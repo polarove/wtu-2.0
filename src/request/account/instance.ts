@@ -4,7 +4,7 @@ import request from '../index'
 const BASR_API = import.meta.env.VITE_APP_BASE_API as string
 const BASR_ORIGIN = import.meta.env.VITE_APP_BASE_ORIGIN as string
 
-const UserController: request = new request({
+const AccountController: request = new request({
     baseURL: BASR_API + '/account',
     headers: {
         'Content-Type': 'application/json',
@@ -13,4 +13,4 @@ const UserController: request = new request({
     withCredentials: true,
 })
 
-export default UserController
+export default AccountController

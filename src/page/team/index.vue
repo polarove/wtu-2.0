@@ -1,8 +1,14 @@
 <template>
     <WtuHeader />
     <div class="wrapper">
-        <div class="entries-wrapper">
-            <WtuEntries class="entries" />
+        <div class="inner-header">
+            <div>
+                <span>我</span>
+                <span>队友1</span>
+                <span>队友2</span>
+                <span>队友3</span>
+            </div>
+            <WtuEntries />
         </div>
         <RouterView />
         <WtuFooter />
@@ -13,12 +19,30 @@
 
 <style lang="scss" scoped>
 .wrapper {
-    padding: 2rem 1rem;
+    padding: 1em 2em;
 
-    .entries-wrapper {
+    .inner-header {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
         align-items: center;
+        margin-bottom: 1em;
+
+        span {
+            margin-right: 1em;
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .inner-header {
+        flex-direction: row-reverse;
+        align-items: flex-start;
+        margin-bottom: 0.5em;
+
+        span {
+            margin-right: 0;
+            margin-bottom: 0.5em;
+        }
     }
 }
 </style>

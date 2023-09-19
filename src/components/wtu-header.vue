@@ -1,11 +1,13 @@
 <template>
     <el-row class="wtu-header" :style="{ boxShadow: isDark ? '' : '0 2px 12px 0 rgba(0, 0, 0, 0.1)' }">
-        <el-col :span="6" class="flex-center">
+        <el-col :span="5" class="flex-center">
             <WtuLogo></WtuLogo>
         </el-col>
-        <el-col :span="12" class="lh-inherit"></el-col>
+        <el-col :span="12">
+
+        </el-col>
         <!-- <div class="flex-1"></div> -->
-        <el-col :span="6" class="flex-start">
+        <el-col :span="7" class="flex-center">
             <WtuAvatar />
         </el-col>
         <div class="curtain" :style="{ visibility: isDark ? 'visible' : 'hidden' }"></div>

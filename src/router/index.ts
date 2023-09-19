@@ -1,31 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import nProgress from 'nprogress'
-import entries from '@/static/entries'
+import entries from '@/composables/entries'
+import { AIsLogin } from '@api/account'
+import { isNotBlank } from '@util/StrUtil'
 
 const routes = [
     {
         path: '/',
         name: 'index',
-        title: '主页',
+        meta: { forehead: 'Warframe Team Up' },
         component: () => import('@page/team/index.vue'),
         redirect: `/${entries.origin}`,
         children: [
             {
                 path: `/${entries.origin}`,
                 name: entries.origin,
-                title: '起源星系',
+                meta: { forehead: '起源星系' },
                 component: () => import('@page/team/origin/index.vue'),
             },
             {
                 path: `/${entries.durivi}`,
                 name: entries.durivi,
-                title: '双衍王境',
+                meta: { forehead: '双衍王境' },
                 component: () => import('@page/team/durivi/index.vue'),
             },
             {
                 path: `/${entries.empyrean}`,
                 name: entries.empyrean,
-                title: '九重天',
+                meta: { forehead: '九重天' },
                 component: () => import('@page/team/empyrean/index.vue'),
             },
         ],
@@ -33,27 +35,42 @@ const routes = [
     {
         path: '/account',
         name: 'account',
-        title: '账号中心',
+        meta: { forehead: '账号中心' },
         component: () => import('@page/account/index.vue'),
         redirect: '/login',
         children: [
             {
-                path: '/account/private',
-                name: 'private',
-                title: '个人空间',
-                component: () => import('@page/account/private/index.vue'),
-            },
-            {
                 path: '/account/login',
                 name: 'login',
-                title: 'Tenno登录',
+                meta: { forehead: 'Tenno登录' },
                 component: () => import('@page/account/login/index.vue'),
             },
             {
                 path: '/account/recover',
                 name: 'recover',
-                title: '找回账号',
+                meta: { forehead: '找回账号' },
                 component: () => import('@page/account/recover/index.vue'),
+            },
+            {
+                path: '/account/verify',
+                name: 'verify',
+                meta: { forehead: '成分查询' },
+                component: () => import('@page/account/verify/index.vue'),
+            },
+        ],
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        meta: { forehead: '个人空间' },
+        component: () => import('@page/profile/index.vue'),
+        redirect: '/profile/home',
+        children: [
+            {
+                path: '/profile/home',
+                name: 'home',
+                meta: { forehead: '个人空间' },
+                component: () => import('@page/profile/home/index.vue'),
             },
         ],
     },
@@ -64,8 +81,13 @@ const router = createRouter({
     routes,
 })
 
-router.beforeEach(() => {
+// @ts-ignore
+router.beforeEach((to, from, next) => {
     nProgress.start()
+    document.title = to.meta.forehead
+        ? (to.meta.forehead as any)
+        : (to.meta.title as any)
+    next()
 })
 
 router.afterEach(() => {

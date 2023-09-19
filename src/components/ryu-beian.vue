@@ -16,11 +16,15 @@
 
 #police {
     width: 23px;
-    margin-right: 0.5em;
+    margin-right: 0.5rem;
 }
 
 
 #beianhao {
     color: var(--el-text-color-primary);
+
+    &:hover {
+        color: var(--el-color-primary);
+    }
 }
 </style>

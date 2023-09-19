@@ -13,7 +13,7 @@
 </template>
   
 <script setup lang='ts'>
-import entries from '@/static/entries'
+import entries from '@/composables/entries'
 import router from '@/router';
 
 const isDurivi = computed(() => router.currentRoute.value.name === entries.durivi)
@@ -32,7 +32,7 @@ const navi = (entry: string) => {
 <style lang='scss' scoped>
 .entries {
     display: flex;
-    grid-gap: 1em;
+    grid-gap: 1rem;
     align-items: center;
 
     .activated {
@@ -47,11 +47,10 @@ const navi = (entry: string) => {
         align-items: center;
         width: 140px;
         height: 55px;
-        border-radius: 0.5em;
+        border-radius: 0.5rem;
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
         cursor: pointer;
         transition: all 0.3s ease-in-out;
-        overflow: visible;
 
         &:hover {
             img {
@@ -62,7 +61,6 @@ const navi = (entry: string) => {
 
         img {
             user-select: none;
-            overflow: visible;
             object-fit: cover;
             transition: all 0.3s ease-in-out;
         }
@@ -72,12 +70,6 @@ const navi = (entry: string) => {
             word-wrap: nowrap;
             user-select: none;
         }
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .entries {
-        display: none;
     }
 }
 </style>

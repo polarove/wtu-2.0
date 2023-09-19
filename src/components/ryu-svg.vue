@@ -7,8 +7,8 @@
 <script setup lang="ts">
 defineProps({
     name: { type: String, required: true },
-    size: { type: String, default: '1em' },
-    margin: { type: String, default: '0 .125em' },
+    size: { type: String, default: '1rem' },
+    margin: { type: String, default: '0 .125rem' },
     color: { type: String, default: '' },
 })
 </script>

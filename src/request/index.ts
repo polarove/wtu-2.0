@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-
+import { authStore } from '@/store'
+const _authStore = authStore()
 export default class request {
     private instance: AxiosInstance | undefined
 
@@ -8,6 +9,7 @@ export default class request {
 
         this.instance.interceptors.request.use(
             (config) => {
+                config.headers.uuid = _authStore.getUUID()
                 return config
             },
             (error) => {

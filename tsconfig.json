@@ -22,10 +22,12 @@
         "baseUrl": "./",
         "paths": {
             "@/*": ["./src/*"],
+            "@icon/*": ["./src/icon/*"],
+            "@img/*": ["./src/img/*"],
             "@page/*": ["./src/page/*"],
             "@composables/*": ["./src/composables/*"],
-            "@store/*": ["./src/store/*"],
-            "@icons/*": ["./src/icons/*"]
+            "@util/*": ["./src/util/*"],
+            "@api/*": ["./src/request/*"]
         }
     },
     "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

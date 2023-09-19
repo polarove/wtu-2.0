@@ -1,11 +1,11 @@
 <template>
     <div class="logo-wrapper">
         <el-tooltip :content="content">
-            <ryu-svg @click="toggleDark()" name="warframe" size="3em" class="cursor-pointer"></ryu-svg>
+            <ryu-svg @click="toggleDark()" name="warframe" size="3rem" class="cursor-pointer"></ryu-svg>
         </el-tooltip>
         <el-tooltip content="返回主页">
             <span @click="backToHome"
-                class="name hover-color-blue text-size-[1.37em] ml-0.5em cursor-pointer select-none font-smiley ">
+                class="name hover-color-blue text-size-[1.37rem] ml-0.5rem cursor-pointer select-none font-smiley ">
                 Warframe Team Up
             </span>
         </el-tooltip>
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { toggleDark, isDark } from '@/composables/theme'
+import { toggleDark, isDark } from '@composables/theme'
 import router from '@/router';
 
 const content = computed(() =>

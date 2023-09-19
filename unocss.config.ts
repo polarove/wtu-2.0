@@ -86,6 +86,12 @@ export default defineConfig({
                 margin: 'auto',
             },
         ],
+        [
+            'c-p',
+            {
+                cursor: 'pointer',
+            },
+        ],
     ],
     presets: [
         presetUno(),
@@ -94,7 +100,6 @@ export default defineConfig({
             extraProperties: {
                 display: 'inline-block',
                 'vertical-align': 'middle',
-                margin: '0 0 .125em 0',
             },
         }),
     ],

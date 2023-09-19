@@ -1,12 +1,18 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+// pinia
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
+// vue app
 import App from './App.vue'
 
 // vue-router
 import router from './router'
 
-// pinia
-const pinia = createPinia()
+// animate.css
+import 'animate.css'
 
 // unocss
 import 'virtual:uno.css'
@@ -18,7 +24,7 @@ import './style/style.css'
 import './style/css-vars.scss'
 
 // font css style
-import './fonts/font.css'
+import './assets/font/font.css'
 
 // nprogress
 import 'nprogress/nprogress.css'
@@ -27,10 +33,15 @@ import 'nprogress/nprogress.css'
 import 'virtual:svg-icons-register'
 import ryuSvg from './components/ryu-svg.vue'
 
+// Element Plus
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
 // element-plus dark mode
 import 'element-plus/theme-chalk/dark/css-vars.css'
 
 const app = createApp(App)
+app.use(ElementPlus)
 app.use(pinia)
 app.use(router)
 app.component('svg-icon', ryuSvg)

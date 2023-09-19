@@ -1,25 +1,27 @@
 <template>
-    <el-form ref="loginFormRef" :rules="loginFormRules" :model="loginForm">
+    <el-form ref="LoginFormRef" :rules="LoginFormRules" :model="LoginForm">
         <el-form-item prop="email">
-            <el-input placeholder="请输入邮箱" v-model="loginForm.email">
+            <el-input placeholder="请输入邮箱" v-model="LoginForm.email">
                 <template #prepend>
                     <div class="i-ant-design:mail-outlined"></div>
                 </template>
             </el-input>
         </el-form-item>
         <el-form-item prop="password">
-            <el-input show-password placeholder="请输入密码" v-model="loginForm.password">
+            <el-input show-password placeholder="请输入密码" v-model="LoginForm.password">
                 <template #prepend>
                     <div class="i-ep:lock"></div>
                 </template>
             </el-input>
         </el-form-item>
         <el-form-item>
-            <el-button @click="login(loginFormRef)">登录&nbsp;/&nbsp;注册</el-button>
+            <el-button @click="login(LoginFormRef)" :loading="loading">
+                {{ loading ? '登录中' : '登录&nbsp;/&nbsp;注册' }}
+            </el-button>
 
             <div class="tip" @click="recover">
                 <span class="i-ep:info-filled mr-5px" />
-                <span>我忘记了密码</span>
+                <span class="select-none">我忘记了密码</span>
             </div>
         </el-form-item>
     </el-form>
@@ -27,15 +29,17 @@
   
 <script setup lang='ts'>
 import router from '@/router'
-import type { FormInstance, FormRules } from 'element-plus'
-import { stateStore } from '@/store'
-import { ILogin } from '@/request/account'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { Login } from '@api/account'
+import { User, response } from '@composables/types';
+import { authStore } from '@/store';
+const _authStore = authStore()
 
-const _stateStore = stateStore()
+const loading = ref(false)
 
-const loginFormRef = ref<FormInstance>()
+const LoginFormRef = ref<FormInstance>()
 
-const loginFormRules = reactive<FormRules>({
+const LoginFormRules = reactive<FormRules>({
     email: [{
         required: true,
         message: '请输入邮箱',
@@ -50,24 +54,26 @@ const loginFormRules = reactive<FormRules>({
     password: [{ required: true, message: "请输入密码", trigger: 'blur' }],
 })
 
-const loginForm = reactive({
+const LoginForm = reactive({
     email: '',
     password: ''
 })
 
 const login = (formEl: FormInstance | undefined) => {
+    loading.value = true
     if (!formEl) return
-    formEl.validate((valid) => {
+    formEl.validate(async (valid) => {
         if (valid) {
-            console.log('submit!')
-            console.log(loginForm);
-            // router.push({ name: 'origin' })
-            // 登录相关
-            // code here
-            console.log(ILogin(loginForm));
-
+            const result = await Login(LoginForm) as response
+            if (result.success) {
+                router.push({ name: "origin" })
+                _authStore.setUser(result.data as User)
+            } else {
+                ElMessage.error(result.message)
+            }
+            loading.value = false
         } else {
-            console.log('error submit!')
+            loading.value = false
             return false
         }
     })
@@ -78,6 +84,8 @@ const recover = () => {
         name: 'recover'
     })
 }
+
+
 </script>
   
 <style lang='scss' scoped>

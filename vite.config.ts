@@ -26,7 +26,7 @@ export default defineConfig({
         }),
         createSvgIconsPlugin({
             // Specify the icon folder to be cached
-            iconDirs: [path.resolve(process.cwd(), 'src/icons')],
+            iconDirs: [path.resolve(process.cwd(), 'src/assets/icon')],
             // Specify symbolId format
             symbolId: 'icon-[dir]-[name]',
 
@@ -42,10 +42,10 @@ export default defineConfig({
         port: 67,
         https: {
             cert: fs.readFileSync(
-                path.resolve(__dirname, 'src/ssl/localhost+3.pem')
+                path.resolve(__dirname, 'src/assets/ssl/localhost+3.pem')
             ),
             key: fs.readFileSync(
-                path.resolve(__dirname, 'src/ssl/localhost+3-key.pem')
+                path.resolve(__dirname, 'src/assets/ssl/localhost+3-key.pem')
             ),
         },
     },
@@ -53,11 +53,11 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, 'src'),
-            '@icons': resolve(__dirname, 'src/icons'),
-            '@img': resolve(__dirname, 'src/img'),
+            '@icon': resolve(__dirname, 'src/assets/icon'),
+            '@img': resolve(__dirname, 'src/assets/img'),
             '@page': resolve(__dirname, 'src/page'),
-            '@router': resolve(__dirname, 'src/router'),
-            '@components': resolve(__dirname, 'src/components'),
+            '@util': resolve(__dirname, 'src/util'),
+            '@api': resolve(__dirname, 'src/request'),
             '@composables': resolve(__dirname, 'src/composables'),
         },
     },

@@ -1,37 +1,43 @@
 import { defineStore } from 'pinia'
+import { User } from '@composables/types'
 
 export const authStore = defineStore({
-    id: 'auth',
+    id: 'session',
     state: () => ({
-        sessionState: false,
-        sessionId: '',
         user: {
-            id: null,
-            username: null,
-            email: null,
-            avatar: null,
-            role: null,
-            created_at: null,
-            updated_at: null,
+            avatar: '',
+            description: '',
+            name: '',
+            uuid: '',
         },
     }),
     actions: {
-        setSessionId(sessionId: string) {
-            this.sessionId = sessionId
-        },
-        getSessionId() {
-            return this.sessionId
-        },
-        setSessionState(sessionState: boolean) {
-            this.sessionState = sessionState
-        },
-        getSessionState() {
-            return this.sessionState
-        },
-        setUser(user: any) {
+        setUser(user: User) {
             this.user = user
         },
+        getUser(): User {
+            return this.user
+        },
+        getDescription(): string {
+            return this.user.description
+        },
+        getUUID(): string {
+            return this.user.uuid
+        },
+        getAvatar(): string {
+            return this.user.avatar
+        },
+        setAvatar(avatar: string) {
+            this.user.avatar = avatar
+        },
+        getName(): string {
+            return this.user.name
+        },
+        setName(name: string) {
+            this.user.name = name
+        },
     },
+    persist: true,
 })
 
 export const stateStore = defineStore({
