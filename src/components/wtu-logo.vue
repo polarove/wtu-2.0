@@ -1,13 +1,13 @@
 <template>
     <div class="logo-wrapper">
-        <el-tooltip :content="content">
+        <el-tooltip :content="content" v-if="showLogo">
             <ryu-svg @click="toggleDark()" name="warframe" size="3rem" class="cursor-pointer"></ryu-svg>
         </el-tooltip>
-        <el-tooltip content="返回主页">
-            <span @click="backToHome"
+        <el-tooltip content="返回主页" v-if="showTitle">
+            <div @click="backToHome"
                 class="name hover-color-blue text-size-[1.37rem] ml-0.5rem cursor-pointer select-none font-smiley ">
                 Warframe Team Up
-            </span>
+            </div>
         </el-tooltip>
     </div>
 </template>
@@ -15,6 +15,17 @@
 <script setup lang="ts">
 import { toggleDark, isDark } from '@composables/theme'
 import router from '@/router';
+
+defineProps({
+    showLogo: {
+        type: Boolean,
+        default: true
+    },
+    showTitle: {
+        type: Boolean,
+        default: true
+    }
+})
 
 const content = computed(() =>
     isDark.value ? '切换为白昼模式' : '切换为夜间模式'
@@ -33,7 +44,13 @@ const backToHome = () => {
 }
 
 .logo-wrapper {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .name {
+        min-width: 150px;
+    }
 
     * {
         vertical-align: middle;

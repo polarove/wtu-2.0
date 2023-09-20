@@ -10,7 +10,6 @@ declare module 'vue' {
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCol: typeof import('element-plus/es')['ElCol']
-    ElDivider: typeof import('element-plus/es')['ElDivider']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElInput: typeof import('element-plus/es')['ElInput']
@@ -28,5 +27,6 @@ declare module 'vue' {
     WtuFooter: typeof import('./src/components/wtu-footer.vue')['default']
     WtuHeader: typeof import('./src/components/wtu-header.vue')['default']
     WtuLogo: typeof import('./src/components/wtu-logo.vue')['default']
+    WtuProfileRoute: typeof import('./src/components/wtu-profile-route.vue')['default']
   }
 }

@@ -27,3 +27,11 @@ export const RecoverAccount = (data: any) => {
 export const ChangePassword = (data: any) => {
     return AccountController.post('/changePassword', data)
 }
+
+export const SaveMyName = (data: any) => {
+    return AccountController.post('/saveMyName', data)
+}
+
+export const UpdateOnlineStatus = (data: any) => {
+    return AccountController.post('/updateOnlineStatus', data)
+}

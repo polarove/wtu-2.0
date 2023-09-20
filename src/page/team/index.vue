@@ -32,17 +32,4 @@
         }
     }
 }
-
-@media screen and (max-width: 768px) {
-    .inner-header {
-        flex-direction: row-reverse;
-        align-items: flex-start;
-        margin-bottom: 0.5em;
-
-        span {
-            margin-right: 0;
-            margin-bottom: 0.5em;
-        }
-    }
-}
 </style>

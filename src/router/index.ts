@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import nProgress from 'nprogress'
 import entries from '@/composables/entries'
-import { AIsLogin } from '@api/account'
-import { isNotBlank } from '@util/StrUtil'
 
 const routes = [
     {
@@ -37,7 +35,7 @@ const routes = [
         name: 'account',
         meta: { forehead: '账号中心' },
         component: () => import('@page/account/index.vue'),
-        redirect: '/login',
+        redirect: '/account/login',
         children: [
             {
                 path: '/account/login',
@@ -64,13 +62,19 @@ const routes = [
         name: 'profile',
         meta: { forehead: '个人空间' },
         component: () => import('@page/profile/index.vue'),
-        redirect: '/profile/home',
+        redirect: '/profile/team',
         children: [
             {
-                path: '/profile/home',
-                name: 'home',
-                meta: { forehead: '个人空间' },
-                component: () => import('@page/profile/home/index.vue'),
+                path: '/profile/team',
+                name: 'team',
+                meta: { forehead: '组队' },
+                component: () => import('@page/profile/team/index.vue'),
+            },
+            {
+                path: '/profile/manage',
+                name: 'manage',
+                meta: { forehead: '账户' },
+                component: () => import('@page/profile/account/index.vue'),
             },
         ],
     },

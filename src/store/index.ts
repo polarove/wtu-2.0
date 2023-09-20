@@ -9,6 +9,7 @@ export const authStore = defineStore({
             description: '',
             name: '',
             uuid: '',
+            onlineStatus: 0,
         },
     }),
     actions: {
@@ -35,6 +36,12 @@ export const authStore = defineStore({
         },
         setName(name: string) {
             this.user.name = name
+        },
+        getOnlineStatus(): number {
+            return this.user.onlineStatus
+        },
+        setOnlineStatus(onlineStatus: number) {
+            this.user.onlineStatus = onlineStatus
         },
     },
     persist: true,

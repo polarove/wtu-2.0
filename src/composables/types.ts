@@ -13,4 +13,5 @@ export interface User {
     description: string
     name: string
     uuid: string
+    onlineStatus: number
 }

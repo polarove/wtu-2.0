@@ -8,7 +8,7 @@
             </el-input>
         </el-form-item>
         <el-form-item prop="password">
-            <el-input show-password placeholder="请输入密码" v-model="LoginForm.password">
+            <el-input show-password placeholder="请输入密码" @keyup.enter="login(LoginFormRef)" v-model="LoginForm.password">
                 <template #prepend>
                     <div class="i-ep:lock"></div>
                 </template>
@@ -68,6 +68,8 @@ const login = (formEl: FormInstance | undefined) => {
             if (result.success) {
                 router.push({ name: "origin" })
                 _authStore.setUser(result.data as User)
+                console.log(_authStore.getUser());
+
             } else {
                 ElMessage.error(result.message)
             }
