@@ -8,7 +8,12 @@
             </el-input>
         </el-form-item>
         <el-form-item prop="password">
-            <el-input show-password placeholder="请输入密码" @keyup.enter="login(LoginFormRef)" v-model="LoginForm.password">
+            <el-input
+                show-password
+                placeholder="请输入密码"
+                @keyup.enter="login(LoginFormRef)"
+                v-model="LoginForm.password"
+            >
                 <template #prepend>
                     <div class="i-ep:lock"></div>
                 </template>
@@ -26,13 +31,13 @@
         </el-form-item>
     </el-form>
 </template>
-  
-<script setup lang='ts'>
+
+<script setup lang="ts">
 import router from '@/router'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { Login } from '@api/account'
-import { User, response } from '@composables/types';
-import { authStore } from '@/store';
+import { User, response } from '@composables/types'
+import { authStore } from '@/store'
 const _authStore = authStore()
 
 const loading = ref(false)
@@ -40,23 +45,24 @@ const loading = ref(false)
 const LoginFormRef = ref<FormInstance>()
 
 const LoginFormRules = reactive<FormRules>({
-    email: [{
-        required: true,
-        message: '请输入邮箱',
-        trigger: 'blur',
-    },
-    {
-        type: 'email',
-        message: '请检查邮箱格式',
-        trigger: ['blur', 'change'],
-    },
+    email: [
+        {
+            required: true,
+            message: '请输入邮箱',
+            trigger: 'blur',
+        },
+        {
+            type: 'email',
+            message: '请检查邮箱格式',
+            trigger: ['blur', 'change'],
+        },
     ],
-    password: [{ required: true, message: "请输入密码", trigger: 'blur' }],
+    password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 })
 
 const LoginForm = reactive({
     email: '',
-    password: ''
+    password: '',
 })
 
 const login = (formEl: FormInstance | undefined) => {
@@ -64,12 +70,10 @@ const login = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate(async (valid) => {
         if (valid) {
-            const result = await Login(LoginForm) as response
+            const result = (await Login(LoginForm)) as response
             if (result.success) {
-                router.push({ name: "origin" })
+                router.push({ name: 'origin' })
                 _authStore.setUser(result.data as User)
-                console.log(_authStore.getUser());
-
             } else {
                 ElMessage.error(result.message)
             }
@@ -83,14 +87,12 @@ const login = (formEl: FormInstance | undefined) => {
 
 const recover = () => {
     router.push({
-        name: 'recover'
+        name: 'recover',
     })
 }
-
-
 </script>
-  
-<style lang='scss' scoped>
+
+<style lang="scss" scoped>
 .tip {
     color: #999;
     margin-left: 15px;

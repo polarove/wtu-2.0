@@ -10,6 +10,7 @@ export const authStore = defineStore({
             name: '',
             uuid: '',
             onlineStatus: 0,
+            boosterList: [] as string[],
         },
     }),
     actions: {
@@ -43,21 +44,17 @@ export const authStore = defineStore({
         setOnlineStatus(onlineStatus: number) {
             this.user.onlineStatus = onlineStatus
         },
+        hasBooster(booster: string): boolean {
+            return this.user.boosterList.includes(booster)
+        },
+        removeBooster(booster: string) {
+            this.user.boosterList = this.user.boosterList.filter(
+                (item) => item !== booster
+            )
+        },
+        addBooster(booster: string) {
+            this.user.boosterList.push(booster)
+        },
     },
     persist: true,
-})
-
-export const stateStore = defineStore({
-    id: 'state',
-    state: () => ({
-        fromRegistry: false,
-    }),
-    actions: {
-        setFromRegistry(fromRegistry: boolean) {
-            this.fromRegistry = fromRegistry
-        },
-        getFromRegistry(): boolean {
-            return this.fromRegistry
-        },
-    },
 })

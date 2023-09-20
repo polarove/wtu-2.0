@@ -1,7 +1,7 @@
 // response from server
 export interface response {
     code: number
-    data: string | object
+    data: string | User
     message: string
     success: boolean
     timestamp: number
@@ -12,6 +12,7 @@ export interface User {
     avatar: string
     description: string
     name: string
-    uuid: string
     onlineStatus: number
+    uuid: string
+    boosterList: string[]
 }

@@ -87,117 +87,166 @@ export class OnlineStatusEnum extends Enum {
     )
 }
 
+export class ActionEnum extends Enum {
+    public static readonly remove = new Enum(0, '删除', 'remove')
+
+    public static readonly add = new Enum(1, '添加', 'add')
+
+    public static readonly update = new Enum(2, '更新', 'update')
+
+    public static readonly REMOVE = 0
+
+    public static readonly ADD = 1
+
+    public static readonly UPDATE = 2
+}
+
 export class AffinityBoosterEnum extends Enum {
-    public static readonly invalid = new Enum(
+    public static readonly Invalid = new Enum(
         0,
         '未生效',
-        '/src/assets/img/booster/Affinity/invalid.png'
+        'https://www.neorae.cn/data/img/booster/Affinity/Invalid.png'
     )
-    public static readonly bronze = new Enum(
+    public static readonly Bronze = new Enum(
         3,
         '大于3天',
-        '/src/assets/img/booster/Affinity/bronze.png'
+        'https://www.neorae.cn/data/img/booster/Affinity/Bronze.png'
     )
-    public static readonly silver = new Enum(
+    public static readonly Silver = new Enum(
         7,
         '大于7天',
-        '/src/assets/img/booster/Affinity/silver.png'
+        'https://www.neorae.cn/data/img/booster/Affinity/Silver.png'
     )
-    public static readonly gold = new Enum(
+    public static readonly Gold = new Enum(
         30,
         '大于30天',
-        '/src/assets/img/booster/Affinity/gold.png'
+        'https://www.neorae.cn/data/img/booster/Affinity/Gold.png'
     )
+    public static readonly type = 'AffinityBooster'
 }
 
 export class CreditBoosterEnum extends Enum {
-    public static readonly invalid = new Enum(
+    public static readonly Invalid = new Enum(
         0,
         '未生效',
-        '/src/assets/img/booster/Credit/invalid.png'
+        'https://www.neorae.cn/data/img/booster/Credit/Invalid.png'
     )
-    public static readonly bronze = new Enum(
+    public static readonly Bronze = new Enum(
         3,
         '大于3天',
-        '/src/assets/img/booster/Credit/bronze.png'
+        'https://www.neorae.cn/data/img/booster/Credit/Bronze.png'
     )
-    public static readonly silver = new Enum(
+    public static readonly Silver = new Enum(
         7,
         '大于7天',
-        '/src/assets/img/booster/Credit/silver.png'
+        'https://www.neorae.cn/data/img/booster/Credit/Silver.png'
     )
-    public static readonly gold = new Enum(
+    public static readonly Gold = new Enum(
         30,
         '大于30天',
-        '/src/assets/img/booster/Credit/gold.png'
+        'https://www.neorae.cn/data/img/booster/Credit/Gold.png'
     )
+    public static readonly type = 'CreditBooster'
 }
 
-export class ModDropChanceBoosterEnum extends Enum {
-    public static readonly invalid = new Enum(
+export class ModDropRateBoosterEnum extends Enum {
+    public static readonly Invalid = new Enum(
         0,
         '未生效',
-        '/src/assets/img/booster/ModDropChance/invalid.png'
+        'https://www.neorae.cn/data/img/booster/ModDropRate/Invalid.png'
     )
-    public static readonly bronze = new Enum(
+    public static readonly Bronze = new Enum(
         3,
         '大于3天',
-        '/src/assets/img/booster/ModDropChance/bronze.png'
+        'https://www.neorae.cn/data/img/booster/ModDropRate/Bronze.png'
     )
-    public static readonly silver = new Enum(
+    public static readonly Silver = new Enum(
         7,
         '大于7天',
-        '/src/assets/img/booster/ModDropChance/silver.png'
+        'https://www.neorae.cn/data/img/booster/ModDropRate/Silver.png'
     )
-    public static readonly gold = new Enum(
+    public static readonly Gold = new Enum(
         30,
         '大于30天',
-        '/src/assets/img/booster/ModDropChance/gold.png'
+        'https://www.neorae.cn/data/img/booster/ModDropRate/Gold.png'
     )
+
+    public static readonly type = 'ModDropRateBooster'
 }
 
 export class ResourceBoosterEnum extends Enum {
-    public static readonly invalid = new Enum(
+    public static readonly Invalid = new Enum(
         0,
         '未生效',
-        '/src/assets/img/booster/ResourceBoosterEnum/invalid.png'
+        'https://www.neorae.cn/data/img/booster/Resource/Invalid.png'
     )
-    public static readonly bronze = new Enum(
+    public static readonly Bronze = new Enum(
         3,
         '大于3天',
-        '/src/assets/img/booster/ResourceBoosterEnum/bronze.png'
+        'https://www.neorae.cn/data/img/booster/Resource/Bronze.png'
     )
-    public static readonly silver = new Enum(
+    public static readonly Silver = new Enum(
         7,
         '大于7天',
-        '/src/assets/img/booster/ResourceBoosterEnum/silver.png'
+        'https://www.neorae.cn/data/img/booster/Resource/Silver.png'
     )
-    public static readonly gold = new Enum(
+    public static readonly Gold = new Enum(
         30,
         '大于30天',
-        '/src/assets/img/booster/ResourceBoosterEnum/gold.png'
+        'https://www.neorae.cn/data/img/booster/Resource/Gold.png'
     )
+
+    public static readonly type = 'ResourceBooster'
 }
 
-export class ResourceDropChanceBoosterEnum extends Enum {
-    public static readonly invalid = new Enum(
+export class ResourceDropRateBoosterEnum extends Enum {
+    public static readonly Invalid = new Enum(
         0,
         '未生效',
-        '/src/assets/img/booster/ResourceDropChance/invalid.png'
+        'https://www.neorae.cn/data/img/booster/ResourceDropRate/Invalid.png'
     )
-    public static readonly bronze = new Enum(
+    public static readonly Bronze = new Enum(
         3,
         '大于3天',
-        '/src/assets/img/booster/ResourceDropChance/bronze.png'
+        'https://www.neorae.cn/data/img/booster/ResourceDropRate/Bronze.png'
     )
-    public static readonly silver = new Enum(
+    public static readonly Silver = new Enum(
         7,
         '大于7天',
-        '/src/assets/img/booster/ResourceDropChance/silver.png'
+        'https://www.neorae.cn/data/img/booster/ResourceDropRate/Silver.png'
     )
-    public static readonly gold = new Enum(
+    public static readonly Gold = new Enum(
         30,
         '大于30天',
-        '/src/assets/img/booster/ResourceDropChance/gold.png'
+        'https://www.neorae.cn/data/img/booster/ResourceDropRate/Gold.png'
     )
+    public static readonly type = 'ResourceDropRateBooster'
+}
+
+export class BoosterEnum extends Enum {
+    public static readonly affinity = new Enum(1, '经验加成', 'affinity')
+
+    public static readonly credit = new Enum(2, '现金加成', 'credit')
+
+    public static readonly mod_drop_chance = new Enum(
+        3,
+        'mod掉落几率加成',
+        'mod_drop_chance'
+    )
+
+    public static readonly resource = new Enum(4, '资源数量加成', 'resource')
+
+    public static readonly resource_drop_chance = new Enum(
+        5,
+        '资源掉落几率加成',
+        'resource_drop_chance'
+    )
+
+    public static readonly types = [
+        AffinityBoosterEnum,
+        CreditBoosterEnum,
+        ModDropRateBoosterEnum,
+        ResourceBoosterEnum,
+        ResourceDropRateBoosterEnum,
+    ]
 }

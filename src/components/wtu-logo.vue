@@ -4,8 +4,7 @@
             <ryu-svg @click="toggleDark()" name="warframe" size="3rem" class="cursor-pointer"></ryu-svg>
         </el-tooltip>
         <el-tooltip content="返回主页" v-if="showTitle">
-            <div @click="backToHome"
-                class="name hover-color-blue text-size-[1.37rem] ml-0.5rem cursor-pointer select-none font-smiley ">
+            <div @click="backToHome" class="name font-smiley invisible-min-900px">
                 Warframe Team Up
             </div>
         </el-tooltip>
@@ -37,12 +36,6 @@ const backToHome = () => {
 </script>
 
 <style lang="scss" scoped>
-@media screen and (max-width: 868px) {
-    .name {
-        display: none !important;
-    }
-}
-
 .logo-wrapper {
     display: flex;
     align-items: center;
@@ -50,11 +43,14 @@ const backToHome = () => {
 
     .name {
         min-width: 150px;
-    }
+        font-size: 1.37em;
+        margin-left: 0.5em;
+        cursor: pointer;
+        user-select: none;
 
-    * {
-        vertical-align: middle;
+        &:hover {
+            color: var(--el-color-primary);
+        }
     }
-
 }
 </style>

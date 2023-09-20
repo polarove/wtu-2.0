@@ -1,24 +1,67 @@
 <template>
-    <el-row class="wtu-header" :style="{ boxShadow: isDark ? '' : '0 2px 12px 0 rgba(0, 0, 0, 0.1)' }">
+    <el-row
+        class="wtu-header"
+        :style="{ boxShadow: isDark ? '' : '0 2px 12px 0 rgba(0, 0, 0, 0.1)' }"
+    >
         <el-col :span="5" class="flex-center">
             <WtuLogo />
-
         </el-col>
         <el-col :span="12" class="flex-center">
-            <span class="title text-size-[1.37rem] font-smiley display-none">Warframe Team Up</span>
+            <span
+                class="title invisible-max-900px text-size-[1.37rem] font-smiley"
+                >Warframe Team Up</span
+            >
         </el-col>
         <!-- <div class="flex-1"></div> -->
-        <el-col :span="7" class="flex-center p-r">
+        <el-col :span="7" class="flex-center">
             <WtuAvatar />
+            <div class="invisible-min-900px ml-1em">
+                <div
+                    v-if="isBlank(_authStore.getUUID())"
+                    class="text-center text-size-[1.0rem] ml-1.0em"
+                >
+                    点击登录&nbsp;/&nbsp;注册
+                </div>
+                <div v-else class="vertical-middle">
+                    <div class="text-size-[1.2rem] font-bold">
+                        {{ _authStore.getName() }}
+                    </div>
+                    <WtuOnlineState />
+                </div>
+            </div>
+            <el-tooltip content="退出登录">
+                <span
+                    class="icon text-size-[1.7rem] ml-0.75em i-ant-design:poweroff-outlined hover-color-red cursor-pointer"
+                    @click="logout()"
+                >
+                </span>
+            </el-tooltip>
         </el-col>
-        <div class="curtain" :style="{ visibility: isDark ? 'visible' : 'hidden' }"></div>
+        <div
+            class="curtain"
+            :style="{ visibility: isDark ? 'visible' : 'hidden' }"
+        ></div>
     </el-row>
 </template>
 
 <script setup lang="ts">
-import { isDark } from '@/composables/theme';
+import { isDark } from '@/composables/theme'
+import { isBlank } from '@util/StrUtil'
+import { authStore } from '@/store'
+import { Logout } from '@/request/account'
+import type { response } from '@/composables/types'
+import router from '@/router'
+const _authStore = authStore()
 
-
+const logout = async () => {
+    const result = (await Logout(_authStore.getUUID())) as response
+    if (result.code === 200) {
+        _authStore.$reset()
+        router.replace({ name: 'login' })
+    } else {
+        ElMessage.error(result.message)
+    }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -43,13 +86,6 @@ import { isDark } from '@/composables/theme';
         width: 100%;
         height: 32px;
         background: linear-gradient(#1e1e20, transparent 70%);
-
-    }
-}
-
-@media screen and (max-width: 868px) {
-    .title {
-        display: inline-block !important;
     }
 }
 </style>

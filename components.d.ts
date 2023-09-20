@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCard: typeof import('element-plus/es')['ElCard']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
@@ -27,6 +28,7 @@ declare module 'vue' {
     WtuFooter: typeof import('./src/components/wtu-footer.vue')['default']
     WtuHeader: typeof import('./src/components/wtu-header.vue')['default']
     WtuLogo: typeof import('./src/components/wtu-logo.vue')['default']
+    WtuOnlineState: typeof import('./src/components/wtu-online-state.vue')['default']
     WtuProfileRoute: typeof import('./src/components/wtu-profile-route.vue')['default']
   }
 }

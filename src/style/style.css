@@ -39,3 +39,31 @@ a {
     color-scheme: dark;
     --wtu-text-color: #fff;
 }
+
+.vertical-middle > * {
+    vertical-align: middle;
+}
+
+@media screen and (max-width: 900px) {
+    .visible-max-900px {
+        display: inline-block;
+    }
+}
+
+@media screen and (min-width: 900px) {
+    .visible-min-900px {
+        display: inline-block;
+    }
+}
+
+@media screen and (min-width: 900px) {
+    .invisible-max-900px {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .invisible-min-900px {
+        display: none;
+    }
+}

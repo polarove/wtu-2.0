@@ -20,8 +20,8 @@ export const GetRecoverCode = (email: string) => {
     return AccountController.get('/getRecoverCode', { email: email })
 }
 
-export const RecoverAccount = (data: any) => {
-    return AccountController.post('/recoverAccount', data)
+export const SubmitCode = (data: any) => {
+    return AccountController.post('/submitCode', data)
 }
 
 export const ChangePassword = (data: any) => {
@@ -34,4 +34,8 @@ export const SaveMyName = (data: any) => {
 
 export const UpdateOnlineStatus = (data: any) => {
     return AccountController.post('/updateOnlineStatus', data)
+}
+
+export const UpdateUserBooster = (data: any) => {
+    return AccountController.post('/updateUserBooster', data)
 }
