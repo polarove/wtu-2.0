@@ -1,24 +1,38 @@
 <template>
     <div class="entries">
-        <div :class="{ activated: isDurivi }" class="entry" @click="navi(entries.durivi)">
-            <img class="img-durivi" src="@img/durivi.png" alt="双衍王境">
-            <div class="state" :style="{ display: isDurivi ? '' : 'none' }"><span>我去，双衍王境</span></div>
+        <div
+            :class="{ activated: isDurivi }"
+            class="entry"
+            @click="navi(entries.durivi)"
+        >
+            <img class="img-durivi" src="@img/durivi.png" alt="双衍王境" />
+            <div class="state" :style="{ display: isDurivi ? '' : 'none' }">
+                <span>我去，双衍王境</span>
+            </div>
         </div>
-        <div :class="{ activated: isEmpyrean }" class="entry" @click="
-            navi(entries.empyrean)">
-            <img class="img-empyrean" src="@img/railjet.png" alt="九重天">
-            <div class="state" :style="{ display: isEmpyrean ? '' : 'none' }"><span>我去，九重天</span></div>
+        <div
+            :class="{ activated: isEmpyrean }"
+            class="entry"
+            @click="navi(entries.empyrean)"
+        >
+            <img class="img-empyrean" src="@img/railjet.png" alt="九重天" />
+            <div class="state" :style="{ display: isEmpyrean ? '' : 'none' }">
+                <span>我去，九重天</span>
+            </div>
         </div>
     </div>
 </template>
-  
-<script setup lang='ts'>
+
+<script setup lang="ts">
 import entries from '@/composables/entries'
-import router from '@/router';
+import router from '@/router'
 
-const isDurivi = computed(() => router.currentRoute.value.name === entries.durivi)
-const isEmpyrean = computed(() => router.currentRoute.value.name === entries.empyrean)
-
+const isDurivi = computed(
+    () => router.currentRoute.value.name === entries.durivi
+)
+const isEmpyrean = computed(
+    () => router.currentRoute.value.name === entries.empyrean
+)
 
 const navi = (entry: string) => {
     if (router.currentRoute.value.name === entry) {
@@ -28,8 +42,8 @@ const navi = (entry: string) => {
     router.push({ name: entry })
 }
 </script>
-  
-<style lang='scss' scoped>
+
+<style lang="scss" scoped>
 .entries {
     display: flex;
     grid-gap: 1rem;
@@ -45,8 +59,8 @@ const navi = (entry: string) => {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 140px;
-        height: 55px;
+        width: 130px;
+        height: 50px;
         border-radius: 0.5rem;
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
         cursor: pointer;
@@ -56,7 +70,6 @@ const navi = (entry: string) => {
             img {
                 transform: scale(1.1);
             }
-
         }
 
         img {

@@ -1,7 +1,7 @@
 <template>
     <el-popover
         :width="320"
-        :disabled="PopDisabled"
+        :disabled="PopDisabled || isBlank(_authStore.getUUID())"
         popper-style="box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; border-radius: 0.5em; padding: 20px;"
     >
         <template #reference>
@@ -56,8 +56,6 @@ import { authStore } from '@/store'
 import { isBlank } from '@util/StrUtil'
 import { OnlineStatusEnum, BoosterEnum, ActionEnum } from '@composables/enums'
 import { UpdateUserBooster } from '@api/account'
-import { response } from '@/composables/types'
-
 const _authStore = authStore()
 
 const user_offline = computed(() => {
@@ -122,10 +120,7 @@ const toggleBooster = async (booster: string) => {
         UpdateBoosterForm.action = ActionEnum.ADD
     }
     UpdateBoosterForm.booster = booster
-    console.log(UpdateBoosterForm)
-
-    const result = (await UpdateUserBooster(UpdateBoosterForm)) as response
-    console.log(result)
+    await UpdateUserBooster(UpdateBoosterForm)
 }
 
 const avatarLoadingErrorHandler = (e: Event) => {

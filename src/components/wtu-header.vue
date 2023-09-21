@@ -29,7 +29,10 @@
                     <WtuOnlineState />
                 </div>
             </div>
-            <el-tooltip content="退出登录">
+            <el-tooltip
+                content="退出登录"
+                v-if="isNotBlank(_authStore.getUUID())"
+            >
                 <span
                     class="icon text-size-[1.7rem] ml-0.75em i-ant-design:poweroff-outlined hover-color-red cursor-pointer"
                     @click="logout()"
@@ -46,12 +49,25 @@
 
 <script setup lang="ts">
 import { isDark } from '@/composables/theme'
-import { isBlank } from '@util/StrUtil'
+import { isBlank, isNotBlank } from '@util/StrUtil'
 import { authStore } from '@/store'
-import { Logout } from '@/request/account'
-import type { response } from '@/composables/types'
+import { Logout, getUserVOByUUID } from '@api/account'
+import type { response, User } from '@/composables/types'
 import router from '@/router'
+import { ElMessage } from 'element-plus'
 const _authStore = authStore()
+
+const init = async () => {
+    if (isBlank(_authStore.getUUID())) {
+        return
+    }
+    const result = (await getUserVOByUUID(_authStore.getUUID())) as response
+    if (result.success) {
+        _authStore.setUser(result.data as User)
+    } else {
+        ElMessage.error(result.message)
+    }
+}
 
 const logout = async () => {
     const result = (await Logout(_authStore.getUUID())) as response
@@ -62,6 +78,9 @@ const logout = async () => {
         ElMessage.error(result.message)
     }
 }
+onMounted(() => {
+    init()
+})
 </script>
 
 <style lang="scss" scoped>
