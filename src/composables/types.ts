@@ -12,7 +12,7 @@ export interface User {
     avatar: string
     description: string
     name: string
-    onlineStatus: number
+    onlineStatus: number | null
     uuid: string
     boosterList: string[]
 }

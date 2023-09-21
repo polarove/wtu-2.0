@@ -14,11 +14,12 @@
         </el-col>
         <!-- <div class="flex-1"></div> -->
         <el-col :span="7" class="flex-center">
-            <WtuAvatar />
-            <div class="invisible-min-900px ml-1em">
+            <WtuAvatar class="avatar" />
+            <div class="invisible-min-900px ml-1em tp">
                 <div
                     v-if="isBlank(_authStore.getUUID())"
-                    class="text-center text-size-[1.0rem] ml-1.0em"
+                    class="text-center text-size-[1.0rem] ml-1.0em cursor-pointer hover-color-blue"
+                    @click="() => router.push({ name: 'login' })"
                 >
                     点击登录&nbsp;/&nbsp;注册
                 </div>
@@ -51,23 +52,11 @@
 import { isDark } from '@/composables/theme'
 import { isBlank, isNotBlank } from '@util/StrUtil'
 import { authStore } from '@/store'
-import { Logout, getUserVOByUUID } from '@api/account'
-import type { response, User } from '@/composables/types'
+import { Logout } from '@api/account'
+import type { response } from '@/composables/types'
 import router from '@/router'
 import { ElMessage } from 'element-plus'
 const _authStore = authStore()
-
-const init = async () => {
-    if (isBlank(_authStore.getUUID())) {
-        return
-    }
-    const result = (await getUserVOByUUID(_authStore.getUUID())) as response
-    if (result.success) {
-        _authStore.setUser(result.data as User)
-    } else {
-        ElMessage.error(result.message)
-    }
-}
 
 const logout = async () => {
     const result = (await Logout(_authStore.getUUID())) as response
@@ -78,8 +67,9 @@ const logout = async () => {
         ElMessage.error(result.message)
     }
 }
+
 onMounted(() => {
-    init()
+    _authStore.updateUser()
 })
 </script>
 
@@ -87,6 +77,13 @@ onMounted(() => {
 .wtu-header {
     height: 67px;
 
+    .avatar {
+        &:hover {
+            + .tp {
+                color: var(--el-color-primary);
+            }
+        }
+    }
     .title {
         min-width: 150px;
         overflow: hidden;

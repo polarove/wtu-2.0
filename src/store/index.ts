@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
-import { User } from '@composables/types'
+import { User, response } from '@composables/types'
+import { getUserVOByUUID } from '@api/account'
+import { ElMessage } from 'element-plus'
+import { isBlank } from '@/util/StrUtil'
 
 export const authStore = defineStore({
     id: 'session',
@@ -9,7 +12,7 @@ export const authStore = defineStore({
             description: '',
             name: '',
             uuid: '',
-            onlineStatus: 0,
+            onlineStatus: null as number | null,
             boosterList: [] as string[],
         },
     }),
@@ -38,7 +41,7 @@ export const authStore = defineStore({
         setName(name: string) {
             this.user.name = name
         },
-        getOnlineStatus(): number {
+        getOnlineStatus(): number | null {
             return this.user.onlineStatus
         },
         setOnlineStatus(onlineStatus: number) {
@@ -54,6 +57,17 @@ export const authStore = defineStore({
         },
         addBooster(booster: string) {
             this.user.boosterList.push(booster)
+        },
+        async updateUser() {
+            if (isBlank(this.getUUID())) {
+                return
+            }
+            const result = (await getUserVOByUUID()) as response
+            if (result.success) {
+                this.setUser(result.data as User)
+            } else {
+                ElMessage.error(result.message)
+            }
         },
     },
     persist: true,

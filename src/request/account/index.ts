@@ -12,8 +12,8 @@ export const Logout = (uuid: string) => {
     return AccountController.get('/logout', { uuid: uuid })
 }
 
-export const getUserVOByUUID = (uuid: string) => {
-    return AccountController.get('/getUserVOByUUID', { uuid: uuid })
+export const getUserVOByUUID = () => {
+    return AccountController.get('/getUserVOByUUID', null)
 }
 
 // export const AIsLogin = (uuid: string) => {

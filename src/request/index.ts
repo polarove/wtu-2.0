@@ -1,15 +1,13 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { authStore } from '@/store'
-const _authStore = authStore()
+import { ReponseCodeEnum } from '@composables/enums'
+import router from '@/router'
 export default class request {
     private instance: AxiosInstance | undefined
 
     constructor(config: AxiosRequestConfig) {
         this.instance = axios.create(config)
-
         this.instance.interceptors.request.use(
             (config) => {
-                config.headers.uuid = _authStore.getUUID()
                 return config
             },
             (error) => {
@@ -19,6 +17,13 @@ export default class request {
 
         this.instance.interceptors.response.use(
             (response) => {
+                if (
+                    response.data.code ===
+                    ReponseCodeEnum.unauthorized.getCode()
+                ) {
+                    router.push({ name: response.data.data })
+                    return Promise.reject(response)
+                }
                 return response.data
             },
             (error) => {

@@ -18,6 +18,7 @@
                 @error="avatarLoadingErrorHandler"
                 class="avatar"
                 :class="{
+                    unknown: user_unknown,
                     offline: user_offline,
                     online: user_online,
                     ingame: user_ingame,
@@ -57,6 +58,10 @@ import { isBlank } from '@util/StrUtil'
 import { OnlineStatusEnum, BoosterEnum, ActionEnum } from '@composables/enums'
 import { UpdateUserBooster } from '@api/account'
 const _authStore = authStore()
+
+const user_unknown = computed(() => {
+    return isBlank(_authStore.getUUID())
+})
 
 const user_offline = computed(() => {
     return _authStore.getOnlineStatus() === OnlineStatusEnum.offline.getCode()
@@ -133,6 +138,9 @@ const avatarLoadingErrorHandler = (e: Event) => {
     cursor: pointer;
 }
 
+.avatar.unknown {
+    box-shadow: 0 0 0 2px rgba($color: #717171, $alpha: 0.7) inset;
+}
 .avatar.offline {
     box-shadow: 0 0 0 2px rgba($color: #d74747, $alpha: 0.7) inset;
 }

@@ -150,6 +150,7 @@ const recover = (formEl: FormInstance | undefined) => {
                         if (action === 'confirm') {
                             navigator.clipboard.writeText(RecoverEmailForm.code)
                         }
+                        return false
                     },
                 })
             } else {
