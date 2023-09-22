@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { User, response } from '@composables/types'
 import { getUserVOByUUID } from '@api/account'
 import { ElMessage } from 'element-plus'
-import { isBlank } from '@/util/StrUtil'
+import { isBlank, isNotBlank } from '@/util/StrUtil'
 
 export const authStore = defineStore({
     id: 'session',
@@ -13,8 +13,10 @@ export const authStore = defineStore({
             name: '',
             uuid: '',
             onlineStatus: null as number | null,
+            server: 1,
             boosterList: [] as string[],
         },
+        difficulty: 0,
     }),
     actions: {
         setUser(user: User) {
@@ -28,6 +30,9 @@ export const authStore = defineStore({
         },
         getUUID(): string {
             return this.user.uuid
+        },
+        isLogin(): boolean {
+            return isNotBlank(this.getUUID())
         },
         getAvatar(): string {
             return this.user.avatar
@@ -58,6 +63,12 @@ export const authStore = defineStore({
         addBooster(booster: string) {
             this.user.boosterList.push(booster)
         },
+        getServer(): number | null {
+            return this.user.server
+        },
+        setServer(server: number) {
+            this.user.server = server
+        },
         async updateUser() {
             if (isBlank(this.getUUID())) {
                 return
@@ -68,6 +79,15 @@ export const authStore = defineStore({
             } else {
                 ElMessage.error(result.message)
             }
+        },
+        getDifficulty(): number {
+            return this.difficulty
+        },
+        setDifficulty(difficulty: number) {
+            this.difficulty = difficulty
+        },
+        isHard(): boolean {
+            return this.difficulty === 1
         },
     },
     persist: true,

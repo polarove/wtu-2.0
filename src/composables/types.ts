@@ -14,5 +14,6 @@ export interface User {
     name: string
     onlineStatus: number | null
     uuid: string
+    server: number
     boosterList: string[]
 }

@@ -44,8 +44,10 @@
                     </template>
                 </WtuBooster>
             </div>
-            <div class="invisible-max-900px">
-                <WtuOnlineState :tooltipDisabled="true" size="1.8rem" />
+            <div class="flex">
+                <div class="invisible-max-900px inline-block">
+                    <WtuOnlineState :tooltipDisabled="true" size="1.8rem" />
+                </div>
             </div>
         </template>
     </el-popover>

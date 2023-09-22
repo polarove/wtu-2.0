@@ -260,3 +260,39 @@ export class ReponseCodeEnum extends Enum {
 
     public static readonly error = new Enum(500, '失败', 'error')
 }
+
+export class ServerEnum extends Enum {
+    public static readonly cn = new Enum(0, '国服', 'cn')
+    public static readonly en = new Enum(1, '国际服', 'en')
+
+    public static readonly types = [
+        {
+            code: ServerEnum.cn.getCode(),
+            type: ServerEnum.cn.getType(),
+            shortcut: ServerEnum.cn.getComment(),
+        },
+        {
+            code: ServerEnum.en.getCode(),
+            type: ServerEnum.en.getType(),
+            shortcut: ServerEnum.en.getComment(),
+        },
+    ]
+}
+
+export class Difficulty extends Enum {
+    public static readonly normal = new Enum(0, '始源星系', 'normal')
+    public static readonly hard = new Enum(1, '钢铁之路', 'hard')
+
+    public static readonly types = [
+        {
+            code: Difficulty.normal.getCode(),
+            type: Difficulty.normal.getType(),
+            shortcut: Difficulty.normal.getComment(),
+        },
+        {
+            code: Difficulty.hard.getCode(),
+            type: Difficulty.hard.getType(),
+            shortcut: Difficulty.hard.getComment(),
+        },
+    ]
+}

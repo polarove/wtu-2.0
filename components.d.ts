@@ -22,13 +22,18 @@ declare module 'vue' {
     RyuBeian: typeof import('./src/components/ryu-beian.vue')['default']
     RyuCode: typeof import('./src/components/ryu-code.vue')['default']
     RyuSvg: typeof import('./src/components/ryu-svg.vue')['default']
+    WtuActivity: typeof import('./src/components/wtu-activity.vue')['default']
+    WtuAppname: typeof import('./src/components/wtu-appname.vue')['default']
     WtuAvatar: typeof import('./src/components/wtu-avatar.vue')['default']
     WtuBooster: typeof import('./src/components/wtu-booster.vue')['default']
+    WtuDifficulty: typeof import('./src/components/wtu-difficulty.vue')['default']
     WtuEntries: typeof import('./src/components/wtu-entries.vue')['default']
     WtuFooter: typeof import('./src/components/wtu-footer.vue')['default']
     WtuHeader: typeof import('./src/components/wtu-header.vue')['default']
     WtuLogo: typeof import('./src/components/wtu-logo.vue')['default']
     WtuOnlineState: typeof import('./src/components/wtu-online-state.vue')['default']
     WtuProfileRoute: typeof import('./src/components/wtu-profile-route.vue')['default']
+    WtuServer: typeof import('./src/components/wtu-server.vue')['default']
+    WtuTeamSet: typeof import('./src/components/wtu-team-set.vue')['default']
   }
 }

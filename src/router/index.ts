@@ -13,7 +13,7 @@ const routes = [
             {
                 path: `/${entries.origin}`,
                 name: entries.origin,
-                meta: { forehead: '起源星系' },
+                meta: { forehead: '始源星系' },
                 component: () => import('@page/team/origin/index.vue'),
             },
             {

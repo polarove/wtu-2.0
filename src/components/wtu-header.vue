@@ -7,10 +7,7 @@
             <WtuLogo />
         </el-col>
         <el-col :span="12" class="flex-center">
-            <span
-                class="title invisible-max-900px text-size-[1.37rem] font-smiley"
-                >Warframe Team Up</span
-            >
+            <WtuAppname class="invisible-max-900px" />
         </el-col>
         <!-- <div class="flex-1"></div> -->
         <el-col :span="7" class="flex-center">
@@ -30,16 +27,6 @@
                     <WtuOnlineState />
                 </div>
             </div>
-            <el-tooltip
-                content="退出登录"
-                v-if="isNotBlank(_authStore.getUUID())"
-            >
-                <span
-                    class="icon text-size-[1.7rem] ml-0.75em i-ant-design:poweroff-outlined hover-color-red cursor-pointer"
-                    @click="logout()"
-                >
-                </span>
-            </el-tooltip>
         </el-col>
         <div
             class="curtain"
@@ -50,23 +37,10 @@
 
 <script setup lang="ts">
 import { isDark } from '@/composables/theme'
-import { isBlank, isNotBlank } from '@util/StrUtil'
+import { isBlank } from '@util/StrUtil'
 import { authStore } from '@/store'
-import { Logout } from '@api/account'
-import type { response } from '@/composables/types'
 import router from '@/router'
-import { ElMessage } from 'element-plus'
 const _authStore = authStore()
-
-const logout = async () => {
-    const result = (await Logout(_authStore.getUUID())) as response
-    if (result.code === 200) {
-        _authStore.$reset()
-        router.replace({ name: 'login' })
-    } else {
-        ElMessage.error(result.message)
-    }
-}
 
 onMounted(() => {
     _authStore.updateUser()
@@ -83,10 +57,6 @@ onMounted(() => {
                 color: var(--el-color-primary);
             }
         }
-    }
-    .title {
-        min-width: 150px;
-        overflow: hidden;
     }
 
     .curtain {

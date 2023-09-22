@@ -6,9 +6,6 @@
             @click="navi(entries.durivi)"
         >
             <img class="img-durivi" src="@img/durivi.png" alt="双衍王境" />
-            <div class="state" :style="{ display: isDurivi ? '' : 'none' }">
-                <span>我去，双衍王境</span>
-            </div>
         </div>
         <div
             :class="{ activated: isEmpyrean }"
@@ -16,9 +13,6 @@
             @click="navi(entries.empyrean)"
         >
             <img class="img-empyrean" src="@img/railjet.png" alt="九重天" />
-            <div class="state" :style="{ display: isEmpyrean ? '' : 'none' }">
-                <span>我去，九重天</span>
-            </div>
         </div>
     </div>
 </template>
@@ -51,7 +45,7 @@ const navi = (entry: string) => {
 
     .activated {
         background-color: var(--el-color-primary);
-        width: 370px !important;
+        width: 200px !important;
     }
 
     .entry {

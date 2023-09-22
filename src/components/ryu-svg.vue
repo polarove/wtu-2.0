@@ -1,5 +1,9 @@
 <template>
-    <svg class="svg-icon" aria-hidden :style="{ width: size, height: size, margin: margin }">
+    <svg
+        class="svg-icon"
+        aria-hidden
+        :style="{ width: size, height: size, margin: margin }"
+    >
         <use :href="`#icon-${name}`" :fill="color"></use>
     </svg>
 </template>

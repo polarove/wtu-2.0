@@ -32,8 +32,8 @@ export const ChangePassword = (data: any) => {
     return AccountController.post('/changePassword', data)
 }
 
-export const SaveMyName = (data: any) => {
-    return AccountController.post('/saveMyName', data)
+export const SaveMyProfile = (data: any) => {
+    return AccountController.post('/saveMyProfile', data)
 }
 
 export const UpdateOnlineStatus = (data: any) => {
@@ -42,4 +42,8 @@ export const UpdateOnlineStatus = (data: any) => {
 
 export const UpdateUserBooster = (data: any) => {
     return AccountController.post('/updateUserBooster', data)
+}
+
+export const ToggleServer = (serverType: number) => {
+    return AccountController.get('/toggleServer', { serverType: serverType })
 }

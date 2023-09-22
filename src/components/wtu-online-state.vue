@@ -21,7 +21,6 @@
                 @click="toggleOnlineStatus(OnlineStatusEnum.online.getCode())"
                 name="online"
                 :size="size"
-                style="margin: 0 18px"
                 class="state online"
                 :class="{ active: user_online }"
             >
@@ -44,15 +43,29 @@
             >
             </RyuSvg>
         </el-tooltip>
+        <el-tooltip
+            content="退出登录"
+            :disabled="tooltipDisabled"
+            v-if="isNotBlank(_authStore.getUUID())"
+        >
+            <RyuSvg
+                name="poweroff"
+                :size="size"
+                @click="logout()"
+                class="state poweroff"
+            />
+        </el-tooltip>
     </div>
 </template>
 
 <script setup lang="ts">
-import { UpdateOnlineStatus } from '@api/account'
+import { UpdateOnlineStatus, Logout } from '@api/account'
 import { response } from '@/composables/types'
 import { ElMessage } from 'element-plus'
 import { OnlineStatusEnum } from '@composables/enums'
 import { authStore } from '@/store'
+import router from '@/router'
+import { isNotBlank } from '@util/StrUtil'
 const _authStore = authStore()
 
 defineProps({
@@ -80,6 +93,17 @@ const user_ingame = computed(() => {
         OnlineStatusEnum.online_in_game.getCode()
     )
 })
+
+const logout = async () => {
+    const result = (await Logout(_authStore.getUUID())) as response
+    if (result.code === 200) {
+        _authStore.$reset()
+        router.replace({ name: 'login' })
+    } else {
+        ElMessage.error(result.message)
+    }
+}
+
 interface UpdateOnlineStatusFormType {
     onlineStatus: number | null
     uuid: string
@@ -100,7 +124,7 @@ const toggleOnlineStatus = async (onlineStatus: number) => {
         UpdateOnlineStatusForm
     )) as response
     if (!result.success) {
-        _authStore.setOnlineStatus(previosOnlineStatus)
+        _authStore.setOnlineStatus(previosOnlineStatus as number)
         ElMessage.error(result.message)
     }
 }
@@ -114,6 +138,9 @@ const toggleOnlineStatus = async (onlineStatus: number) => {
         &:hover {
             cursor: pointer;
         }
+    }
+    .state:nth-child(n + 2) {
+        margin-left: 8px !important;
     }
 
     .offline {
@@ -150,6 +177,14 @@ const toggleOnlineStatus = async (onlineStatus: number) => {
 
     .ingame.active {
         color: #47d747;
+    }
+
+    .poweroff {
+        color: #ccc;
+        transform: color 0.3s ease-in-out;
+        &:hover {
+            color: var(--el-color-danger);
+        }
     }
 }
 </style>

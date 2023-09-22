@@ -16,21 +16,21 @@
             </div>
             <el-form
                 class="mt-20px"
-                ref="NameFormRef"
-                :model="NameForm"
-                :rules="NameFormRules"
+                ref="VerifyFormRef"
+                :model="VerifyForm"
+                :rules="VerifyFormRules"
             >
                 <el-form-item prop="name" label="我是：">
                     <el-input
-                        v-model="NameForm.name"
+                        v-model="VerifyForm.name"
                         class="inline-block"
-                        placeholder="请填写游戏内昵称，用于组队"
-                        @keyup.enter="saveMyName(NameFormRef)"
+                        placeholder="请填写游戏内昵称"
+                        @keyup.enter="saveMyProfile(VerifyFormRef)"
                     >
                         <template #append>
                             <el-button
                                 :loading="loading"
-                                @click="saveMyName(NameFormRef)"
+                                @click="saveMyProfile(VerifyFormRef)"
                                 >保存</el-button
                             >
                         </template>
@@ -59,11 +59,13 @@
 
 <script setup lang="ts">
 import router from '@/router'
-import { Verify, SaveMyName } from '@api/account'
+import { Verify, SaveMyProfile } from '@api/account'
 import type { User, response } from '@composables/types'
 import type { FormInstance, FormRules } from 'element-plus'
 import { authStore } from '@/store'
 import { ElMessage } from 'element-plus'
+import { defaults } from '@composables/defaults'
+const Default = new defaults()
 
 const _authStore = authStore()
 const email = router.currentRoute.value.query.email as string
@@ -84,32 +86,38 @@ const verificationForm = reactive({
 
 const verify = async () => {
     const result = (await Verify(verificationForm)) as response
-    verificationStatus.message = result.message
     if (result.code == 204) {
         setTimeout(() => {
             verificationStatus.compeleted = true
             verificationStatus.succeed = true
-        }, 2000)
+        }, 1000)
     } else if (result.code == 205) {
         setTimeout(() => {
             verificationStatus.compeleted = true
-            verificationStatus.duplicated = true
-        }, 2000)
+            if (Default.isDefualtUserName(_authStore.getName())) {
+                verificationStatus.succeed = true
+                verificationStatus.message = '别忘了输入用户名哦^_^'
+            } else {
+                verificationStatus.duplicated = true
+            }
+        }, 1000)
     } else if (result.code == 206) {
         setTimeout(() => {
             verificationStatus.compeleted = true
             verificationStatus.failed = true
-        }, 2000)
+        }, 1000)
     }
+    verificationStatus.message = result.message
 }
 verify()
 
-const NameFormRef = ref<FormInstance>()
-const NameForm = reactive({
+const VerifyFormRef = ref<FormInstance>()
+const VerifyForm = reactive({
     email: '',
     name: '',
+    server: '',
 })
-const NameFormRules = reactive<FormRules>({
+const VerifyFormRules = reactive<FormRules>({
     name: [
         {
             required: true,
@@ -124,13 +132,13 @@ const NameFormRules = reactive<FormRules>({
 })
 
 const loading = ref(false)
-const saveMyName = async (formEl: FormInstance | undefined) => {
+const saveMyProfile = async (formEl: FormInstance | undefined) => {
     loading.value = true
     if (!formEl) return
     formEl.validate(async (valid) => {
         if (valid) {
-            NameForm.email = email
-            const result = (await SaveMyName(NameForm)) as response
+            VerifyForm.email = email
+            const result = (await SaveMyProfile(VerifyForm)) as response
             if (result.success) {
                 router.push({ name: 'origin' })
                 _authStore.setUser(result.data as User)
