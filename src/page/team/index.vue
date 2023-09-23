@@ -4,25 +4,46 @@
         <WtuDifficulty />
     </div>
     <div class="wrapper">
-        <div class="invisible-min-900px">
-            <div class="flex-between">
-                <div><WtuActivity class="mb-0.5em" /> <WtuTeamSet /></div>
-                <WtuEntries />
-            </div>
-        </div>
-        <div class="invisible-max-900px flex-center">
+        <div :class="{ wideScreen: wideMode, compactScreen: !wideMode }">
             <div>
-                <WtuEntries class="flex-center mb-1.4em" />
-                <WtuActivity class="text-center mb-1.4em" />
-                <WtuTeamSet class="flex-center" />
+                <WtuBreadcrumb />
+                <WtuActivity class="mb-0.5em mt-0.5em" />
+                <WtuTeamSet />
             </div>
+            <WtuEntries
+                :class="{ compactOnly: !wideMode }"
+                :scale="wideMode ? 1 : 0.8"
+            />
         </div>
         <RouterView class="ma-auto" />
     </div>
     <WtuFooter />
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const wideMode = ref(true)
+
+const initLayouts = () => {
+    if (document.body.clientWidth < 900) {
+        wideMode.value = false
+    } else {
+        wideMode.value = true
+    }
+}
+window.addEventListener('resize', () => {
+    initLayouts()
+})
+
+onMounted(() => {
+    initLayouts()
+})
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', () => {
+        initLayouts()
+    })
+})
+</script>
 
 <style lang="scss" scoped>
 .selections {
@@ -31,7 +52,21 @@
     top: 50%;
 }
 .wrapper {
-    margin-top: 1em;
     padding: 1em 2em;
+    .wideScreen {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .compactScreen {
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .compactOnly {
+        margin: 1em 0;
+    }
 }
 </style>

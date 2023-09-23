@@ -8,14 +8,21 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
+    ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
+    ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElCol: typeof import('element-plus/es')['ElCol']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElDrawer: typeof import('element-plus/es')['ElDrawer']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
+    ElImage: typeof import('element-plus/es')['ElImage']
     ElInput: typeof import('element-plus/es')['ElInput']
+    ElOption: typeof import('element-plus/es')['ElOption']
     ElPopover: typeof import('element-plus/es')['ElPopover']
     ElRow: typeof import('element-plus/es')['ElRow']
+    ElSelect: typeof import('element-plus/es')['ElSelect']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -26,8 +33,12 @@ declare module 'vue' {
     WtuAppname: typeof import('./src/components/wtu-appname.vue')['default']
     WtuAvatar: typeof import('./src/components/wtu-avatar.vue')['default']
     WtuBooster: typeof import('./src/components/wtu-booster.vue')['default']
+    WtuBreadcrumb: typeof import('./src/components/wtu-breadcrumb.vue')['default']
+    WtuCreateTeam: typeof import('./src/components/wtu-create-team.vue')['default']
     WtuDifficulty: typeof import('./src/components/wtu-difficulty.vue')['default']
     WtuEntries: typeof import('./src/components/wtu-entries.vue')['default']
+    WtuFocus: typeof import('./src/components/wtu-focus.vue')['default']
+    WtuFocusList: typeof import('./src/components/wtu-focus-list.vue')['default']
     WtuFooter: typeof import('./src/components/wtu-footer.vue')['default']
     WtuHeader: typeof import('./src/components/wtu-header.vue')['default']
     WtuLogo: typeof import('./src/components/wtu-logo.vue')['default']
@@ -35,5 +46,10 @@ declare module 'vue' {
     WtuProfileRoute: typeof import('./src/components/wtu-profile-route.vue')['default']
     WtuServer: typeof import('./src/components/wtu-server.vue')['default']
     WtuTeamSet: typeof import('./src/components/wtu-team-set.vue')['default']
+    WtuWarframe: typeof import('./src/components/wtu-warframe.vue')['default']
+    WtuWarframeList: typeof import('./src/components/wtu-warframe-list.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
   }
 }

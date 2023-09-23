@@ -1,34 +1,72 @@
 <template>
     <div class="tabs">
-        <span class="tab">活动</span>
-        <span class="tab">警报</span>
-        <span class="tab" v-if="_authStore.getDifficulty()">钢铁之路侵袭</span>
-        <span class="tab">入侵</span>
-        <span class="tab">集团</span>
-        <span class="tab">虚空裂缝</span>
-        <span class="tab">突击</span>
-        <span class="tab">执行官猎杀</span>
-        <span class="tab">星球探索</span>
+        <span
+            @click="router.push({ name: 'origin' })"
+            class="tab"
+            :class="{ active: routes.name === entries.origin }"
+        >
+            <RyuSvg name="planet" size="1.4em" />
+        </span>
+
+        <span v-if="_authStore.getDifficulty()">
+            <span
+                class="tab"
+                @click="touch(activity)"
+                :class="{ active: activity.name === routes.name }"
+                v-for="(activity, index) in childRoutes"
+            >
+                <RyuSvg :index="index" :name="activity.name" size="1.4em" />
+            </span>
+        </span>
+        <span v-else>
+            <span
+                class="tab"
+                @click="touch(activity)"
+                :class="{ active: activity.name === routes.name }"
+                v-for="(activity, index) in easyModeRoutes"
+            >
+                <RyuSvg :index="index" :name="activity.name" size="1.4em" />
+            </span>
+        </span>
     </div>
 </template>
 
 <script setup lang="ts">
 import { authStore } from '@/store'
+import entries from '@composables/entries'
+import router from '@/router'
+const routes = useRoute()
 const _authStore = authStore()
+const childRoutes = routes.matched
+    .find((item) => item.name === 'index')
+    ?.children.find((item) => item.name === 'activity')?.children
+
+const easyModeRoutes = childRoutes?.filter((item) => item.name !== 'steelpath')
+const touch = (activity: any) => {
+    router.push({ name: activity.name })
+}
 </script>
 
 <style lang="scss" scoped>
 .tabs {
     .tab {
-        user-select: none;
         cursor: pointer;
+        user-select: none;
         font-size: 1.1em;
+        text-align: center;
+        margin-right: 0.4em;
         &:hover {
             color: var(--el-color-primary);
         }
     }
-    .tab:nth-child(n + 2) {
-        margin-left: 0.5em;
+    .tab {
+        > * {
+            vertical-align: middle;
+        }
+    }
+
+    .active {
+        color: var(--el-color-primary);
     }
 }
 </style>

@@ -5,14 +5,22 @@
             class="entry"
             @click="navi(entries.durivi)"
         >
-            <img class="img-durivi" src="@img/durivi.png" alt="双衍王境" />
+            <img
+                :style="{ transform: `scale(${scale})` }"
+                src="@img/durivi.png"
+                alt="双衍王境"
+            />
         </div>
         <div
             :class="{ activated: isEmpyrean }"
             class="entry"
             @click="navi(entries.empyrean)"
         >
-            <img class="img-empyrean" src="@img/railjet.png" alt="九重天" />
+            <img
+                :style="{ transform: `scale(${scale})` }"
+                src="@img/railjet.png"
+                alt="九重天"
+            />
         </div>
     </div>
 </template>
@@ -20,7 +28,12 @@
 <script setup lang="ts">
 import entries from '@/composables/entries'
 import router from '@/router'
-
+defineProps({
+    scale: {
+        type: Number,
+        default: 1,
+    },
+})
 const isDurivi = computed(
     () => router.currentRoute.value.name === entries.durivi
 )

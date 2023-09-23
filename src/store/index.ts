@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { User, response } from '@composables/types'
+import { ServerEnum } from '@/composables/enums'
 import { getUserVOByUUID } from '@api/account'
 import { ElMessage } from 'element-plus'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
@@ -16,7 +17,7 @@ export const authStore = defineStore({
             server: 1,
             boosterList: [] as string[],
         },
-        difficulty: 0,
+        difficulty: false,
     }),
     actions: {
         setUser(user: User) {
@@ -69,6 +70,11 @@ export const authStore = defineStore({
         setServer(server: number) {
             this.user.server = server
         },
+        getServerChar(): string {
+            return ServerEnum.types.find(
+                (item) => item.code === this.getServer()
+            )?.shortcut as string
+        },
         async updateUser() {
             if (isBlank(this.getUUID())) {
                 return
@@ -80,14 +86,11 @@ export const authStore = defineStore({
                 ElMessage.error(result.message)
             }
         },
-        getDifficulty(): number {
+        getDifficulty(): boolean {
             return this.difficulty
         },
-        setDifficulty(difficulty: number) {
+        setDifficulty(difficulty: boolean) {
             this.difficulty = difficulty
-        },
-        isHard(): boolean {
-            return this.difficulty === 1
         },
     },
     persist: true,

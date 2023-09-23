@@ -64,6 +64,7 @@ onMounted(() => {
         width: 100%;
         right: 0;
         bottom: -31px;
+        z-index: -1;
     }
 
     .curtain::before {

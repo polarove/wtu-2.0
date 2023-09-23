@@ -2,26 +2,27 @@
     <div class="tools">
         <RyuSvg
             class="tool"
-            name="ironpath"
+            name="steelpath"
             size="2rem"
-            :class="{ invisible: isHard }"
-            @click="_authStore.setDifficulty(Difficulty.normal.getCode())"
+            :class="{ invisible: !_authStore.getDifficulty() }"
+            @click="updateDifficulty(false)"
         />
         <RyuSvg
             class="tool"
             name="origin"
             size="2rem"
-            :class="{ invisible: !isHard }"
-            @click="_authStore.setDifficulty(Difficulty.hard.getCode())"
+            :class="{ invisible: _authStore.getDifficulty() }"
+            @click="updateDifficulty(true)"
         />
     </div>
 </template>
 
 <script setup lang="ts">
 import { authStore } from '@/store'
-import { Difficulty } from '@composables/enums'
 const _authStore = authStore()
-const isHard = computed(() => !_authStore.getDifficulty())
+const updateDifficulty = (difficulty: boolean) => {
+    _authStore.setDifficulty(difficulty)
+}
 </script>
 
 <style lang="scss" scoped>

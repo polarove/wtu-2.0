@@ -28,6 +28,70 @@ const routes = [
                 meta: { forehead: '九重天' },
                 component: () => import('@page/team/empyrean/index.vue'),
             },
+            {
+                path: '/activity',
+                name: 'activity',
+                meta: { forehead: '活动' },
+                redirect: '/activity/event',
+                children: [
+                    {
+                        path: '/activity/event',
+                        name: 'event',
+                        meta: { forehead: '事件' },
+                        component: () =>
+                            import('@page/team/activity/event/index.vue'),
+                    },
+                    {
+                        path: '/activity/alarm',
+                        name: 'alarm',
+                        meta: { forehead: '警报' },
+                        component: () =>
+                            import('@page/team/activity/alarm/index.vue'),
+                    },
+                    {
+                        path: '/activity/steelpath',
+                        name: 'steelpath',
+                        meta: { forehead: '钢铁之路侵袭' },
+                        component: () =>
+                            import('@page/team/activity/steelpath/index.vue'),
+                    },
+                    {
+                        path: '/activity/invasion',
+                        name: 'invasion',
+                        meta: { forehead: '侵袭' },
+                        component: () =>
+                            import('@page/team/activity/invasion/index.vue'),
+                    },
+                    {
+                        path: '/activity/syndicate',
+                        name: 'syndicate',
+                        meta: { forehead: '集团' },
+                        component: () =>
+                            import('@page/team/activity/syndicate/index.vue'),
+                    },
+                    {
+                        path: '/activity/fissure',
+                        name: 'fissure',
+                        meta: { forehead: '虚空裂缝' },
+                        component: () =>
+                            import('@page/team/activity/fissure/index.vue'),
+                    },
+                    {
+                        path: '/activity/sortie',
+                        name: 'sortie',
+                        meta: { forehead: '突击' },
+                        component: () =>
+                            import('@page/team/activity/sortie/index.vue'),
+                    },
+                    {
+                        path: '/activity/hunt',
+                        name: 'hunt',
+                        meta: { forehead: '执行官猎杀' },
+                        component: () =>
+                            import('@page/team/activity/hunt/index.vue'),
+                    },
+                ],
+            },
         ],
     },
     {
