@@ -100,19 +100,35 @@ const createTeamFormRules = reactive<FormRules>({
 const createTeamForm = reactive({
     title: '3232',
     me: {
-        warframe: {},
+        warframe: {
+            en: 'any',
+            cn: '任意',
+            durivi: false,
+        },
         focus: '',
     },
     firstMate: {
-        warframe: '',
+        warframe: {
+            en: 'any',
+            cn: '任意',
+            durivi: false,
+        },
         focus: '',
     },
     secondMate: {
-        warframe: '',
+        warframe: {
+            en: 'any',
+            cn: '任意',
+            durivi: false,
+        },
         focus: '',
     },
     thirdMate: {
-        warframe: '',
+        warframe: {
+            en: 'any',
+            cn: '任意',
+            durivi: false,
+        },
         focus: '',
     },
 })
@@ -154,8 +170,9 @@ const publishTeam = async (formEl: FormInstance | undefined) => {
     if (!formEl) {
         return
     }
-    const result = (await CreateTeam(createTeamForm)) as response
-    console.log(result)
+    // const result = (await CreateTeam(createTeamForm)) as response
+    // console.log(result)
+    console.log(createTeamForm)
 }
 
 const initDrawerWidth = () => {
@@ -220,5 +237,9 @@ onBeforeUnmount(() => {
         width: 40px;
         height: 40px;
     }
+}
+
+:deep(.el-form-item__content) {
+    line-height: normal;
 }
 </style>

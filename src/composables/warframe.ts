@@ -6,6 +6,11 @@ export interface warframe {
 
 export const warframes: Array<warframe> = [
     {
+        en: 'any',
+        cn: '任意',
+        durivi: false,
+    },
+    {
         en: 'Ash',
         cn: '未知中文名',
         durivi: false,
@@ -279,11 +284,6 @@ export const warframes: Array<warframe> = [
     {
         en: 'Zephyr',
         cn: '未知中文名',
-        durivi: false,
-    },
-    {
-        en: 'any',
-        cn: '任意',
         durivi: false,
     },
 ]

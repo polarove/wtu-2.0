@@ -33,7 +33,7 @@
             >
                 <div v-if="route.name === entries.durivi">
                     <WtuWarframe
-                        :target="warframe"
+                        :modelValue="warframe"
                         width="130px"
                         @click="select(warframe)"
                     />
@@ -43,16 +43,16 @@
                         :style="{
                             display: warframe.durivi ? 'none' : '',
                         }"
-                        :target="warframe"
+                        :modelValue="warframe"
                         width="130px"
                         @click="select(warframe)"
                     />
                 </div>
             </div>
         </ul>
-        <div class="flex-center h-70vh">
+        <div class="flex-center h-70vh" v-else>
             <WtuWarframe
-                :target="targetWarframe"
+                :modelValue="targetWarframe"
                 width="130px"
                 style="transform: scale(2.5)"
                 @click="confirm()"
