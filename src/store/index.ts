@@ -65,7 +65,7 @@ export const authStore = defineStore({
         addBooster(booster: string) {
             this.user.boosterList.push(booster)
         },
-        getServer(): number | null {
+        getServer(): number {
             return this.user.server
         },
         setServer(server: number) {

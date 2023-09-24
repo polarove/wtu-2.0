@@ -1,11 +1,17 @@
 <template>
     <div class="loadouts">
-        <el-popover placement="bottom" :width="150" trigger="hover">
+        <el-popover
+            placement="bottom"
+            :width="150"
+            trigger="hover"
+            :disabled="disabled"
+        >
             <template #reference>
                 <div
                     class="loadout"
                     @mouseenter="toggleAvatar()"
                     @mouseleave="toggleAvatar()"
+                    @click="$emit('emitCreateTeam'), disablePopover()"
                 >
                     <div
                         class="avatar warframe"
@@ -50,13 +56,13 @@
                 </div>
             </template>
             <div class="flex-between" v-if="isNotBlank(teammate.user.uuid)">
-                <span>
+                <span @click="toggleUserInfoDialog" class="name">
                     {{ props.teammate.user.name }}
                 </span>
                 <span>{{ props.teammate.user.level }}</span>
             </div>
             <div v-else>
-                <span>等待加入</span>
+                <span>等待玩家加入</span>
             </div>
             <slot name="loadout"> </slot>
         </el-popover>
@@ -67,6 +73,13 @@
 const IMAGE_ORIGIN = import.meta.env.VITE_APP_IMAGE_ORIGIN as string
 import { type TeamMate } from '@/composables/types'
 import { isNotBlank } from '@/util/StrUtil'
+const disabled = ref(false)
+const disablePopover = () => {
+    disabled.value = true
+}
+const enablePopover = () => {
+    disabled.value = false
+}
 
 const props = defineProps({
     teammate: {
@@ -90,6 +103,12 @@ const warframe_avatar = computed(() => {
 
 const user_avatar = computed(() => {
     return props.teammate.user.avatar
+})
+const toggleUserInfoDialog = () => {
+    console.log('toggleUserInfoDialog')
+}
+defineExpose({
+    enablePopover,
 })
 </script>
 
@@ -138,6 +157,14 @@ const user_avatar = computed(() => {
                 opacity: 0.5;
             }
         }
+    }
+}
+
+.name {
+    cursor: pointer;
+    user-select: none;
+    &:hover {
+        color: var(--el-color-primary);
     }
 }
 </style>

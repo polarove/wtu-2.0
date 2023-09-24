@@ -34,8 +34,15 @@ export interface TeamMate {
     focus: string
 }
 
+export interface teamRequirement {
+    type: string
+    content: string
+}
+
 export interface CreateTeam {
     title: string
+    server: number
+    requirements: Array<teamRequirement>
     host: TeamMate
     firstMate: TeamMate
     secondMate: TeamMate

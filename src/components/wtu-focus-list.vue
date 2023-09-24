@@ -2,12 +2,12 @@
     <div
         v-for="len in focus"
         class="focus"
-        :style="{ opacity: modelValue !== len.name ? 0.33 : 1 }"
-        @click="$emit('update:modelValue', len.name)"
+        :style="{ opacity: modelValue !== len.en ? 0.33 : 1 }"
+        @click="$emit('update:modelValue', len.en)"
     >
-        <RyuSvg :name="len.name" :size="size" />
+        <RyuSvg :name="len.en" :size="size" />
         <div v-if="showName" class="text-center">
-            {{ len.name }}
+            {{ len.label }}
         </div>
     </div>
 </template>
@@ -25,7 +25,7 @@ defineProps({
     },
     showName: {
         type: Boolean,
-        default: false,
+        default: true,
     },
 })
 </script>

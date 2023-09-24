@@ -23,11 +23,11 @@
                 :value="name"
             />
         </el-select>
-        <ul class="infinite-list" style="overflow: auto" v-if="isBlank(text)">
+        <ul style="overflow: auto; padding-left: 30px" v-if="isBlank(text)">
             <div
                 v-for="(warframe, index) in warframes"
                 :key="index"
-                class="infinite-list-item inline-block mr-3 mt-3"
+                class="infinite-list-item inline-block mt-15px"
             >
                 <div v-if="route.name === entries.durivi">
                     <WtuWarframe

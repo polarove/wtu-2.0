@@ -4,7 +4,8 @@
             <WtuLoadout
                 :teammate="createTeamForm.host"
                 class="teammate"
-                @click="createTeam()"
+                @emitCreateTeam="createTeam()"
+                ref="HostRef"
             >
                 <template #loadout>
                     <div>
@@ -19,7 +20,8 @@
             <WtuLoadout
                 class="teammate"
                 :teammate="createTeamForm.firstMate"
-                @click="createTeam()"
+                @emitCreateTeam="createTeam()"
+                ref="FirstMateRef"
             >
                 <template #loadout>
                     <div>
@@ -34,7 +36,8 @@
             <WtuLoadout
                 class="teammate"
                 :teammate="createTeamForm.secondMate"
-                @click="createTeam()"
+                @emitCreateTeam="createTeam()"
+                ref="SecondMateRef"
             >
                 <template #loadout>
                     <div>
@@ -49,7 +52,8 @@
             <WtuLoadout
                 class="teammate"
                 :teammate="createTeamForm.thirdMate"
-                @click="createTeam()"
+                @emitCreateTeam="createTeam()"
+                ref="ThirdMateRef"
             >
                 <template #loadout>
                     <div>
@@ -67,6 +71,7 @@
             :size="teamDrawer.dynamicSize"
             :title="teamDrawer.title"
             :direction="teamDrawer.direction"
+            @close="toggleTooltipDisabled()"
         >
             <el-form
                 :model="createTeamForm"
@@ -80,6 +85,49 @@
                         v-model="createTeamForm.title"
                     />
                 </el-form-item>
+                <el-form-item> 进队要求 </el-form-item>
+                <el-form-item
+                    v-for="(requirement, index) in createTeamForm.requirements"
+                    :key="index"
+                >
+                    <el-input
+                        placeholder="请输入要求"
+                        v-model="requirement.content"
+                    >
+                        <template #prepend>
+                            <el-select
+                                style="width: 110px"
+                                v-model="requirement.type"
+                            >
+                                <el-option
+                                    v-for="(requirement, index) in requirements"
+                                    :key="index"
+                                    :value="requirement.type"
+                                    :label="requirement.name"
+                                />
+                            </el-select>
+                        </template>
+                        <template #append>
+                            <el-button
+                                class="mt-2"
+                                @click.prevent="removeRequirement(requirement)"
+                            >
+                                移除
+                            </el-button>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <div class="addRequirement">
+                        <RyuSvg
+                            name="add"
+                            size="1.5em"
+                            class="add"
+                            @click.prevent="addRequirement()"
+                        ></RyuSvg>
+                    </div>
+                </el-form-item>
+                <el-form-item> 队伍配置 </el-form-item>
                 <el-form-item prop="host" label="我">
                     <WtuWarframe
                         v-model="createTeamForm.host.warframe"
@@ -123,12 +171,12 @@
             </el-form>
             <el-drawer
                 v-model="warframeListDrawer.visible"
+                :title="title"
                 :size="warframeListDrawer.dynamicSize"
-                :title="warframeListDrawer.title"
                 :direction="warframeListDrawer.direction"
+                destroy-on-close
                 :append-to-body="true"
             >
-                <template #header> 选择一个战甲 </template>
                 <WtuWarframeList
                     @emitToggleWarframeDrawer="toggleWarframeDrawer(0)"
                     @updateModelValue="selectWarframe($event)"
@@ -148,6 +196,7 @@ import { authStore } from '@/store'
 import { type FormInstance, type FormRules } from 'element-plus'
 import { type CreateTeam } from '@/composables/types'
 import { type warframe } from '@/composables/warframe'
+import { requirements } from '@composables/requirement'
 const routes = useRoute()
 const _authStore = authStore()
 
@@ -165,6 +214,13 @@ const createTeamFormRules = reactive<FormRules>({
 })
 const createTeamForm = reactive<CreateTeam>({
     title: '未修改的标题',
+    server: _authStore.getServer(),
+    requirements: [
+        {
+            type: 'any',
+            content: '',
+        },
+    ],
     host: {
         user: {
             uuid: _authStore.getUUID(),
@@ -219,6 +275,25 @@ const createTeamForm = reactive<CreateTeam>({
     },
 })
 
+const removeRequirement = (requirement: any) => {
+    const index = createTeamForm.requirements.indexOf(requirement)
+    if (index === 0) {
+        return
+    }
+    if (index !== -1) {
+        createTeamForm.requirements.splice(index, 1)
+    }
+}
+const addRequirement = () => {
+    if (createTeamForm.requirements.length > 7) {
+        return
+    }
+    createTeamForm.requirements.push({
+        type: 'any',
+        content: '',
+    })
+}
+
 const teamDrawer = reactive({
     dynamicSize: '40%',
     visible: false,
@@ -257,6 +332,13 @@ const selectWarframe = (target: warframe) => {
     }
 }
 
+const title = computed(() => {
+    if (warframeListDrawer.edit === 1) {
+        return '选择你的战甲'
+    }
+    return '选择第' + warframeListDrawer.edit + '个队友的战甲'
+})
+
 const createTeam = () => {
     teamDrawer.visible = true
     teamDrawer.title = '在 ' + routes.meta.forehead + ' 招募队友'
@@ -267,6 +349,17 @@ const publishTeam = async (formEl: FormInstance | undefined) => {
         return
     }
     console.log(createTeamForm)
+}
+
+const HostRef = ref()
+const FirstMateRef = ref()
+const SecondMateRef = ref()
+const ThirdMateRef = ref()
+const toggleTooltipDisabled = () => {
+    HostRef.value?.enablePopover()
+    FirstMateRef.value?.enablePopover()
+    SecondMateRef.value?.enablePopover()
+    ThirdMateRef.value?.enablePopover()
 }
 
 const initDrawerWidth = () => {
@@ -310,6 +403,22 @@ onBeforeUnmount(() => {
 
     .teammate:nth-child(n + 2) {
         margin-left: 1em;
+    }
+}
+.addRequirement {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+
+    .add {
+        cursor: pointer;
+        transition: all 0.1s ease-in-out;
+        &:hover {
+            transform: scale(1.1);
+            color: var(--el-color-primary);
+        }
     }
 }
 
