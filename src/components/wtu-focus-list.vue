@@ -4,7 +4,7 @@
             :span="rows === 1 ? 4 : 8"
             v-for="len in focus"
             class="focus"
-            :style="{ opacity: modelValue !== len.en ? 0.33 : 1 }"
+            :style="{ opacity: modelValue !== len.en ? 0.25 : 1 }"
             @click="$emit('update:modelValue', len.en)"
         >
             <RyuSvg :name="len.en" :size="size" />
