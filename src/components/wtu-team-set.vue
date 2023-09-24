@@ -57,7 +57,7 @@
                                 />
                             </el-select>
                         </template>
-                        <template #append v-if="index !== 0">
+                        <template #append>
                             <el-button
                                 class="mt-2"
                                 @click.prevent="removeRequirement(requirement)"
@@ -79,7 +79,7 @@
                 <el-form-item
                     v-for="(member, index) in createTeamForm.member"
                     :key="index"
-                    :label="member.user.name"
+                    :label="!index ? member.user.name : '队友_' + index + ':'"
                     class="member"
                 >
                     <div class="flex-between w-100%">
@@ -110,6 +110,7 @@
                     </div>
                 </el-form-item>
             </el-form>
+
             <el-drawer
                 v-model="warframeListDrawer.visible"
                 :title="title"
@@ -125,9 +126,12 @@
                 />
             </el-drawer>
             <template #footer>
-                <el-button @click="publishTeam(createTeamFormRef)">
-                    发布
-                </el-button>
+                <div class="flex-between">
+                    <RyuSponsor />
+                    <el-button @click="publishTeam(createTeamFormRef)">
+                        发布
+                    </el-button>
+                </div>
             </template>
         </el-drawer>
     </div>
@@ -156,12 +160,7 @@ const createTeamFormRules = reactive<FormRules>({
 const createTeamForm = reactive<CreateTeam>({
     title: '未修改的标题',
     server: _authStore.getServer(),
-    requirements: [
-        {
-            type: 'any',
-            content: '',
-        },
-    ],
+    requirements: [],
     member: [
         {
             user: {
@@ -194,9 +193,6 @@ const createTeamForm = reactive<CreateTeam>({
 
 const removeRequirement = (requirement: any) => {
     const index = createTeamForm.requirements.indexOf(requirement)
-    if (index === 0) {
-        return
-    }
     if (index !== -1) {
         createTeamForm.requirements.splice(index, 1)
     }

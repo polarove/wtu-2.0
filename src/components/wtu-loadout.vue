@@ -119,12 +119,16 @@ defineExpose({
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) inset;
-    border-radius: 3px;
+    border-radius: 4px;
     user-select: none;
+    border: 1px solid var(--el-border-color-light);
+    &:hover {
+        border-color: var(--el-color-primary);
+    }
 
     .loadout {
         position: relative;
+
         display: flex;
         align-items: center;
         justify-content: center;
