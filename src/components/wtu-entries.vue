@@ -55,7 +55,7 @@ const navi = (entry: string) => {
     display: flex;
     grid-gap: 1rem;
     align-items: center;
-
+    user-select: none;
     .activated {
         background-color: var(--el-color-primary);
         width: 200px !important;

@@ -166,8 +166,12 @@ const createTeamFormRules = reactive<FormRules>({
 const createTeamForm = reactive<CreateTeam>({
     title: '未修改的标题',
     host: {
-        name: _authStore.getName(),
-        level: 0,
+        user: {
+            uuid: _authStore.getUUID(),
+            name: _authStore.getName(),
+            avatar: _authStore.getAvatar(),
+            level: _authStore.getLevel(),
+        },
         warframe: {
             en: 'any',
             cn: '任意',
@@ -175,8 +179,12 @@ const createTeamForm = reactive<CreateTeam>({
         focus: 'any',
     },
     firstMate: {
-        name: '等待招募',
-        level: 0,
+        user: {
+            uuid: '',
+            name: '',
+            avatar: '',
+            level: 0,
+        },
         warframe: {
             en: 'any',
             cn: '任意',
@@ -184,8 +192,12 @@ const createTeamForm = reactive<CreateTeam>({
         focus: 'any',
     },
     secondMate: {
-        name: '等待招募',
-        level: 0,
+        user: {
+            uuid: '',
+            name: '',
+            avatar: '',
+            level: 0,
+        },
         warframe: {
             en: 'any',
             cn: '任意',
@@ -193,8 +205,12 @@ const createTeamForm = reactive<CreateTeam>({
         focus: 'any',
     },
     thirdMate: {
-        name: '等待招募',
-        level: 0,
+        user: {
+            uuid: '',
+            name: '',
+            avatar: '',
+            level: 0,
+        },
         warframe: {
             en: 'any',
             cn: '任意',

@@ -15,6 +15,7 @@ export const authStore = defineStore({
             uuid: '',
             onlineStatus: null as number | null,
             server: 1,
+            level: 0,
             boosterList: [] as string[],
         },
         difficulty: false,
@@ -93,6 +94,12 @@ export const authStore = defineStore({
         },
         setDifficulty(difficulty: boolean) {
             this.difficulty = difficulty
+        },
+        getLevel(): number {
+            return this.user.level
+        },
+        setLevel(level: number) {
+            this.user.level = level
         },
     },
     persist: true,

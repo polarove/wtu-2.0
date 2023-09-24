@@ -16,13 +16,20 @@ export interface User {
     onlineStatus: number | null
     uuid: string
     server: number
+    level: number
     boosterList: string[]
+}
+
+export interface userInTeam {
+    uuid: string
+    name: string
+    avatar: string
+    level: number
 }
 
 // create team object
 export interface TeamMate {
-    name: string
-    level: number
+    user: userInTeam
     warframe: warframe
     focus: string
 }

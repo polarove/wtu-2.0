@@ -49,6 +49,7 @@ const touch = (activity: any) => {
 
 <style lang="scss" scoped>
 .tabs {
+    user-select: none;
     .tab {
         cursor: pointer;
         user-select: none;
