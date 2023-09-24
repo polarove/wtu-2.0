@@ -2,7 +2,7 @@
     <div>
         <div class="teamset" v-if="_authStore.isLogin()">
             <WtuLoadout
-                v-for="(teammate, index) in createTeamForm.member"
+                v-for="(teammate, index) in createTeamForm.members"
                 :teammate="teammate"
                 :index="index"
                 :ref="(el: Component) => setLoadoutRef(el, index)"
@@ -77,7 +77,7 @@
                 </el-form-item>
                 <el-form-item> 队伍配置 </el-form-item>
                 <el-form-item
-                    v-for="(member, index) in createTeamForm.member"
+                    v-for="(member, index) in createTeamForm.members"
                     :key="index"
                     :label="!index ? member.user.name : '队友_' + index + ':'"
                     class="member"
@@ -140,10 +140,10 @@
 <script setup lang="ts">
 import { authStore } from '@/store'
 import { type FormInstance, type FormRules } from 'element-plus'
-import { type CreateTeam } from '@/composables/types'
+import { type CreateTeamInstance } from '@/composables/types'
 import { type warframe } from '@/composables/warframe'
 import { requirements } from '@composables/requirement'
-import { Component } from 'vue'
+import { CreateTeam } from '@api/team'
 const routes = useRoute()
 const _authStore = authStore()
 
@@ -157,11 +157,12 @@ const createTeamFormRules = reactive<FormRules>({
         },
     ],
 })
-const createTeamForm = reactive<CreateTeam>({
+const createTeamForm = reactive<CreateTeamInstance>({
     title: '未修改的标题',
     server: _authStore.getServer(),
+    channel: null,
     requirements: [],
-    member: [
+    members: [
         {
             user: {
                 uuid: _authStore.getUUID(),
@@ -207,10 +208,10 @@ const addRequirement = () => {
     })
 }
 const addMember = () => {
-    if (createTeamForm.member.length > 3) {
+    if (createTeamForm.members.length > 3) {
         return
     }
-    createTeamForm.member.push({
+    createTeamForm.members.push({
         user: {
             uuid: '',
             name: '',
@@ -226,12 +227,12 @@ const addMember = () => {
 }
 
 const removeMember = (member: any) => {
-    const index = createTeamForm.member.indexOf(member)
+    const index = createTeamForm.members.indexOf(member)
     if (index === 0 || index === 1) {
         return
     }
     if (index !== -1) {
-        createTeamForm.member.splice(index, 1)
+        createTeamForm.members.splice(index, 1)
     }
 }
 
@@ -260,7 +261,7 @@ const toggleWarframeDrawer = (index: number) => {
 }
 
 const selectWarframe = (target: warframe) => {
-    createTeamForm.member[warframeListDrawer.edit].warframe = target
+    createTeamForm.members[warframeListDrawer.edit].warframe = target
 }
 
 const title = computed(() => {
@@ -286,10 +287,18 @@ const toggleTooltipDisabled = () => {
     refs[`${teamDrawer.from}`].enablePopover()
 }
 
-const publishTeam = async (formEl: FormInstance | undefined) => {
+const publishTeam = (formEl: FormInstance | undefined) => {
     if (!formEl) {
         return
     }
+    formEl.validate(async (valid: boolean) => {
+        if (!valid) {
+            return
+        }
+        createTeamForm.channel = routes.name
+        const result = await CreateTeam(createTeamForm)
+        console.log(result)
+    })
     console.log(createTeamForm)
 }
 

@@ -1,4 +1,5 @@
 import type { warframe } from '@composables/warframe'
+import type { RouteRecordName } from 'vue-router'
 // response from server
 export interface response {
     code: number
@@ -39,9 +40,10 @@ export interface teamRequirement {
     content: string
 }
 
-export interface CreateTeam {
+export interface CreateTeamInstance {
     title: string
     server: number
+    channel: RouteRecordName | null | undefined
     requirements: Array<teamRequirement>
-    member: Array<TeamMate>
+    members: Array<TeamMate>
 }
