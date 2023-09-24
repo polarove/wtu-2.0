@@ -1,19 +1,23 @@
-
 <template>
     <el-tooltip content="请输入验证码" :visible="tooltipVisible">
         <div class="ryu_code_wrapper">
             <div class="w-100% h-100% text-center">
                 <form :modelValue="modelValue">
-                    <input class="inputUnit" @keyup="Backspace($event, order)"
-                        :ref="(el: HTMLInputElement) => setInputRef(el, order)" @input="constraintInput($event, order)"
-                        :style="{ width: cellWidth, height: cellHeight }" v-for="order in count" />
+                    <input
+                        class="inputUnit"
+                        @keyup="Backspace($event, order)"
+                        :ref="(el: HTMLInputElement) => setInputRef(el, order)"
+                        @input="constraintInput($event, order)"
+                        :style="{ width: cellWidth, height: cellHeight }"
+                        v-for="order in count"
+                    />
                 </form>
             </div>
         </div>
     </el-tooltip>
 </template>
-  
-<script setup lang='ts'>
+
+<script setup lang="ts">
 // 因为要动态生成ref，所以需要关闭ts检查
 // @ts-nocheck
 const tooltipVisible = ref(true)
@@ -21,31 +25,31 @@ const emit = defineEmits(['update:modelValue', 'submit'])
 const props = defineProps({
     modelValue: {
         type: String,
-        default: ''
+        default: '',
     },
     activeInputBorderColor: {
         type: String,
-        default: '#449bf2'
+        default: '#449bf2',
     },
     count: {
         type: Number,
-        default: 6
+        default: 6,
     },
     tooltipDisappearsAt: {
         type: String,
-        default: '2'
+        default: '2',
     },
     cellUnit: {
         type: Number,
-        default: 1
+        default: 1,
     },
     cellWidth: {
         type: String,
-        default: '2em'
+        default: '2em',
     },
     cellHeight: {
         type: String,
-        default: '2em'
+        default: '2em',
     },
 })
 
@@ -85,7 +89,9 @@ const constraintInput = (event: InputEvent, order: number) => {
     }
 }
 const updateResult = () => {
-    result.value = Object.values(refs).map((item) => item.value).join('')
+    result.value = Object.values(refs)
+        .map((item) => item.value)
+        .join('')
     emit('update:modelValue', result.value)
     if (result.value.length === props.count) {
         emit('submit', result.value)
@@ -101,7 +107,7 @@ const Backspace = (event: KeyboardEvent, order: number) => {
     }
 }
 
-window.addEventListener("paste", function () {
+window.addEventListener('paste', function () {
     this.navigator.clipboard.readText().then((text) => {
         text.split('').forEach((item, index) => {
             let nextOrder = index + 1
@@ -115,7 +121,7 @@ window.addEventListener("paste", function () {
             }
             currentPosition.value = Object.keys(refs).length
         })
-    });
+    })
 })
 
 watchEffect(() => {
@@ -131,14 +137,14 @@ const testNumber = (str: string) => {
 }
 
 defineExpose({
-    result
+    result,
 })
 onMounted(() => {
     AutoFocus()
 })
 </script>
-  
-<style lang='scss' scoped>
+
+<style lang="scss" scoped>
 .ryu_code_wrapper {
     display: flex;
     justify-content: center;
@@ -150,7 +156,6 @@ onMounted(() => {
         &:focus {
             box-shadow: 0 0 0 1px #449bf2 inset;
         }
-
     }
 
     input {

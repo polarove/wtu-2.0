@@ -43,8 +43,5 @@ export interface CreateTeam {
     title: string
     server: number
     requirements: Array<teamRequirement>
-    host: TeamMate
-    firstMate: TeamMate
-    secondMate: TeamMate
-    thirdMate: TeamMate
+    member: Array<TeamMate>
 }

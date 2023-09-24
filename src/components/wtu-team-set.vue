@@ -2,66 +2,16 @@
     <div>
         <div class="teamset" v-if="_authStore.isLogin()">
             <WtuLoadout
-                :teammate="createTeamForm.host"
+                v-for="(teammate, index) in createTeamForm.member"
+                :teammate="teammate"
+                :index="index"
+                :ref="(el: Component) => setLoadoutRef(el, index)"
                 class="teammate"
-                @emitCreateTeam="createTeam()"
-                ref="HostRef"
+                @emitCreateTeam="createTeam(index)"
             >
                 <template #loadout>
                     <div>
-                        {{
-                            createTeamForm.host.warframe[
-                                _authStore.getServerChar()
-                            ]
-                        }}
-                    </div>
-                </template>
-            </WtuLoadout>
-            <WtuLoadout
-                class="teammate"
-                :teammate="createTeamForm.firstMate"
-                @emitCreateTeam="createTeam()"
-                ref="FirstMateRef"
-            >
-                <template #loadout>
-                    <div>
-                        {{
-                            createTeamForm.firstMate.warframe[
-                                _authStore.getServerChar()
-                            ]
-                        }}
-                    </div>
-                </template>
-            </WtuLoadout>
-            <WtuLoadout
-                class="teammate"
-                :teammate="createTeamForm.secondMate"
-                @emitCreateTeam="createTeam()"
-                ref="SecondMateRef"
-            >
-                <template #loadout>
-                    <div>
-                        {{
-                            createTeamForm.secondMate.warframe[
-                                _authStore.getServerChar()
-                            ]
-                        }}
-                    </div>
-                </template>
-            </WtuLoadout>
-            <WtuLoadout
-                class="teammate"
-                :teammate="createTeamForm.thirdMate"
-                @emitCreateTeam="createTeam()"
-                ref="ThirdMateRef"
-            >
-                <template #loadout>
-                    <div>
-                        {{
-                            createTeamForm.thirdMate.warframe[
-                                _authStore.getServerChar()
-                            ]
-                        }}
+                        {{ teammate.warframe[_authStore.getServerChar()] }}
                     </div>
                 </template>
             </WtuLoadout>
@@ -107,7 +57,7 @@
                                 />
                             </el-select>
                         </template>
-                        <template #append>
+                        <template #append v-if="index !== 0">
                             <el-button
                                 class="mt-2"
                                 @click.prevent="removeRequirement(requirement)"
@@ -118,55 +68,46 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item>
-                    <div class="addRequirement">
-                        <RyuSvg
-                            name="add"
-                            size="1.5em"
-                            class="add"
+                    <div class="addFormItem">
+                        <div
+                            class="i-ant-design:appstore-add-outlined icon"
                             @click.prevent="addRequirement()"
-                        ></RyuSvg>
+                        ></div>
                     </div>
                 </el-form-item>
                 <el-form-item> 队伍配置 </el-form-item>
-                <el-form-item prop="host" label="我">
-                    <WtuWarframe
-                        v-model="createTeamForm.host.warframe"
-                        @click="toggleWarframeDrawer(1)"
-                    />
-                    <WtuFocusList
-                        v-model="createTeamForm.host.focus"
-                        size="3em"
-                    />
+                <el-form-item
+                    v-for="(member, index) in createTeamForm.member"
+                    :key="index"
+                    :label="member.user.name"
+                    class="member"
+                >
+                    <div class="flex-between w-100%">
+                        <div class="flex-center">
+                            <WtuWarframe
+                                v-model="member.warframe"
+                                @click="toggleWarframeDrawer(index)"
+                            />
+                            <WtuFocusList
+                                v-model="member.focus"
+                                size="3em"
+                                :rows="1"
+                            />
+                        </div>
+                        <div
+                            v-if="index !== 0 && index !== 1"
+                            class="i-ant-design:usergroup-delete-outlined icon"
+                            @click.prevent="removeMember(member)"
+                        ></div>
+                    </div>
                 </el-form-item>
-                <el-form-item prop="first_mate" label="队员1">
-                    <WtuWarframe
-                        v-model="createTeamForm.firstMate.warframe"
-                        @click="toggleWarframeDrawer(2)"
-                    />
-                    <WtuFocusList
-                        v-model="createTeamForm.firstMate.focus"
-                        size="3em"
-                    />
-                </el-form-item>
-                <el-form-item prop="second_mate" label="队员2">
-                    <WtuWarframe
-                        v-model="createTeamForm.secondMate.warframe"
-                        @click="toggleWarframeDrawer(3)"
-                    />
-                    <WtuFocusList
-                        v-model="createTeamForm.secondMate.focus"
-                        size="3em"
-                    />
-                </el-form-item>
-                <el-form-item prop="third_mate" label="队员3">
-                    <WtuWarframe
-                        v-model="createTeamForm.thirdMate.warframe"
-                        @click="toggleWarframeDrawer(4)"
-                    />
-                    <WtuFocusList
-                        v-model="createTeamForm.thirdMate.focus"
-                        size="3em"
-                    />
+                <el-form-item>
+                    <div class="addFormItem">
+                        <div
+                            class="i-ant-design:usergroup-add-outlined icon mr-4"
+                            @click.prevent="addMember()"
+                        ></div>
+                    </div>
                 </el-form-item>
             </el-form>
             <el-drawer
@@ -175,10 +116,11 @@
                 :size="warframeListDrawer.dynamicSize"
                 :direction="warframeListDrawer.direction"
                 destroy-on-close
+                @close="toggleTooltipDisabled()"
                 :append-to-body="true"
             >
                 <WtuWarframeList
-                    @emitToggleWarframeDrawer="toggleWarframeDrawer(0)"
+                    @emitToggleWarframeDrawer="toggleWarframeDrawer($event)"
                     @updateModelValue="selectWarframe($event)"
                 />
             </el-drawer>
@@ -197,6 +139,7 @@ import { type FormInstance, type FormRules } from 'element-plus'
 import { type CreateTeam } from '@/composables/types'
 import { type warframe } from '@/composables/warframe'
 import { requirements } from '@composables/requirement'
+import { Component } from 'vue'
 const routes = useRoute()
 const _authStore = authStore()
 
@@ -209,8 +152,6 @@ const createTeamFormRules = reactive<FormRules>({
             trigger: 'blur',
         },
     ],
-    host: [{ required: true, message: '请选择你的build' }],
-    first_mate: [{ required: true, message: '请选择至少一个队友的build' }],
 })
 const createTeamForm = reactive<CreateTeam>({
     title: '未修改的标题',
@@ -221,58 +162,34 @@ const createTeamForm = reactive<CreateTeam>({
             content: '',
         },
     ],
-    host: {
-        user: {
-            uuid: _authStore.getUUID(),
-            name: _authStore.getName(),
-            avatar: _authStore.getAvatar(),
-            level: _authStore.getLevel(),
+    member: [
+        {
+            user: {
+                uuid: _authStore.getUUID(),
+                name: _authStore.getName(),
+                avatar: _authStore.getAvatar(),
+                level: _authStore.getLevel(),
+            },
+            warframe: {
+                en: 'any',
+                cn: '任意',
+            },
+            focus: 'any',
         },
-        warframe: {
-            en: 'any',
-            cn: '任意',
+        {
+            user: {
+                uuid: '',
+                name: '',
+                avatar: '',
+                level: 0,
+            },
+            warframe: {
+                en: 'any',
+                cn: '任意',
+            },
+            focus: 'any',
         },
-        focus: 'any',
-    },
-    firstMate: {
-        user: {
-            uuid: '',
-            name: '',
-            avatar: '',
-            level: 0,
-        },
-        warframe: {
-            en: 'any',
-            cn: '任意',
-        },
-        focus: 'any',
-    },
-    secondMate: {
-        user: {
-            uuid: '',
-            name: '',
-            avatar: '',
-            level: 0,
-        },
-        warframe: {
-            en: 'any',
-            cn: '任意',
-        },
-        focus: 'any',
-    },
-    thirdMate: {
-        user: {
-            uuid: '',
-            name: '',
-            avatar: '',
-            level: 0,
-        },
-        warframe: {
-            en: 'any',
-            cn: '任意',
-        },
-        focus: 'any',
-    },
+    ],
 })
 
 const removeRequirement = (requirement: any) => {
@@ -293,12 +210,41 @@ const addRequirement = () => {
         content: '',
     })
 }
+const addMember = () => {
+    if (createTeamForm.member.length > 3) {
+        return
+    }
+    createTeamForm.member.push({
+        user: {
+            uuid: '',
+            name: '',
+            avatar: '',
+            level: 0,
+        },
+        warframe: {
+            en: 'any',
+            cn: '任意',
+        },
+        focus: 'any',
+    })
+}
+
+const removeMember = (member: any) => {
+    const index = createTeamForm.member.indexOf(member)
+    if (index === 0 || index === 1) {
+        return
+    }
+    if (index !== -1) {
+        createTeamForm.member.splice(index, 1)
+    }
+}
 
 const teamDrawer = reactive({
     dynamicSize: '40%',
     visible: false,
     title: '',
     direction: 'rtl',
+    from: 0,
 })
 
 const warframeListDrawer = reactive({
@@ -308,28 +254,17 @@ const warframeListDrawer = reactive({
     direction: 'rtl',
     edit: 0,
 })
+
 const toggleWarframeDrawer = (index: number) => {
     warframeListDrawer.visible = !warframeListDrawer.visible
+    if (!index) {
+        return
+    }
     warframeListDrawer.edit = index
 }
 
 const selectWarframe = (target: warframe) => {
-    switch (warframeListDrawer.edit) {
-        case 1:
-            createTeamForm.host.warframe = target
-            break
-        case 2:
-            createTeamForm.firstMate.warframe = target
-            break
-        case 3:
-            createTeamForm.secondMate.warframe = target
-            break
-        case 4:
-            createTeamForm.thirdMate.warframe = target
-            break
-        default:
-            break
-    }
+    createTeamForm.member[warframeListDrawer.edit].warframe = target
 }
 
 const title = computed(() => {
@@ -339,9 +274,20 @@ const title = computed(() => {
     return '选择第' + warframeListDrawer.edit + '个队友的战甲'
 })
 
-const createTeam = () => {
+const createTeam = (index: number) => {
     teamDrawer.visible = true
     teamDrawer.title = '在 ' + routes.meta.forehead + ' 招募队友'
+    teamDrawer.from = index
+}
+
+const refs: Record<string, any> = {}
+const setLoadoutRef = (el: any, index: number) => {
+    if (el) {
+        refs[`${index}`] = el
+    }
+}
+const toggleTooltipDisabled = () => {
+    refs[`${teamDrawer.from}`].enablePopover()
 }
 
 const publishTeam = async (formEl: FormInstance | undefined) => {
@@ -349,17 +295,6 @@ const publishTeam = async (formEl: FormInstance | undefined) => {
         return
     }
     console.log(createTeamForm)
-}
-
-const HostRef = ref()
-const FirstMateRef = ref()
-const SecondMateRef = ref()
-const ThirdMateRef = ref()
-const toggleTooltipDisabled = () => {
-    HostRef.value?.enablePopover()
-    FirstMateRef.value?.enablePopover()
-    SecondMateRef.value?.enablePopover()
-    ThirdMateRef.value?.enablePopover()
 }
 
 const initDrawerWidth = () => {
@@ -405,14 +340,27 @@ onBeforeUnmount(() => {
         margin-left: 1em;
     }
 }
-.addRequirement {
+.addFormItem {
     display: flex;
     justify-content: center;
     align-items: center;
 
     width: 100%;
 
-    .add {
+    .icon {
+        font-size: 2em;
+        cursor: pointer;
+        transition: all 0.1s ease-in-out;
+        &:hover {
+            transform: scale(1.1);
+            color: var(--el-color-primary);
+        }
+    }
+}
+
+.member {
+    .icon {
+        font-size: 2em;
         cursor: pointer;
         transition: all 0.1s ease-in-out;
         &:hover {
