@@ -1,31 +1,40 @@
 import { warframes, type warframe } from '@composables/warframe'
+import { authStore } from '@/store'
+import entries from '@/composables/entries'
+const _authStore = authStore()
 
-export const getWarframeList = (
-    isDuriviOnly: boolean,
-    language: keyof warframe,
+export const filterWarframeNameList = (
+    routeName: string,
     search: string
 ): Array<string> => {
     let result: Array<string> = []
-    if (isDuriviOnly) {
+    if (routeName === entries.durivi) {
         result = warframes
-            .filter((warframe) => warframe.durivi)
             .filter((warframe) =>
-                warframe[language].toString().includes(search)
+                warframe[_authStore.getServerChar()].toString().includes(search)
             )
-            .map((warframe) => warframe[language]) as any
+            .map((warframe) => warframe[_authStore.getServerChar()])
     } else {
         result = warframes
+            .filter((warframe) => !isStalker(warframe.en))
             .filter((warframe) =>
-                warframe[language].toString().includes(search)
+                warframe[_authStore.getServerChar()].toString().includes(search)
             )
-            .map((warframe) => warframe[language]) as any
+            .map((warframe) => warframe[_authStore.getServerChar()])
     }
     return result
 }
 
-export const getWarframe = (
-    name: string | undefined,
-    language: keyof warframe
-): warframe => {
-    return warframes.find((warframe) => warframe[language] === name) as warframe
+export const searchWarframe = (name: string | undefined): warframe => {
+    return warframes.find(
+        (warframe) => warframe[_authStore.getServerChar()] === name
+    ) as warframe
+}
+
+export const isAny = (name: string): boolean => {
+    return name === 'Any'
+}
+
+export const isStalker = (name: string): boolean => {
+    return name === 'Stalker'
 }

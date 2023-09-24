@@ -11,7 +11,7 @@
 defineProps({
     name: {
         type: String,
-        default: 'Default',
+        default: 'any',
         required: true,
     },
     size: {

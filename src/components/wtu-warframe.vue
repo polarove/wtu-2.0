@@ -1,12 +1,12 @@
 <template>
     <div
-        @click="$emit('update:modelValue')"
+        @click="$emit('update:modelValue', modelValue)"
         :style="{ width: width }"
         class="warframe-wrapper"
     >
         <el-avatar class="icon" :src="src" :size="size" :shape="shape" />
         <div class="text" v-if="showName">
-            {{ language === 'en' ? modelValue.en : modelValue.cn }}
+            {{ modelValue[_authStore.getServerChar()] }}
         </div>
     </div>
 </template>
@@ -14,7 +14,8 @@
 <script setup lang="ts">
 const IMAGE_ORIGIN = import.meta.env.VITE_APP_IMAGE_ORIGIN as string
 import type { warframe } from '@/composables/warframe'
-
+import { authStore } from '@/store'
+const _authStore = authStore()
 const props = defineProps({
     modelValue: {
         type: Object as PropType<warframe>,
@@ -23,10 +24,6 @@ const props = defineProps({
             cn: '任意',
             durivi: false,
         },
-    },
-    language: {
-        type: String,
-        default: 'en',
     },
     shape: {
         type: String,

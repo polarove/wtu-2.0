@@ -6,9 +6,9 @@ export interface Focus {
 
 export const focus: Array<Focus> = [
     {
-        name: 'Default',
+        name: 'any',
         value: 0,
-        label: '默认',
+        label: '任意',
     },
     {
         name: 'Madurai',

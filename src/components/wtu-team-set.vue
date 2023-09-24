@@ -1,17 +1,66 @@
 <template>
     <div>
         <div class="teamset" v-if="_authStore.isLogin()">
-            <WtuAvatar :size="40" :PopDisabled="true" />
-            <div class="plus" v-if="emptyTeam" @click="createTeam()">
-                <RyuSvg name="plus" size="40%" class="icon" />
-            </div>
-            <div class="teammates" v-else>
-                <el-avatar
-                    shape="sqare"
-                    class="teammate"
-                    v-for="teammate in teammates"
-                />
-            </div>
+            <WtuLoadout
+                :teammate="createTeamForm.host"
+                class="teammate"
+                @click="createTeam()"
+            >
+                <template #loadout>
+                    <div>
+                        {{
+                            createTeamForm.host.warframe[
+                                _authStore.getServerChar()
+                            ]
+                        }}
+                    </div>
+                </template>
+            </WtuLoadout>
+            <WtuLoadout
+                class="teammate"
+                :teammate="createTeamForm.firstMate"
+                @click="createTeam()"
+            >
+                <template #loadout>
+                    <div>
+                        {{
+                            createTeamForm.firstMate.warframe[
+                                _authStore.getServerChar()
+                            ]
+                        }}
+                    </div>
+                </template>
+            </WtuLoadout>
+            <WtuLoadout
+                class="teammate"
+                :teammate="createTeamForm.secondMate"
+                @click="createTeam()"
+            >
+                <template #loadout>
+                    <div>
+                        {{
+                            createTeamForm.secondMate.warframe[
+                                _authStore.getServerChar()
+                            ]
+                        }}
+                    </div>
+                </template>
+            </WtuLoadout>
+            <WtuLoadout
+                class="teammate"
+                :teammate="createTeamForm.thirdMate"
+                @click="createTeam()"
+            >
+                <template #loadout>
+                    <div>
+                        {{
+                            createTeamForm.thirdMate.warframe[
+                                _authStore.getServerChar()
+                            ]
+                        }}
+                    </div>
+                </template>
+            </WtuLoadout>
         </div>
         <el-drawer
             v-model="teamDrawer.visible"
@@ -31,28 +80,45 @@
                         v-model="createTeamForm.title"
                     />
                 </el-form-item>
-                <el-form-item prop="me" label="我">
+                <el-form-item prop="host" label="我">
                     <WtuWarframe
-                        v-model="createTeamForm.me.warframe"
-                        @click="toggleWarframeDrawer()"
+                        v-model="createTeamForm.host.warframe"
+                        @click="toggleWarframeDrawer(1)"
                     />
                     <WtuFocusList
-                        v-model="createTeamForm.me.focus"
+                        v-model="createTeamForm.host.focus"
                         size="3em"
                     />
                 </el-form-item>
-                <el-form-item
-                    prop="first_mate"
-                    v-model="createTeamForm.firstMate.focus"
-                    label="队员1"
-                >
-                    <WtuWarframe value="Gyre" />
+                <el-form-item prop="first_mate" label="队员1">
+                    <WtuWarframe
+                        v-model="createTeamForm.firstMate.warframe"
+                        @click="toggleWarframeDrawer(2)"
+                    />
+                    <WtuFocusList
+                        v-model="createTeamForm.firstMate.focus"
+                        size="3em"
+                    />
                 </el-form-item>
                 <el-form-item prop="second_mate" label="队员2">
-                    <WtuWarframe value="Gyre" />
+                    <WtuWarframe
+                        v-model="createTeamForm.secondMate.warframe"
+                        @click="toggleWarframeDrawer(3)"
+                    />
+                    <WtuFocusList
+                        v-model="createTeamForm.secondMate.focus"
+                        size="3em"
+                    />
                 </el-form-item>
                 <el-form-item prop="third_mate" label="队员3">
-                    <WtuWarframe value="Gyre" />
+                    <WtuWarframe
+                        v-model="createTeamForm.thirdMate.warframe"
+                        @click="toggleWarframeDrawer(4)"
+                    />
+                    <WtuFocusList
+                        v-model="createTeamForm.thirdMate.focus"
+                        size="3em"
+                    />
                 </el-form-item>
             </el-form>
             <el-drawer
@@ -64,8 +130,8 @@
             >
                 <template #header> 选择一个战甲 </template>
                 <WtuWarframeList
-                    @emitToggleWarframeDrawer="toggleWarframeDrawer()"
-                    @updateSelection="selectWarframe($event)"
+                    @emitToggleWarframeDrawer="toggleWarframeDrawer(0)"
+                    @updateModelValue="selectWarframe($event)"
                 />
             </el-drawer>
             <template #footer>
@@ -78,12 +144,12 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
-import { response } from '@composables/types'
 import { authStore } from '@/store'
-import { CreateTeam } from '@api/team'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import type { warframe } from '@/composables/warframe'
+import { type FormInstance, type FormRules } from 'element-plus'
+import { type CreateTeam } from '@/composables/types'
+import { type warframe } from '@/composables/warframe'
+const routes = useRoute()
+const _authStore = authStore()
 
 const createTeamFormRef = ref<FormInstance>()
 const createTeamFormRules = reactive<FormRules>({
@@ -94,49 +160,48 @@ const createTeamFormRules = reactive<FormRules>({
             trigger: 'blur',
         },
     ],
-    me: [{ required: true, trigger: 'blur' }],
-    first_mate: [{ required: true, trigger: 'blur' }],
+    host: [{ required: true, message: '请选择你的build' }],
+    first_mate: [{ required: true, message: '请选择至少一个队友的build' }],
 })
-const createTeamForm = reactive({
-    title: '3232',
-    me: {
+const createTeamForm = reactive<CreateTeam>({
+    title: '未修改的标题',
+    host: {
+        name: _authStore.getName(),
+        level: 0,
         warframe: {
             en: 'any',
             cn: '任意',
-            durivi: false,
         },
-        focus: '',
+        focus: 'any',
     },
     firstMate: {
+        name: '等待招募',
+        level: 0,
         warframe: {
             en: 'any',
             cn: '任意',
-            durivi: false,
         },
-        focus: '',
+        focus: 'any',
     },
     secondMate: {
+        name: '等待招募',
+        level: 0,
         warframe: {
             en: 'any',
             cn: '任意',
-            durivi: false,
         },
-        focus: '',
+        focus: 'any',
     },
     thirdMate: {
+        name: '等待招募',
+        level: 0,
         warframe: {
             en: 'any',
             cn: '任意',
-            durivi: false,
         },
-        focus: '',
+        focus: 'any',
     },
 })
-
-const routes = useRoute()
-const _authStore = authStore()
-const teammates = reactive([])
-const emptyTeam = computed(() => teammates.length === 0)
 
 const teamDrawer = reactive({
     dynamicSize: '40%',
@@ -150,28 +215,26 @@ const warframeListDrawer = reactive({
     title: '选择一个战甲',
     dynamicSize: '40%',
     direction: 'rtl',
+    edit: 0,
 })
-const toggleWarframeDrawer = () => {
+const toggleWarframeDrawer = (index: number) => {
     warframeListDrawer.visible = !warframeListDrawer.visible
+    warframeListDrawer.edit = index
 }
 
 const selectWarframe = (target: warframe) => {
-    createTeamForm.me.warframe = target.value
-    console.log(target.value)
-    console.log(createTeamForm.me.warframe)
+    createTeamForm.host.warframe = target
 }
 
 const createTeam = () => {
     teamDrawer.visible = true
     teamDrawer.title = '在 ' + routes.meta.forehead + ' 招募队友'
 }
-const teamFormRef = ref<FormInstance>()
+
 const publishTeam = async (formEl: FormInstance | undefined) => {
     if (!formEl) {
         return
     }
-    // const result = (await CreateTeam(createTeamForm)) as response
-    // console.log(result)
     console.log(createTeamForm)
 }
 
@@ -203,39 +266,19 @@ onBeforeUnmount(() => {
 .teamset {
     display: flex;
     align-items: center;
-    .plus {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 0 0 1px #7d7d7d inset;
-        margin-left: 1em;
-        border-radius: 0.2em;
-        cursor: pointer;
-        &:hover {
-            box-shadow: 0 0 0 1px var(--el-color-primary) inset;
 
-            .icon {
-                opacity: 1;
-                color: var(--el-color-primary);
-            }
-        }
-
-        .icon {
-            opacity: 0.4;
-        }
-    }
-    .teammates {
-        display: flex;
-        align-items: center;
-        justify-content: space-evenly;
-        width: 150px;
-        height: 40px;
-    }
     .teammate {
         width: 40px;
         height: 40px;
+        transition: all 0.1s ease-in-out;
+        &:hover {
+            box-shadow: 0 0 2px 0 var(--el-color-primary);
+            transform: scale(1.1);
+        }
+    }
+
+    .teammate:nth-child(n + 2) {
+        margin-left: 1em;
     }
 }
 

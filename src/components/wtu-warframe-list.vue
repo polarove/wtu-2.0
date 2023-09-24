@@ -6,13 +6,14 @@
             loading-text="加载中..."
             no-match-text="空"
             no-data-text="无数据"
-            placeholder="选择一个战甲"
+            :placeholder="placeholder"
             clearable
             :remote-method="filter"
             :loading="loading"
-            @change="filterWarframeList()"
             @clear="reset()"
+            @visible-change="reload($event)"
             class="search"
+            size="large"
         >
             <el-option
                 v-for="(name, index) in names"
@@ -21,11 +22,7 @@
                 :value="name"
             />
         </el-select>
-        <ul
-            class="infinite-list"
-            style="overflow: auto"
-            v-if="targetWarframe.en === 'any'"
-        >
+        <ul class="infinite-list" style="overflow: auto" v-if="isBlank(text)">
             <div
                 v-for="(warframe, index) in warframes"
                 :key="index"
@@ -41,7 +38,7 @@
                 <div v-else>
                     <WtuWarframe
                         :style="{
-                            display: warframe.durivi ? 'none' : '',
+                            display: isStalker(warframe.en) ? 'none' : 'block',
                         }"
                         :modelValue="warframe"
                         width="130px"
@@ -54,7 +51,7 @@
             <WtuWarframe
                 :modelValue="targetWarframe"
                 width="130px"
-                style="transform: scale(2.5)"
+                style="transform: scale(3)"
                 @click="confirm()"
             />
         </div>
@@ -63,16 +60,17 @@
 
 <script setup lang="ts">
 import { warframes, type warframe } from '@composables/warframe'
-import { getWarframeList, getWarframe } from '@util/WarframeUtil'
+import { filterWarframeNameList, isStalker } from '@util/WarframeUtil'
 import { authStore } from '@/store'
 import entries from '@/composables/entries'
+import { isBlank } from '@/util/StrUtil'
 const _authStore = authStore()
 const route = useRoute()
-const emit = defineEmits(['updateSelection', 'emitToggleWarframeDrawer'])
+const emit = defineEmits(['updateModelValue', 'emitToggleWarframeDrawer'])
+
 const targetWarframe = ref<warframe>({
-    en: 'any',
-    cn: '任意',
-    durivi: false,
+    en: '',
+    cn: '',
 })
 
 defineProps({
@@ -80,48 +78,48 @@ defineProps({
         type: String,
         default: 'en',
     },
+    placeholder: {
+        type: String,
+        default: '选择一个战甲',
+    },
 })
 const loading = ref<boolean>(false)
 const text = ref<string>('')
 const names = ref<Array<string>>([])
+const rotueName = computed(() => route.name)
 
 const filter = (query: string) => {
     loading.value = true
-    names.value = getWarframeList(
-        false,
-        _authStore.getServerChar() as keyof warframe,
+    names.value = filterWarframeNameList(
+        rotueName.value?.toString() as string,
         query
     )
     loading.value = false
 }
 filter('')
 
-const filterWarframeList = () => {
-    targetWarframe.value = getWarframe(
-        text.value,
-        _authStore.getServerChar() as keyof warframe
-    )
-}
-
 const reset = () => {
     targetWarframe.value = {
-        en: 'any',
-        cn: '任意',
-        durivi: false,
+        en: '',
+        cn: '',
     }
 }
 
 const select = (warframe: warframe) => {
-    text.value = warframe[
-        _authStore.getServerChar() as keyof warframe
-    ] as string
+    text.value = warframe[_authStore.getServerChar()]
     targetWarframe.value = {
         ...warframe,
     }
 }
 
+const reload = (visible: boolean): void => {
+    if (visible) {
+        filter(text.value)
+    }
+}
+
 const confirm = () => {
-    emit('updateSelection', targetWarframe)
+    emit('updateModelValue', targetWarframe.value)
     emit('emitToggleWarframeDrawer')
 }
 </script>

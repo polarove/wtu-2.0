@@ -29,7 +29,6 @@ const toggleServer = async () => {
     const result = (await ToggleServer(
         _authStore.getServer() ? 0 : 1
     )) as response
-    console.log(result.data)
 
     if (result.success) {
         _authStore.setUser(result.data as User)

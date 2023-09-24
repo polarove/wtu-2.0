@@ -6,8 +6,7 @@
     <div class="wrapper">
         <div :class="{ wideScreen: wideMode, compactScreen: !wideMode }">
             <div>
-                <WtuBreadcrumb />
-                <WtuActivity class="mb-0.5em mt-0.5em" />
+                <WtuActivity class="mb-0.75em mt-0.75em" />
                 <WtuTeamSet />
             </div>
             <WtuEntries

@@ -1,5 +1,5 @@
 <template>
-    <div class="tabs">
+    <div class="tabs flex-between">
         <span
             @click="router.push({ name: 'origin' })"
             class="tab"
@@ -54,7 +54,7 @@ const touch = (activity: any) => {
         user-select: none;
         font-size: 1.1em;
         text-align: center;
-        margin-right: 0.4em;
+        margin: 0 0.15em;
         &:hover {
             color: var(--el-color-primary);
         }

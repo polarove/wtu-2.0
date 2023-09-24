@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import { User, response } from '@composables/types'
-import { ServerEnum } from '@/composables/enums'
 import { getUserVOByUUID } from '@api/account'
 import { ElMessage } from 'element-plus'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
+import { warframe } from '@/composables/warframe'
 
 export const authStore = defineStore({
     id: 'session',
@@ -70,10 +70,12 @@ export const authStore = defineStore({
         setServer(server: number) {
             this.user.server = server
         },
-        getServerChar(): string {
-            return ServerEnum.types.find(
-                (item) => item.code === this.getServer()
-            )?.shortcut as string
+        getServerChar(): keyof warframe {
+            if (this.getServer()) {
+                return 'en'
+            } else {
+                return 'cn'
+            }
         },
         async updateUser() {
             if (isBlank(this.getUUID())) {

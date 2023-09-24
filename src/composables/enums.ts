@@ -1,38 +1,9 @@
-import { Component } from 'vue'
-
 class Enum {
     private readonly code: number
-    private readonly type:
-        | number
-        | string
-        | boolean
-        | object
-        | symbol
-        | Component
+    private readonly type: string
+    private readonly comment: string
 
-    private readonly comment:
-        | number
-        | string
-        | boolean
-        | object
-        | symbol
-        | Component
-        | null
-        | undefined
-
-    constructor(
-        code: number,
-        type: number | string | boolean | object | symbol | Component,
-        comment:
-            | number
-            | string
-            | boolean
-            | object
-            | symbol
-            | Component
-            | null
-            | undefined
-    ) {
+    constructor(code: number, type: string, comment: string) {
         this.code = code
         this.type = type
         this.comment = comment
@@ -42,19 +13,11 @@ class Enum {
         return this.code
     }
 
-    public getType(): number | string | boolean | object | symbol | Component {
+    public getType(): string {
         return this.type
     }
 
-    public getComment():
-        | number
-        | string
-        | boolean
-        | object
-        | symbol
-        | Component
-        | null
-        | undefined {
+    public getComment(): string {
         return this.comment
     }
 
