@@ -12,6 +12,7 @@
             :loading="loading"
             @clear="reset()"
             @visible-change="reload($event)"
+            @change="getWarframeByName($event)"
             class="search"
             size="large"
         >
@@ -60,7 +61,11 @@
 
 <script setup lang="ts">
 import { warframes, type warframe } from '@composables/warframe'
-import { filterWarframeNameList, isStalker } from '@util/WarframeUtil'
+import {
+    filterWarframeNameList,
+    isStalker,
+    searchWarframe,
+} from '@util/WarframeUtil'
 import { authStore } from '@/store'
 import entries from '@/composables/entries'
 import { isBlank } from '@/util/StrUtil'
@@ -115,6 +120,16 @@ const select = (warframe: warframe) => {
 const reload = (visible: boolean): void => {
     if (visible) {
         filter(text.value)
+    }
+}
+
+const getWarframeByName = (name: string) => {
+    if (isBlank(name)) {
+        return
+    }
+    const warframe = searchWarframe(name)
+    if (warframe) {
+        targetWarframe.value = warframe
     }
 }
 

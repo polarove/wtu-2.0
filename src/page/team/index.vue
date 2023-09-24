@@ -6,8 +6,8 @@
     <div class="wrapper">
         <div :class="{ wideScreen: wideMode, compactScreen: !wideMode }">
             <div>
-                <WtuActivity class="mb-0.75em mt-0.75em" />
-                <WtuTeamSet />
+                <WtuActivity class="mb-0.75em mt-0.5em" />
+                <WtuTeamSet class="center-min-900px" />
             </div>
             <WtuEntries
                 :class="{ compactOnly: !wideMode }"
@@ -66,6 +66,14 @@ onBeforeUnmount(() => {
 
     .compactOnly {
         margin: 1em 0;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .center-min-900px {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 </style>

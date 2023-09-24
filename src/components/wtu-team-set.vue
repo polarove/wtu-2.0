@@ -223,7 +223,22 @@ const toggleWarframeDrawer = (index: number) => {
 }
 
 const selectWarframe = (target: warframe) => {
-    createTeamForm.host.warframe = target
+    switch (warframeListDrawer.edit) {
+        case 1:
+            createTeamForm.host.warframe = target
+            break
+        case 2:
+            createTeamForm.firstMate.warframe = target
+            break
+        case 3:
+            createTeamForm.secondMate.warframe = target
+            break
+        case 4:
+            createTeamForm.thirdMate.warframe = target
+            break
+        default:
+            break
+    }
 }
 
 const createTeam = () => {
