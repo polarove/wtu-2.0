@@ -18,16 +18,13 @@
 </template>
 
 <script setup lang="ts">
-import { authStore, teamStore } from '@/store'
+import { authStore } from '@/store'
 import router from '@/router'
 const _authStore = authStore()
-const _teamStore = teamStore()
-const route = useRoute()
 const updateDifficulty = (difficulty: boolean) => {
     _authStore.setDifficulty(difficulty)
     if (difficulty) {
         router.push({ name: 'steelpath' })
-        _teamStore.initTeamList(route.name)
     } else {
         router.push({ name: 'origin' })
     }

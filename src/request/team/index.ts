@@ -5,5 +5,5 @@ export const CreateTeam = (data: any) => {
 }
 
 export const GetTeamList = (data: any) => {
-    return TeamController.post('/getTeam', data)
+    return TeamController.post('/getTeamList', data)
 }

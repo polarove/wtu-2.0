@@ -8,7 +8,7 @@ const routes = [
         name: 'index',
         meta: { forehead: 'Warframe Team Up' },
         component: () => import('@page/team/index.vue'),
-        redirect: `/${entries.origin}`,
+        redirect: `/team/${entries.origin}`,
         children: [
             {
                 path: `/team/${entries.origin}`,

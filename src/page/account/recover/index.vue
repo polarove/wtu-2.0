@@ -103,7 +103,7 @@ const RecoverEmailFormRules = reactive<FormRules>({
         {
             required: true,
             message: '请输入邮箱',
-            trigger: 'blur',
+            trigger: 'change',
         },
         {
             type: 'email',

@@ -33,6 +33,7 @@ defineProps({
         margin-top: 1em;
         font-size: 0.88em;
         color: #999;
+        user-select: none;
     }
 }
 </style>

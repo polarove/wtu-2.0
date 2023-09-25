@@ -49,7 +49,7 @@ const LoginFormRules = reactive<FormRules>({
         {
             required: true,
             message: '请输入邮箱',
-            trigger: 'blur',
+            trigger: 'change',
         },
         {
             type: 'email',
@@ -57,7 +57,7 @@ const LoginFormRules = reactive<FormRules>({
             trigger: ['blur', 'change'],
         },
     ],
-    password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+    password: [{ required: true, message: '请输入密码', trigger: 'change' }],
 })
 
 const LoginForm = reactive({
