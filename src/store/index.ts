@@ -4,7 +4,7 @@ import { getUserVOByUUID } from '@api/account'
 import { ElMessage } from 'element-plus'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { warframe } from '@/composables/warframe'
-import { TeamInstance } from '@composables/team'
+import { Team } from '@composables/team'
 import { GetTeamList } from '@api/team'
 import { RouteRecordName } from 'vue-router'
 
@@ -111,9 +111,7 @@ export const authStore = defineStore({
 export const teamStore = defineStore({
     id: 'team',
     state: () => ({
-        published: false,
-        TeamInstance: {} as TeamInstance,
-        TeamList: [] as Array<TeamInstance>,
+        TeamList: [] as Array<Team>,
     }),
     actions: {
         initTeamList(channel: RouteRecordName | null | undefined) {
@@ -126,18 +124,21 @@ export const teamStore = defineStore({
             }
             GetTeamList(param).then((res: any) => {
                 if (res.success) {
-                    console.log(res)
-                    this.setTeam(res.data as Array<TeamInstance>)
+                    console.log(res.data)
+                    this.setTeamList(res.data as Array<Team>)
                 } else {
                     ElMessage.error(res.message)
                 }
             })
         },
-        setTeam(TeamList: Array<TeamInstance>) {
+        setTeamList(TeamList: Array<Team>) {
             this.TeamList = TeamList
         },
-        getTeam(): Array<TeamInstance> {
+        getLocaleTeamList(): Array<Team> {
             return this.TeamList
+        },
+        addTeam(team: Team) {
+            this.TeamList.push(team)
         },
         isEmpty(): boolean {
             return this.TeamList.length === 0

@@ -142,13 +142,15 @@
 <script setup lang="ts">
 import { authStore } from '@/store'
 import { type FormInstance, type FormRules } from 'element-plus'
-import { type TeamInstance } from '@/composables/team'
+import { type TeamInstance, type Team } from '@/composables/team'
 import { type warframe } from '@/composables/warframe'
 import { requirements } from '@composables/requirement'
 import { CreateTeam } from '@api/team'
 import { type response } from '@composables/types'
+import { teamStore } from '@/store'
 const routes = useRoute()
 const _authStore = authStore()
+const _teamStore = teamStore()
 
 const createTeamFormRef = ref<FormInstance>()
 const createTeamFormRules = reactive<FormRules>({
@@ -306,6 +308,10 @@ const publishTeam = (formEl: FormInstance | undefined) => {
         const result = (await CreateTeam(createTeamForm)) as response
         if (result.success) {
             teamDrawer.visible = false
+            let temp: Team = {
+                team: createTeamForm,
+            }
+            _teamStore.addTeam(temp)
         } else {
             ElMessage.error(result.message)
         }

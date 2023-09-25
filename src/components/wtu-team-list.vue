@@ -4,22 +4,23 @@
         tip="当前暂无组队信息"
         :empty="_teamStore.isEmpty()"
     >
-        <el-card class="team" v-for="team in _teamStore.getTeam()">
+        <el-card class="team" v-for="instance in TeamList">
             <template #header>
-                {{ team.title }}
+                {{ instance.team.title }}
             </template>
-            <WtuWarframe
-                :warframe="build.warframe"
-                v-for="build in team.members"
-            />
+            <div></div>
         </el-card>
     </RyuEmpty>
 </template>
 
 <script setup lang="ts">
-import WtuWarframe from '@/components/wtu-warframe.vue'
 import { teamStore } from '@/store'
+import { storeToRefs } from 'pinia'
+
 const _teamStore = teamStore()
+
+const { TeamList } = storeToRefs(_teamStore)
+console.log(TeamList.value)
 </script>
 
 <style lang="scss" scoped>

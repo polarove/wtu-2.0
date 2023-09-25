@@ -27,3 +27,7 @@ export interface TeamInstance {
     requirements: Array<teamRequirement>
     members: Array<TeamMate>
 }
+
+export interface Team {
+    team: TeamInstance
+}
