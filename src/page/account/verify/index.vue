@@ -60,7 +60,8 @@
 <script setup lang="ts">
 import router from '@/router'
 import { Verify, SaveMyProfile } from '@api/account'
-import type { User, response } from '@composables/types'
+import type { response } from '@composables/types'
+import type { User } from '@composables/user'
 import type { FormInstance, FormRules } from 'element-plus'
 import { authStore } from '@/store'
 import { ElMessage } from 'element-plus'

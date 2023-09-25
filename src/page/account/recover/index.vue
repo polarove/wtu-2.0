@@ -66,7 +66,8 @@ import {
     type FormRules,
 } from 'element-plus'
 import { GetRecoverCode, SubmitCode, ChangePassword } from '@api/account'
-import { User, response } from '@/composables/types'
+import { response } from '@/composables/types'
+import type { User } from '@composables/user'
 import router from '@/router'
 import { isNotBlank } from '@/util/StrUtil'
 import { authStore } from '@/store'

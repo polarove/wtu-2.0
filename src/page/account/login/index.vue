@@ -36,7 +36,8 @@
 import router from '@/router'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { Login } from '@api/account'
-import { User, response } from '@composables/types'
+import { response } from '@composables/types'
+import type { User } from '@composables/user'
 import { authStore } from '@/store'
 const _authStore = authStore()
 

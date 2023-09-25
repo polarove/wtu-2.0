@@ -1,12 +1,17 @@
 import { defineStore } from 'pinia'
-import { User, response } from '@composables/types'
+import { response } from '@composables/types'
+import type { User } from '@composables/user'
 import { getUserVOByUUID } from '@api/account'
 import { ElMessage } from 'element-plus'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { warframe } from '@/composables/warframe'
-import { TeamInstance } from '@composables/team'
+import type {
+    TeamInstance,
+    TeamList,
+    TeamPage,
+    TeamListParams,
+} from '@composables/team'
 import { GetTeamList } from '@api/team'
-import { RouteRecordName } from 'vue-router'
 
 export const authStore = defineStore({
     id: 'session',
@@ -111,36 +116,33 @@ export const authStore = defineStore({
 export const teamStore = defineStore({
     id: 'team',
     state: () => ({
-        published: false,
         TeamInstance: {} as TeamInstance,
-        TeamList: [] as Array<TeamInstance>,
+        TeamPage: {} as TeamPage,
     }),
     actions: {
-        initTeamList(channel: RouteRecordName | null | undefined) {
-            const _authStore = authStore()
-            let param = {
-                page: 1,
-                size: 10,
-                server: _authStore.getServer(),
-                channel: channel,
-            }
+        initTeamList(param: TeamListParams) {
             GetTeamList(param).then((res: any) => {
                 if (res.success) {
-                    console.log(res)
-                    this.setTeam(res.data as Array<TeamInstance>)
+                    this.setTeam(res.data.records as Array<TeamList>)
                 } else {
                     ElMessage.error(res.message)
                 }
             })
         },
-        setTeam(TeamList: Array<TeamInstance>) {
-            this.TeamList = TeamList
+        setTeam(TeamList: Array<TeamList>) {
+            this.TeamPage.records = TeamList
         },
-        getTeam(): Array<TeamInstance> {
-            return this.TeamList
+        getTeam(): Array<TeamList> {
+            return this.TeamPage.records
+        },
+        getTeamPage(): TeamPage {
+            return this.TeamPage
+        },
+        addTeam(team: TeamList) {
+            this.TeamPage.records.push(team)
         },
         isEmpty(): boolean {
-            return this.TeamList.length === 0
+            return this.TeamPage.records.length === 0
         },
     },
     persist: true,
