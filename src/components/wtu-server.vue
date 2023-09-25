@@ -5,14 +5,14 @@
 </template>
 
 <script setup lang="ts">
-import { authStore } from '@/store'
+import { authStore, teamStore } from '@/store'
 import { toUpperCase } from '@/util/StrUtil'
 import { ServerEnum } from '@composables/enums'
 import { ToggleServer } from '@api/account'
 import { User, response } from '@/composables/types'
-
+const route = useRoute()
 const _authStore = authStore()
-
+const _teamStore = teamStore()
 const server = computed(() => {
     return ServerEnum.types.find((item) => item.code == _authStore.getServer())
         ?.shortcut
@@ -32,6 +32,7 @@ const toggleServer = async () => {
 
     if (result.success) {
         _authStore.setUser(result.data as User)
+        _teamStore.initTeamList(route.name)
     } else {
         console.log(result.message)
     }

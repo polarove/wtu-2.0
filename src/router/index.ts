@@ -11,80 +11,80 @@ const routes = [
         redirect: `/${entries.origin}`,
         children: [
             {
-                path: `/${entries.origin}`,
+                path: `/team/${entries.origin}`,
                 name: entries.origin,
                 meta: { forehead: '始源星系' },
                 component: () => import('@page/team/origin/index.vue'),
             },
             {
-                path: `/${entries.durivi}`,
+                path: `/team/${entries.durivi}`,
                 name: entries.durivi,
                 meta: { forehead: '双衍王境' },
                 component: () => import('@page/team/durivi/index.vue'),
             },
             {
-                path: `/${entries.empyrean}`,
+                path: `/team/${entries.empyrean}`,
                 name: entries.empyrean,
                 meta: { forehead: '九重天' },
                 component: () => import('@page/team/empyrean/index.vue'),
             },
             {
-                path: '/activity',
+                path: '/team/activity',
                 name: 'activity',
                 meta: { forehead: '活动' },
                 redirect: '/activity/event',
                 children: [
                     {
-                        path: '/activity/event',
+                        path: '/team/activity/event',
                         name: 'event',
                         meta: { forehead: '事件' },
                         component: () =>
                             import('@page/team/activity/event/index.vue'),
                     },
                     {
-                        path: '/activity/alarm',
+                        path: '/team/activity/alarm',
                         name: 'alarm',
                         meta: { forehead: '警报' },
                         component: () =>
                             import('@page/team/activity/alarm/index.vue'),
                     },
                     {
-                        path: '/activity/steelpath',
+                        path: '/team/activity/steelpath',
                         name: 'steelpath',
                         meta: { forehead: '钢铁之路侵袭' },
                         component: () =>
                             import('@page/team/activity/steelpath/index.vue'),
                     },
                     {
-                        path: '/activity/invasion',
+                        path: '/team/activity/invasion',
                         name: 'invasion',
                         meta: { forehead: '侵袭' },
                         component: () =>
                             import('@page/team/activity/invasion/index.vue'),
                     },
                     {
-                        path: '/activity/syndicate',
+                        path: '/team/activity/syndicate',
                         name: 'syndicate',
                         meta: { forehead: '集团' },
                         component: () =>
                             import('@page/team/activity/syndicate/index.vue'),
                     },
                     {
-                        path: '/activity/fissure',
+                        path: '/team/activity/fissure',
                         name: 'fissure',
                         meta: { forehead: '虚空裂缝' },
                         component: () =>
                             import('@page/team/activity/fissure/index.vue'),
                     },
                     {
-                        path: '/activity/sortie',
+                        path: '/team/activity/sortie',
                         name: 'sortie',
                         meta: { forehead: '突击' },
                         component: () =>
                             import('@page/team/activity/sortie/index.vue'),
                     },
                     {
-                        path: '/activity/hunt',
+                        path: '/team/activity/hunt',
                         name: 'hunt',
                         meta: { forehead: '执行官猎杀' },
                         component: () =>

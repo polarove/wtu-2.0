@@ -105,7 +105,9 @@
                     <div class="addFormItem">
                         <div
                             class="i-ant-design:usergroup-add-outlined icon mr-4"
-                            @click.prevent="addMember()"
+                            @click.prevent="
+                                addMember(createTeamForm.members.length)
+                            "
                         ></div>
                     </div>
                 </el-form-item>
@@ -140,10 +142,11 @@
 <script setup lang="ts">
 import { authStore } from '@/store'
 import { type FormInstance, type FormRules } from 'element-plus'
-import { type CreateTeamInstance } from '@/composables/types'
+import { type TeamInstance } from '@/composables/team'
 import { type warframe } from '@/composables/warframe'
 import { requirements } from '@composables/requirement'
 import { CreateTeam } from '@api/team'
+import { type response } from '@composables/types'
 const routes = useRoute()
 const _authStore = authStore()
 
@@ -157,7 +160,7 @@ const createTeamFormRules = reactive<FormRules>({
         },
     ],
 })
-const createTeamForm = reactive<CreateTeamInstance>({
+const createTeamForm = reactive<TeamInstance>({
     title: '未修改的标题',
     server: _authStore.getServer(),
     channel: null,
@@ -175,6 +178,7 @@ const createTeamForm = reactive<CreateTeamInstance>({
                 cn: '任意',
             },
             focus: 'any',
+            role: 0,
         },
         {
             user: {
@@ -188,9 +192,40 @@ const createTeamForm = reactive<CreateTeamInstance>({
                 cn: '任意',
             },
             focus: 'any',
+            role: 1,
         },
     ],
 })
+
+const addMember = (index: number) => {
+    if (createTeamForm.members.length > 3) {
+        return
+    }
+    createTeamForm.members.push({
+        user: {
+            uuid: '',
+            name: '',
+            avatar: '',
+            level: 0,
+        },
+        warframe: {
+            en: 'any',
+            cn: '任意',
+        },
+        focus: 'any',
+        role: index,
+    })
+}
+
+const removeMember = (member: any) => {
+    const index = createTeamForm.members.indexOf(member)
+    if (index === 0 || index === 1) {
+        return
+    }
+    if (index !== -1) {
+        createTeamForm.members.splice(index, 1)
+    }
+}
 
 const removeRequirement = (requirement: any) => {
     const index = createTeamForm.requirements.indexOf(requirement)
@@ -207,34 +242,6 @@ const addRequirement = () => {
         content: '',
     })
 }
-const addMember = () => {
-    if (createTeamForm.members.length > 3) {
-        return
-    }
-    createTeamForm.members.push({
-        user: {
-            uuid: '',
-            name: '',
-            avatar: '',
-            level: 0,
-        },
-        warframe: {
-            en: 'any',
-            cn: '任意',
-        },
-        focus: 'any',
-    })
-}
-
-const removeMember = (member: any) => {
-    const index = createTeamForm.members.indexOf(member)
-    if (index === 0 || index === 1) {
-        return
-    }
-    if (index !== -1) {
-        createTeamForm.members.splice(index, 1)
-    }
-}
 
 const teamDrawer = reactive({
     dynamicSize: '40%',
@@ -242,6 +249,7 @@ const teamDrawer = reactive({
     title: '',
     direction: 'rtl',
     from: 0,
+    edit: 0,
 })
 
 const warframeListDrawer = reactive({
@@ -249,26 +257,25 @@ const warframeListDrawer = reactive({
     title: '选择一个战甲',
     dynamicSize: '40%',
     direction: 'rtl',
-    edit: 0,
 })
 
 const toggleWarframeDrawer = (index: number) => {
     warframeListDrawer.visible = !warframeListDrawer.visible
-    if (!index) {
+    if (index === undefined) {
         return
     }
-    warframeListDrawer.edit = index
+    teamDrawer.edit = index
 }
 
 const selectWarframe = (target: warframe) => {
-    createTeamForm.members[warframeListDrawer.edit].warframe = target
+    createTeamForm.members[teamDrawer.edit as number].warframe = target
 }
 
 const title = computed(() => {
-    if (warframeListDrawer.edit === 1) {
+    if (teamDrawer.edit === 0) {
         return '选择你的战甲'
     }
-    return '选择第' + warframeListDrawer.edit + '个队友的战甲'
+    return '选择第' + teamDrawer.edit + '个队友的战甲'
 })
 
 const createTeam = (index: number) => {
@@ -296,10 +303,13 @@ const publishTeam = (formEl: FormInstance | undefined) => {
             return
         }
         createTeamForm.channel = routes.name
-        const result = await CreateTeam(createTeamForm)
-        console.log(result)
+        const result = (await CreateTeam(createTeamForm)) as response
+        if (result.success) {
+            teamDrawer.visible = false
+        } else {
+            ElMessage.error(result.message)
+        }
     })
-    console.log(createTeamForm)
 }
 
 const initDrawerWidth = () => {

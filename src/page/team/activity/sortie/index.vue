@@ -1,5 +1,5 @@
 <template>
-    <div>活动组队</div>
+    <WtuTeamList />
 </template>
 
 <script setup lang="ts"></script>

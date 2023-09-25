@@ -14,12 +14,16 @@
                 :scale="wideMode ? 1 : 0.8"
             />
         </div>
-        <RouterView class="ma-auto" />
+        <div><RouterView class="ma-auto" /></div>
     </div>
     <WtuFooter />
 </template>
 
 <script setup lang="ts">
+import { teamStore } from '@/store'
+const _teamStore = teamStore()
+const route = useRoute()
+
 const wideMode = ref(true)
 
 const initLayouts = () => {
@@ -35,12 +39,17 @@ window.addEventListener('resize', () => {
 
 onMounted(() => {
     initLayouts()
+    _teamStore.initTeamList(route.name)
 })
 
 onBeforeUnmount(() => {
     window.removeEventListener('resize', () => {
         initLayouts()
     })
+})
+
+onBeforeRouteUpdate((to) => {
+    _teamStore.initTeamList(to.name)
 })
 </script>
 
