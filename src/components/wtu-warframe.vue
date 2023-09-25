@@ -52,6 +52,7 @@ const src = computed(() => {
     cursor: pointer;
     text-align: center;
     text-wrap: pretty;
+    user-select: none;
     &:hover {
         .text {
             color: var(--el-color-primary) !important;

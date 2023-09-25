@@ -1,6 +1,8 @@
 import { RouteRecordName } from 'vue-router'
 import { warframe } from './warframe'
 import { Page } from './types'
+import { UserBO } from './user'
+
 export interface userInTeam {
     uuid: string
     name: string
@@ -13,7 +15,8 @@ export interface TeamMate {
     user: userInTeam
     warframe: warframe
     focus: string
-    role: number
+    leader: number
+    occupied: number
 }
 
 export interface teamRequirement {
@@ -29,7 +32,7 @@ export interface TeamInstance {
     members: Array<TeamMate>
 }
 
-export interface teamBO {
+export interface TeamBO {
     id: number
     uuid: string
     server: number
@@ -43,8 +46,10 @@ export interface teamBO {
 export interface TeamMemberBO {
     id: number
     focus: string
-    role: number
+    leader: number
     warframe: warframe
+    occupied: number
+    user: UserBO
     isDeleted: number
 }
 
@@ -56,7 +61,7 @@ export interface TeamRequirementBO {
 }
 
 export interface TeamList {
-    team: teamBO
+    team: TeamBO
     members: Array<TeamMemberBO>
     requirements: Array<TeamRequirementBO>
 }

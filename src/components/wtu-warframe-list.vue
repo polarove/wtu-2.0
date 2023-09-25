@@ -51,8 +51,8 @@
         <div class="flex-center h-70vh" v-else>
             <WtuWarframe
                 :modelValue="targetWarframe"
-                width="130px"
-                style="transform: scale(3)"
+                width="140px"
+                style="transform: scale(2.4)"
                 @click="confirm()"
             />
         </div>

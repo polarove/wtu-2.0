@@ -63,6 +63,33 @@ export default defineConfig({
             },
         ],
         [
+            'flex-col',
+            {
+                display: 'flex',
+                'flex-direction': 'column',
+                'justify-content': 'center',
+                'align-items': 'center',
+            },
+        ],
+        [
+            'flex-col',
+            {
+                display: 'flex',
+                'flex-direction': 'column',
+                'justify-content': 'flex-start',
+                'align-items': 'center',
+            },
+        ],
+        [
+            'flex-col-reverse',
+            {
+                display: 'flex',
+                'flex-direction': 'column-reverse',
+                'justify-content': 'center',
+                'align-items': 'center',
+            },
+        ],
+        [
             'font-smiley',
             {
                 'font-family': 'smiley-sans',

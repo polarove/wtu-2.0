@@ -1,45 +1,45 @@
 export interface Focus {
-    en: string
     cn: string
-    value: number
-    label: string
+    cn_simplified: string
+    en: string
+    en_simplified: string
 }
 
 export const focus: Array<Focus> = [
     {
-        en: 'any',
         cn: '任意',
-        value: 0,
-        label: 'any',
+        cn_simplified: '任意',
+        en: 'any',
+        en_simplified: 'any',
     },
     {
-        en: 'Madurai',
         cn: '马杜莱',
-        value: 1,
-        label: 'M',
+        cn_simplified: 'M晶',
+        en: 'Madurai',
+        en_simplified: 'M',
     },
     {
-        en: 'Naramon',
         cn: '纳拉蒙',
-        value: 2,
-        label: 'N',
+        cn_simplified: 'N晶',
+        en: 'Naramon',
+        en_simplified: 'N',
     },
     {
-        en: 'Unairu',
         cn: '乌奈鲁',
-        value: 3,
-        label: 'U',
+        cn_simplified: 'U晶',
+        en: 'Unairu',
+        en_simplified: 'U',
     },
     {
-        en: 'Vazarin',
         cn: '瓦扎林',
-        value: 4,
-        label: 'V',
+        cn_simplified: 'V晶',
+        en: 'Vazarin',
+        en_simplified: 'V',
     },
     {
-        en: 'Zenurik',
         cn: '泽努里克',
-        value: 5,
-        label: 'Z',
+        cn_simplified: 'Z晶',
+        en: 'Zenurik',
+        en_simplified: 'Z',
     },
 ]

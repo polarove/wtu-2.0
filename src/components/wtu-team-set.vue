@@ -52,7 +52,7 @@
                                 <el-option
                                     v-for="(requirement, index) in requirements"
                                     :key="index"
-                                    :value="requirement.type"
+                                    :value="requirement.name"
                                     :label="requirement.name"
                                 />
                             </el-select>
@@ -79,11 +79,11 @@
                 <el-form-item
                     v-for="(member, index) in createTeamForm.members"
                     :key="index"
-                    :label="!index ? member.user.name : '队友_' + index + ':'"
+                    :label="!index ? '我' : '队友_' + index + ':'"
                     class="member"
                 >
                     <div class="flex-between w-100%">
-                        <div class="flex-center">
+                        <div class="flex-start w-100%">
                             <WtuWarframe
                                 v-model="member.warframe"
                                 @click="toggleWarframeDrawer(index)"
@@ -91,7 +91,8 @@
                             <WtuFocusList
                                 v-model="member.focus"
                                 size="3em"
-                                :rows="1"
+                                :rows="rows"
+                                simplified
                             />
                         </div>
                         <div
@@ -105,9 +106,7 @@
                     <div class="addFormItem">
                         <div
                             class="i-ant-design:usergroup-add-outlined icon mr-4"
-                            @click.prevent="
-                                addMember(createTeamForm.members.length)
-                            "
+                            @click.prevent="addMember()"
                         ></div>
                     </div>
                 </el-form-item>
@@ -179,7 +178,8 @@ const createTeamForm = reactive<TeamInstance>({
                 cn: '任意',
             },
             focus: 'any',
-            role: 0,
+            leader: 1,
+            occupied: 1,
         },
         {
             user: {
@@ -193,12 +193,13 @@ const createTeamForm = reactive<TeamInstance>({
                 cn: '任意',
             },
             focus: 'any',
-            role: 1,
+            leader: 0,
+            occupied: 0,
         },
     ],
 })
 
-const addMember = (index: number) => {
+const addMember = () => {
     if (createTeamForm.members.length > 3) {
         return
     }
@@ -214,7 +215,8 @@ const addMember = (index: number) => {
             cn: '任意',
         },
         focus: 'any',
-        role: index,
+        leader: 0,
+        occupied: 0,
     })
 }
 
@@ -307,20 +309,23 @@ const publishTeam = (formEl: FormInstance | undefined) => {
         const result = (await CreateTeam(createTeamForm)) as response
         if (result.success) {
             teamDrawer.visible = false
+            console.log(result.data)
             _teamStore.addTeam(result.data as TeamList)
         } else {
             ElMessage.error(result.message)
         }
     })
 }
-
+const rows = ref<number>(1)
 const initDrawerWidth = () => {
     if (document.body.clientWidth < 900) {
         teamDrawer.dynamicSize = '100%'
         warframeListDrawer.dynamicSize = '95%'
+        rows.value = 2
     } else {
         teamDrawer.dynamicSize = '40%'
         warframeListDrawer.dynamicSize = '35%'
+        rows.value = 1
     }
 }
 initDrawerWidth()

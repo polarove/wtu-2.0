@@ -20,21 +20,11 @@
 </template>
 
 <script setup lang="ts">
-import { teamStore, authStore } from '@/store'
-import type { TeamListParams } from '@composables/team'
-import { RouteRecordName } from 'vue-router'
+import { teamStore } from '@/store'
 const _teamStore = teamStore()
-const _authStore = authStore()
 const route = useRoute()
 
 const wideMode = ref(true)
-
-const param = reactive<TeamListParams>({
-    page: 1,
-    size: 5,
-    server: _authStore.getServer(),
-    channel: null,
-})
 
 const initLayouts = () => {
     if (document.body.clientWidth < 900) {
@@ -49,7 +39,7 @@ window.addEventListener('resize', () => {
 
 onMounted(() => {
     initLayouts()
-    initTeamList(route.name)
+    _teamStore.initTeamList(route.name)
 })
 
 onBeforeUnmount(() => {
@@ -59,13 +49,12 @@ onBeforeUnmount(() => {
 })
 
 onBeforeRouteUpdate((to) => {
-    initTeamList(to.name)
+    _teamStore.initTeamList(to.name)
 })
 
-const initTeamList = (channel: RouteRecordName | undefined | null) => {
-    param.channel = channel
-    _teamStore.initTeamList(param)
-}
+setInterval(() => {
+    _teamStore.initTeamList(route.name)
+}, 1000 * 60 * 3)
 </script>
 
 <style lang="scss" scoped>

@@ -5,12 +5,8 @@ import { getUserVOByUUID } from '@api/account'
 import { ElMessage } from 'element-plus'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { warframe } from '@/composables/warframe'
-import type {
-    TeamInstance,
-    TeamList,
-    TeamPage,
-    TeamListParams,
-} from '@composables/team'
+import type { TeamList, TeamPage, TeamListParams } from '@composables/team'
+import type { RouteRecordName } from 'vue-router'
 import { GetTeamList } from '@api/team'
 
 export const authStore = defineStore({
@@ -116,23 +112,57 @@ export const authStore = defineStore({
 export const teamStore = defineStore({
     id: 'team',
     state: () => ({
-        TeamInstance: {} as TeamInstance,
+        param: {} as TeamListParams,
         TeamPage: {} as TeamPage,
+        loading: false,
     }),
     actions: {
-        initTeamList(param: TeamListParams) {
-            GetTeamList(param).then((res: any) => {
+        initTeamList(rotue: RouteRecordName | undefined | null) {
+            this.loading = true
+            const _authStore = authStore()
+            this.param = {
+                page: 1,
+                size: 5,
+                server: _authStore.getServer(),
+                channel: rotue,
+            }
+            GetTeamList(this.param).then((res: any) => {
                 if (res.success) {
                     this.setTeam(res.data.records as Array<TeamList>)
                 } else {
                     ElMessage.error(res.message)
                 }
+                this.loading = false
             })
+            console.log(this.TeamPage.records)
+        },
+        removeTeam(id: number) {
+            this.TeamPage.records = this.TeamPage.records.filter(
+                (item) => item.team.id !== id
+            )
+        },
+        toggleTeamStatus(uuid: string, status: number) {
+            this.TeamPage.records.map((item) => {
+                if (item.team.uuid === uuid) {
+                    item.team.status = status
+                }
+            })
+        },
+        getLoading(): boolean {
+            return this.loading
+        },
+        getParam(): TeamListParams {
+            return this.param
+        },
+        setParam(param: TeamListParams) {
+            this.param = param
         },
         setTeam(TeamList: Array<TeamList>) {
             this.TeamPage.records = TeamList
         },
         getTeam(): Array<TeamList> {
+            console.log(this.TeamPage.records)
+
             return this.TeamPage.records
         },
         getTeamPage(): TeamPage {
@@ -142,7 +172,7 @@ export const teamStore = defineStore({
             this.TeamPage.records.push(team)
         },
         isEmpty(): boolean {
-            return this.TeamPage.records.length === 0
+            return this.TeamPage.records.values().next().done ? true : false
         },
     },
     persist: true,

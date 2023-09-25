@@ -8,3 +8,9 @@ export interface User {
     level: number
     boosterList: string[]
 }
+
+export interface UserBO {
+    uuid: string
+    name: string
+    avatar: string
+}

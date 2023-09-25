@@ -9,7 +9,8 @@ import { authStore, teamStore } from '@/store'
 import { toUpperCase } from '@/util/StrUtil'
 import { ServerEnum } from '@composables/enums'
 import { ToggleServer } from '@api/account'
-import { User, response } from '@/composables/types'
+import { response } from '@/composables/types'
+import type { User } from '@/composables/user'
 const route = useRoute()
 const _authStore = authStore()
 const _teamStore = teamStore()
