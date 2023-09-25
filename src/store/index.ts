@@ -111,6 +111,8 @@ export const authStore = defineStore({
 export const teamStore = defineStore({
     id: 'team',
     state: () => ({
+        published: false,
+        TeamInstance: {} as TeamInstance,
         TeamList: [] as Array<TeamInstance>,
     }),
     actions: {
@@ -122,14 +124,13 @@ export const teamStore = defineStore({
                 server: _authStore.getServer(),
                 channel: channel,
             }
-            console.log(param)
-            // GetTeamList(param).then((res: any) => {
-            //     if (res.success) {
-            //         this.setTeam(res.data as Array<TeamInstance>)
-            //     } else {
-            //         ElMessage.error(res.message)
-            //     }
-            // })
+            GetTeamList(param).then((res: any) => {
+                if (res.success) {
+                    this.setTeam(res.data as Array<TeamInstance>)
+                } else {
+                    ElMessage.error(res.message)
+                }
+            })
         },
         setTeam(TeamList: Array<TeamInstance>) {
             this.TeamList = TeamList
@@ -141,4 +142,5 @@ export const teamStore = defineStore({
             return this.TeamList.length === 0
         },
     },
+    persist: true,
 })

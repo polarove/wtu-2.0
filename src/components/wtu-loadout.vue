@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
 const IMAGE_ORIGIN = import.meta.env.VITE_APP_IMAGE_ORIGIN as string
-import { type TeamMate } from '@/composables/types'
+import { type TeamMate } from '@/composables/team'
 import { isNotBlank } from '@/util/StrUtil'
 const disabled = ref(false)
 const disablePopover = () => {

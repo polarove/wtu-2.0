@@ -14,7 +14,7 @@
                 :scale="wideMode ? 1 : 0.8"
             />
         </div>
-        <div><RouterView class="ma-auto" /></div>
+        <div class="w-75vw p-1em h-100% ma-auto"><RouterView /></div>
     </div>
     <WtuFooter />
 </template>
