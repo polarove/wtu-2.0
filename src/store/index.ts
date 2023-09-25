@@ -126,7 +126,7 @@ export const teamStore = defineStore({
             }
             GetTeamList(param).then((res: any) => {
                 if (res.success) {
-                    console.log(res.data)
+                    console.log(res)
                     this.setTeam(res.data as Array<TeamInstance>)
                 } else {
                     ElMessage.error(res.message)
