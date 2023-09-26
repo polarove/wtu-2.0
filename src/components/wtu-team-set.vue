@@ -245,7 +245,7 @@ const addRequirement = () => {
         return
     }
     createTeamForm.requirements.push({
-        type: 'any',
+        type: '任意',
         content: '',
     })
 }
