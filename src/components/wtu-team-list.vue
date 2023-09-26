@@ -1,18 +1,14 @@
 <template>
     <RyuLoading :loading="_teamStore.getLoading()">
-        <RyuEmpty
-            iconSize="6em"
-            tip="当前暂无组队信息"
-            :empty="_teamStore.isEmpty()"
-        >
+        <RyuEmpty iconSize="6em" tip="当前暂无组队信息" :empty="empty">
             <el-card
                 class="team"
                 v-for="(instance, index) in _teamStore.getTeam()"
             >
                 <template #header>
                     <div class="flex-between">
-                        <span>{{ instance.team.title }}</span>
-                        <div>
+                        <span>{{ instance.team.title }}2</span>
+                        <div class="invisible-max-900px">
                             <el-button
                                 size="small"
                                 type="success"
@@ -99,6 +95,7 @@
                                 </template>
                             </el-popconfirm>
                         </div>
+                        <div class="visible-min-900px">2323</div>
                     </div>
                 </template>
                 <el-row>
@@ -163,6 +160,7 @@ import { ElNotification } from 'element-plus'
 const _teamStore = teamStore()
 const _authStore = authStore()
 const activeNames = ref<string>()
+const empty = ref<boolean>(false)
 const loading = reactive({
     delete: false,
     status: false,
@@ -225,6 +223,12 @@ const joinTeam = (teamId: number, name: string | undefined) => {
         position: 'bottom-right',
     })
 }
+
+watchEffect(() => {
+    if (_teamStore.getTeam() !== undefined) {
+        empty.value = _teamStore.getTeam().length === 0
+    }
+})
 </script>
 
 <style lang="scss" scoped>

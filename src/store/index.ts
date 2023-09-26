@@ -161,8 +161,6 @@ export const teamStore = defineStore({
             this.TeamPage.records = TeamList
         },
         getTeam(): Array<TeamList> {
-            console.log(this.TeamPage.records)
-
             return this.TeamPage.records
         },
         getTeamPage(): TeamPage {
@@ -171,9 +169,6 @@ export const teamStore = defineStore({
         addTeam(team: TeamList) {
             this.TeamPage.records.splice(0, 0, team)
         },
-        isEmpty(): boolean {
-            return this.TeamPage.records.values().next().done ? true : false
-        },
     },
-    persist: true,
+    persist: false,
 })
