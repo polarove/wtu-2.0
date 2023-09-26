@@ -134,7 +134,6 @@ export const teamStore = defineStore({
                 }
                 this.loading = false
             })
-            console.log(this.TeamPage.records)
         },
         removeTeam(id: number) {
             this.TeamPage.records = this.TeamPage.records.filter(

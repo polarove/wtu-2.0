@@ -9,9 +9,7 @@
             </div>
             <div class="inline-block">
                 <WtuProfileRoute class="hidden-router" />
-                <div class="text-size-[2rem] font-bold name">
-                    {{ _authStore.getName() }}
-                </div>
+                <RyuName class="text-size-[2rem] font-bold name" />
                 <div class="text-gray">
                     <RyuSvg name="quote"></RyuSvg>
                     <span>{{ _authStore.getDescription() }}</span>

@@ -37,6 +37,7 @@ declare module 'vue' {
     RyuCode: typeof import('./src/components/ryu-code.vue')['default']
     RyuEmpty: typeof import('./src/components/ryu-empty.vue')['default']
     RyuLoading: typeof import('./src/components/ryu-loading.vue')['default']
+    RyuName: typeof import('./src/components/ryu-name.vue')['default']
     RyuSponsor: typeof import('./src/components/ryu-sponsor.vue')['default']
     RyuSvg: typeof import('./src/components/ryu-svg.vue')['default']
     WtuActivity: typeof import('./src/components/wtu-activity.vue')['default']
