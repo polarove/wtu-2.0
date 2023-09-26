@@ -34,6 +34,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     RyuBeian: typeof import('./src/components/ryu-beian.vue')['default']
+    RyuClipboard: typeof import('./src/components/ryu-clipboard.vue')['default']
     RyuCode: typeof import('./src/components/ryu-code.vue')['default']
     RyuEmpty: typeof import('./src/components/ryu-empty.vue')['default']
     RyuLoading: typeof import('./src/components/ryu-loading.vue')['default']

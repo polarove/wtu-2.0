@@ -1,6 +1,11 @@
 <template>
-    <RyuLoading :loading="_teamStore.getLoading()">
-        <RyuEmpty iconSize="6em" tip="当前暂无组队信息" :empty="empty">
+    <RyuLoading :loading="_teamStore.getLoading()" class="mt-1em">
+        <RyuEmpty
+            iconSize="6em"
+            tip="当前暂无组队信息"
+            :empty="empty"
+            class="mt-1em"
+        >
             <el-card
                 class="team"
                 v-for="(instance, index) in _teamStore.getTeam()"
@@ -67,84 +72,89 @@
                                 </template>
                             </el-popconfirm>
                         </div>
-                        <el-dropdown
-                            class="invisible-max-900px"
-                            :hide-on-click="false"
-                            v-if="isCreator(instance.team.creatorUuid)"
-                        >
-                            <span class="i-ep:arrow-down"> </span>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item>
-                                        <el-button
-                                            v-if="
-                                                instance.team.creatorUuid ===
-                                                _authStore.getUUID()
-                                            "
-                                            :loading="loading.status"
-                                            size="small"
-                                            :type="
-                                                isPublic(
-                                                    instance.team.creatorUuid,
-                                                    instance.team.status
-                                                )
-                                                    ? 'success'
-                                                    : 'danger'
-                                            "
-                                            @click="
-                                                toggleTeamStatus(
-                                                    instance.team.uuid,
-                                                    isPublic(
-                                                        instance.team
-                                                            .creatorUuid,
-                                                        instance.team.status
-                                                    )
-                                                        ? 0
-                                                        : 1
-                                                )
-                                            "
-                                        >
-                                            <div
-                                                :class="
-                                                    isPublic(
-                                                        instance.team
-                                                            .creatorUuid,
-                                                        instance.team.status
-                                                    )
-                                                        ? 'i-ep:view'
-                                                        : 'i-ep:hide'
+
+                        <div class="invisible-max-900px">
+                            <el-dropdown
+                                :hide-on-click="false"
+                                v-if="isCreator(instance.team.creatorUuid)"
+                            >
+                                <span class="i-ep:arrow-down"> </span>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item>
+                                            <el-button
+                                                v-if="
+                                                    instance.team
+                                                        .creatorUuid ===
+                                                    _authStore.getUUID()
                                                 "
-                                            ></div> </el-button
-                                    ></el-dropdown-item>
-                                    <el-dropdown-item>
-                                        <el-popconfirm
-                                            title="删除？"
-                                            width="40"
-                                            confirm-button-text="是"
-                                            cancel-button-text="不了"
-                                            v-if="
-                                                isCreator(
-                                                    instance.team.creatorUuid
-                                                )
-                                            "
-                                            @confirm="
-                                                removeTeam(instance.team.id)
-                                            "
-                                            :hide-icon="true"
-                                            confirm-button-type="default"
-                                        >
-                                            <template #reference>
-                                                <el-button size="small">
-                                                    <div
-                                                        class="i-ep:close"
-                                                    ></div>
-                                                </el-button>
-                                            </template>
-                                        </el-popconfirm>
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
+                                                :loading="loading.status"
+                                                size="small"
+                                                :type="
+                                                    isPublic(
+                                                        instance.team
+                                                            .creatorUuid,
+                                                        instance.team.status
+                                                    )
+                                                        ? 'success'
+                                                        : 'danger'
+                                                "
+                                                @click="
+                                                    toggleTeamStatus(
+                                                        instance.team.uuid,
+                                                        isPublic(
+                                                            instance.team
+                                                                .creatorUuid,
+                                                            instance.team.status
+                                                        )
+                                                            ? 0
+                                                            : 1
+                                                    )
+                                                "
+                                            >
+                                                <div
+                                                    :class="
+                                                        isPublic(
+                                                            instance.team
+                                                                .creatorUuid,
+                                                            instance.team.status
+                                                        )
+                                                            ? 'i-ep:view'
+                                                            : 'i-ep:hide'
+                                                    "
+                                                ></div> </el-button
+                                        ></el-dropdown-item>
+                                        <el-dropdown-item>
+                                            <el-popconfirm
+                                                title="删除？"
+                                                width="40"
+                                                confirm-button-text="是"
+                                                cancel-button-text="不了"
+                                                v-if="
+                                                    isCreator(
+                                                        instance.team
+                                                            .creatorUuid
+                                                    )
+                                                "
+                                                @confirm="
+                                                    removeTeam(instance.team.id)
+                                                "
+                                                :hide-icon="true"
+                                                confirm-button-type="default"
+                                            >
+                                                <template #reference>
+                                                    <el-button size="small">
+                                                        <div
+                                                            class="i-ep:close"
+                                                        ></div>
+                                                    </el-button>
+                                                </template>
+                                            </el-popconfirm>
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </div>
                     </div>
                 </template>
                 <el-row>
@@ -157,45 +167,59 @@
                     v-model="activeNames"
                     v-if="instance.requirements.length > 0"
                     accordion
-                    @change="
-                        joinTeam(
-                            instance.team.id,
-                            instance.members.find((member) => member.leader)
-                                ?.user.name
-                        )
-                    "
                 >
                     <el-collapse-item :name="index">
                         <template #title>
-                            <div class="flex-center select-none">
-                                <span
-                                    v-if="
-                                        copyHistory.includes(instance.team.id)
-                                    "
-                                    class="i-ep:document-checked text-size-[1.4em] color-green-500"
-                                ></span>
-                                <span
-                                    v-else
-                                    class="i-ep:document text-size-[1.4em]"
-                                ></span>
-                                <span class="text-size-[1.11em]">
-                                    &nbsp;入队要求
-                                </span>
-                            </div>
+                            <span class="font-bold">
+                                {{ instance.requirements.length }}&nbsp;
+                            </span>
+                            <span> 入队要求 </span>
                         </template>
                         <div
                             v-for="requirement in instance.requirements"
                             class="requirement"
                         >
-                            <span class="type"
-                                >{{ requirement.type }}&nbsp;&nbsp;></span
+                            <span class="type">
+                                {{ requirement.type }}&nbsp;&nbsp;</span
                             >
                             <span class="content">
                                 {{ requirement.content }}
                             </span>
                         </div>
+                        <RyuClipboard
+                            :content="
+                                instance.members.find((member) => member.leader)
+                                    ?.user.name
+                            "
+                            prefix="/join"
+                            icon="i-ep:document"
+                            checked="i-ep:document-checked"
+                        >
+                            <template #append>
+                                <div
+                                    class="i-ep:chat-dot-square hover-color-blue ml-5px text-size-[1.4em]"
+                                ></div>
+                            </template>
+                        </RyuClipboard>
                     </el-collapse-item>
                 </el-collapse>
+                <RyuClipboard
+                    v-else
+                    :content="
+                        instance.members.find((member) => member.leader)?.user
+                            .name
+                    "
+                    prefix="/join"
+                    icon="i-ep:document"
+                    checked="i-ep:document-checked"
+                    fontSize="0.8em"
+                >
+                    <template #append>
+                        <div
+                            class="i-ep:chat-dot-square hover-color-blue ml-5px text-size-[1.4em]"
+                        ></div>
+                    </template>
+                </RyuClipboard>
             </el-card>
         </RyuEmpty>
     </RyuLoading>
@@ -205,7 +229,6 @@
 import { Response } from '@/composables/types'
 import { ToggleTeamStatus, RemoveTeam } from '@api/team'
 import { teamStore, authStore } from '@/store'
-import { ElNotification } from 'element-plus'
 const _teamStore = teamStore()
 const _authStore = authStore()
 const activeNames = ref<string>()
@@ -250,27 +273,6 @@ const removeTeam = async (id: number) => {
         loading.delete = false
         ElMessage.error(result.message)
     }
-}
-
-const copyHistory = reactive<Array<number>>([])
-const joinTeam = (teamId: number, name: string | undefined) => {
-    if (!name) {
-        return
-    }
-    let prefix = '/join '
-    let result = prefix + name
-
-    navigator.clipboard.writeText(result)
-    if (copyHistory.includes(teamId)) {
-        return
-    }
-    copyHistory.push(teamId)
-    ElNotification.success({
-        title: '已复制入队指令',
-        message: '请在游戏内聊天框粘贴',
-        offset: 20,
-        position: 'bottom-right',
-    })
 }
 
 watchEffect(() => {
