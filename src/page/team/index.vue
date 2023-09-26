@@ -20,14 +20,22 @@
 </template>
 
 <script setup lang="ts">
-import { TeamList, TeamPage } from '@/composables/team'
-import { teamStore } from '@/store'
+import type { TeamList, TeamListParams, TeamPage } from '@/composables/team'
+import { teamStore, authStore } from '@/store'
 import { GetTeamList } from '@api/team'
 import type { response } from '@/composables/types'
 const _teamStore = teamStore()
+const _authStore = authStore()
 const route = useRoute()
 
 const wideMode = ref(true)
+const TeamParams = reactive<TeamListParams>({
+    page: 1,
+    size: 5,
+    server: _authStore.getServer(),
+    channel: null,
+    uuid: null,
+})
 
 const initLayouts = () => {
     if (document.body.clientWidth < 900) {
@@ -53,7 +61,9 @@ const autoRefresh = (interval: number) => {
 
 onMounted(() => {
     initLayouts()
-    _teamStore.initTeamList(route.name)
+    TeamParams.channel = route.name
+    _teamStore.setParam(TeamParams)
+    _teamStore.initTeamList()
     autoRefresh(1000 * 60 * 10)
 })
 
@@ -64,7 +74,9 @@ onBeforeUnmount(() => {
 })
 
 onBeforeRouteUpdate((to) => {
-    _teamStore.initTeamList(to.name)
+    TeamParams.channel = to.name
+    _teamStore.setParam(TeamParams)
+    _teamStore.initTeamList()
 })
 </script>
 

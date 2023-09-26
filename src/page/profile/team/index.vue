@@ -1,52 +1,27 @@
 <template>
     <div class="w-55vw">
-        <el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card
-        ><el-card class="card">我是大帅逼</el-card>
+        <WtuTeamList />
     </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { TeamListParams } from '@/composables/team'
+import { teamStore, authStore } from '@/store'
+const _teamStore = teamStore()
+const _authStore = authStore()
+const TeamParams = reactive<TeamListParams>({
+    page: 1,
+    size: 5,
+    server: _authStore.getServer(),
+    channel: null,
+    uuid: null,
+})
+
+onMounted(() => {
+    _teamStore.setParam(TeamParams)
+    _teamStore.initTeamList()
+})
+</script>
 
 <style lang="scss" scoped>
 .card {

@@ -11,7 +11,6 @@ import { ServerEnum } from '@composables/enums'
 import { ToggleServer } from '@api/account'
 import { response } from '@/composables/types'
 import type { User } from '@/composables/user'
-const route = useRoute()
 const _authStore = authStore()
 const _teamStore = teamStore()
 const server = computed(() => {
@@ -32,7 +31,11 @@ const toggleServer = async () => {
     )) as response<User>
     if (result.success) {
         _authStore.setUser(result.data)
-        _teamStore.initTeamList(route.name)
+        _teamStore.setParam({
+            ..._teamStore.getParam(),
+            server: _authStore.getServer(),
+        })
+        _teamStore.initTeamList()
     } else {
         console.log(result.message)
     }

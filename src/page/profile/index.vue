@@ -21,6 +21,7 @@
     <div class="routerview__container">
         <RouterView />
     </div>
+    <WtuFooter />
 </template>
 
 <script setup lang="ts">

@@ -73,6 +73,7 @@ export interface TeamPage extends Page {
 export interface TeamListParams {
     page: number
     size: number
-    server: number
+    server: number | null
     channel: RouteRecordName | undefined | null
+    uuid: string | null
 }

@@ -117,15 +117,8 @@ export const teamStore = defineStore({
         loading: false,
     }),
     actions: {
-        initTeamList(rotue: RouteRecordName | undefined | null) {
+        initTeamList() {
             this.loading = true
-            const _authStore = authStore()
-            this.param = {
-                page: 1,
-                size: 5,
-                server: _authStore.getServer(),
-                channel: rotue,
-            }
             GetTeamList(this.param).then((res: any) => {
                 if (res.success) {
                     this.setTeam(res.data.records as Array<TeamList>)

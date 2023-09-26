@@ -12,9 +12,16 @@
             >
                 <template #header>
                     <div class="flex-between">
-                        <span class="flex-1">{{ instance.team.title }}</span>
+                        <div class="vertical-middle">
+                            <el-tag v-if="showChannel" effect="dark">
+                                {{ getChannel(instance.team.channel) }}
+                            </el-tag>
+                            <span class="ml-5px">
+                                {{ instance.team.title }}
+                            </span>
+                        </div>
                         <div
-                            class="invisible-min-900px"
+                            class="invisible-min-900px flex"
                             v-if="isCreator(instance.team.creatorUuid)"
                         >
                             <el-button
@@ -229,8 +236,20 @@
 import { response } from '@/composables/types'
 import { ToggleTeamStatus, RemoveTeam } from '@api/team'
 import { teamStore, authStore } from '@/store'
+defineProps({
+    showChannel: {
+        type: Boolean,
+        default: true,
+    },
+})
 const _teamStore = teamStore()
 const _authStore = authStore()
+const route = useRouter()
+const getChannel = (routeName: string) => {
+    return route.getRoutes().filter((item) => item.name === routeName)[0].meta
+        .forehead
+}
+
 const activeNames = ref<string>()
 const empty = ref<boolean>(false)
 const loading = reactive({
