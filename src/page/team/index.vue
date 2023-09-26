@@ -26,10 +26,12 @@ import { GetTeamList } from '@api/team'
 import type { response } from '@/composables/types'
 import { defaults } from '@/composables/defaults'
 import { ElNotification } from 'element-plus'
+import { websocket } from '@util/WebsocketUtil'
 const _teamStore = teamStore()
 const _authStore = authStore()
 const route = useRoute()
-
+const socket = new websocket(import.meta.env.VITE_APP_WSS_ORIGIN, '/')
+socket.join(1, 'test', { name: 'test' })
 const wideMode = ref(true)
 const TeamParams = reactive<TeamListParams>({
     page: 1,
@@ -65,7 +67,7 @@ onMounted(() => {
     initLayouts()
     TeamParams.channel = route.name
     _teamStore.setParam(TeamParams)
-    _teamStore.initTeamList()
+    // _teamStore.initTeamList()
     autoRefresh(1000 * 60 * 10)
 })
 

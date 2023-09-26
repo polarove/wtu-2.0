@@ -15,7 +15,7 @@
                         <div class="vertical-middle">
                             <el-tag
                                 v-if="showChannel"
-                                :effect="isDark ? '' : 'dark'"
+                                :effect="isDark ? 'plain' : 'dark'"
                             >
                                 {{ getChannel(instance.team.channel) }}
                             </el-tag>
