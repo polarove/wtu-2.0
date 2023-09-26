@@ -24,6 +24,8 @@ import type { TeamList, TeamListParams, TeamPage } from '@/composables/team'
 import { teamStore, authStore } from '@/store'
 import { GetTeamList } from '@api/team'
 import type { response } from '@/composables/types'
+import { defaults } from '@/composables/defaults'
+import { ElNotification } from 'element-plus'
 const _teamStore = teamStore()
 const _authStore = authStore()
 const route = useRoute()
@@ -78,6 +80,18 @@ onBeforeRouteUpdate((to) => {
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
 })
+
+const e = new defaults()
+if (e.isDefualtUserName(_authStore.getName())) {
+    ElNotification({
+        title: '提示',
+        message: '左键双击 — 头像的右边的名字可更改用户名',
+        type: 'info',
+        duration: 5000,
+        offset: 100,
+        position: 'top-right',
+    })
+}
 </script>
 
 <style lang="scss" scoped>
