@@ -29,6 +29,7 @@ defineProps({
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-top: 2em;
     .tip {
         margin-top: 1em;
         font-size: 0.88em;

@@ -52,9 +52,9 @@ onBeforeRouteUpdate((to) => {
     _teamStore.initTeamList(to.name)
 })
 
-setInterval(() => {
-    _teamStore.initTeamList(route.name)
-}, 1000 * 60 * 3)
+// setInterval(() => {
+//     _teamStore.initTeamList(route.name)
+// }, 1000 * 60 * 3)
 </script>
 
 <style lang="scss" scoped>
