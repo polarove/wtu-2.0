@@ -28,20 +28,16 @@
         </template>
         <template #default>
             <div class="booster-list">
-                <WtuBooster :src="'23'" v-for="booster in BoosterEnum.types">
-                    <template #img>
-                        <img
-                            :class="{
-                                active: _authStore.hasBooster(booster.type),
-                            }"
-                            @click="toggleBooster(booster.type)"
-                            :src="_authStore.hasBooster(booster.type) ?
-                            (booster.Gold.getComment() as string)
-                            : (booster.Invalid.getComment() as string)"
-                            alt="booster"
-                            class="booster-img"
-                        />
-                    </template>
+                <WtuBooster
+                    v-for="booster in boosterList"
+                    :src="
+                        _authStore.hasBooster(booster.en)
+                            ? booster.valid
+                            : booster.invalid
+                    "
+                    @click="toggleBooster(booster.en)"
+                    :active="_authStore.hasBooster(booster.en)"
+                >
                 </WtuBooster>
             </div>
             <div class="flex">
@@ -57,7 +53,8 @@
 import router from '@/router'
 import { authStore } from '@/store'
 import { isBlank } from '@util/StrUtil'
-import { OnlineStatusEnum, BoosterEnum, ActionEnum } from '@composables/enums'
+import { OnlineStatusEnum, ActionEnum } from '@composables/enums'
+import { boosterList } from '@composables/booster'
 import { UpdateUserBooster } from '@api/account'
 const _authStore = authStore()
 
@@ -119,6 +116,8 @@ const UpdateBoosterForm = reactive<UpdateBoosterForm>({
     booster: '',
 })
 const toggleBooster = async (booster: string) => {
+    console.log(1)
+
     if (_authStore.hasBooster(booster)) {
         _authStore.removeBooster(booster)
         UpdateBoosterForm.action = ActionEnum.REMOVE
@@ -157,26 +156,10 @@ const avatarLoadingErrorHandler = (e: Event) => {
 
 .booster-list {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     border-bottom: 1px solid #ebeef5;
     margin-bottom: 7px;
     padding-bottom: 7px;
-
-    .active {
-        opacity: 1 !important;
-        transform: scale(1.2);
-    }
-    .booster-img {
-        width: 50px;
-        margin: 0 5px;
-        cursor: pointer;
-        opacity: 0.4;
-
-        &:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-    }
 }
 </style>

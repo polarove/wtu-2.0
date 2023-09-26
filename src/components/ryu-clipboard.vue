@@ -62,7 +62,7 @@ const copy = () => {
     margin-top: 0.5em;
     font-size: 1em;
     user-select: none;
-    background-color: #f5f5f5;
+    background-color: var(--el-border-color-extra-light);
     padding: 0.5em;
     border-radius: 0.3em;
     display: flex;

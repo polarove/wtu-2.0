@@ -6,7 +6,6 @@ import { ElMessage } from 'element-plus'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { warframe } from '@/composables/warframe'
 import type { TeamList, TeamPage, TeamListParams } from '@composables/team'
-import type { RouteRecordName } from 'vue-router'
 import { GetTeamList } from '@api/team'
 
 export const authStore = defineStore({
@@ -119,14 +118,20 @@ export const teamStore = defineStore({
     actions: {
         initTeamList() {
             this.loading = true
-            GetTeamList(this.param).then((res: any) => {
-                if (res.success) {
-                    this.setTeam(res.data.records as Array<TeamList>)
-                } else {
-                    ElMessage.error(res.message)
-                }
-                this.loading = false
-            })
+            GetTeamList(this.param)
+                .then((res: any) => {
+                    if (res.success) {
+                        this.setTeam(res.data.records as Array<TeamList>)
+                    } else {
+                        ElMessage.error(res.message)
+                    }
+                })
+                .catch((err: any) => {
+                    ElMessage.error(err.message)
+                })
+                .finally(() => {
+                    this.loading = false
+                })
         },
         removeTeam(id: number) {
             this.TeamPage.records = this.TeamPage.records.filter(
@@ -162,5 +167,4 @@ export const teamStore = defineStore({
             this.TeamPage.records.splice(0, 0, team)
         },
     },
-    persist: false,
 })

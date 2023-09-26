@@ -13,7 +13,10 @@
                 <template #header>
                     <div class="flex-between">
                         <div class="vertical-middle">
-                            <el-tag v-if="showChannel" effect="dark">
+                            <el-tag
+                                v-if="showChannel"
+                                :effect="isDark ? '' : 'dark'"
+                            >
                                 {{ getChannel(instance.team.channel) }}
                             </el-tag>
                             <span class="ml-5px">
@@ -180,7 +183,7 @@
                             <span class="font-bold">
                                 {{ instance.requirements.length }}&nbsp;
                             </span>
-                            <span> 入队要求 </span>
+                            <span>入队要求</span>
                         </template>
                         <div
                             v-for="requirement in instance.requirements"
@@ -236,6 +239,7 @@
 import { response } from '@/composables/types'
 import { ToggleTeamStatus, RemoveTeam } from '@api/team'
 import { teamStore, authStore } from '@/store'
+import { isDark } from '@composables/theme'
 defineProps({
     showChannel: {
         type: Boolean,

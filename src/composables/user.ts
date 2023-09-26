@@ -13,4 +13,6 @@ export interface UserBO {
     uuid: string
     name: string
     avatar: string
+    onlineStatus: number
+    boosterList: string[]
 }

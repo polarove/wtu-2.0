@@ -14,7 +14,7 @@ const TeamParams = reactive<TeamListParams>({
     size: 5,
     server: _authStore.getServer(),
     channel: null,
-    uuid: null,
+    uuid: _authStore.getUUID(),
 })
 
 onMounted(() => {
