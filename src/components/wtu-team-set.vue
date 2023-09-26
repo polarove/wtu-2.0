@@ -144,8 +144,9 @@ import { type FormInstance, type FormRules } from 'element-plus'
 import { type TeamInstance, type TeamList } from '@/composables/team'
 import { type warframe } from '@/composables/warframe'
 import { requirements } from '@composables/requirement'
-import { CreateTeam } from '@api/team'
-import { type response } from '@composables/types'
+import { CreateTeam, GetTeamById } from '@api/team'
+import type { Response } from '@/composables/types'
+
 const routes = useRoute()
 const _authStore = authStore()
 const _teamStore = teamStore()
@@ -301,19 +302,30 @@ const publishTeam = (formEl: FormInstance | undefined) => {
     if (!formEl) {
         return
     }
-    formEl.validate(async (valid: boolean) => {
+    formEl.validate((valid: boolean) => {
         if (!valid) {
             return
         }
         createTeamForm.channel = routes.name
-        const result = (await CreateTeam(createTeamForm)) as response
-        if (result.success) {
-            teamDrawer.visible = false
-            console.log(result.data)
-            _teamStore.addTeam(result.data as TeamList)
-        } else {
-            ElMessage.error(result.message)
-        }
+        CreateTeam(createTeamForm)
+            .then(async (res: any) => {
+                if (res.success) {
+                    const result = (await GetTeamById(
+                        res.data
+                    )) as Response<TeamList>
+                    if (result.success) {
+                        _teamStore.addTeam(result.data)
+                    } else {
+                        ElMessage.error(result.message)
+                    }
+                }
+            })
+            .catch((err: any) => {
+                ElMessage.error(err.message)
+            })
+            .finally(() => {
+                teamDrawer.visible = false
+            })
     })
 }
 const rows = ref<number>(1)

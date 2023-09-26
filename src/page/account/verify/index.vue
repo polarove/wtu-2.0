@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import router from '@/router'
 import { Verify, SaveMyProfile } from '@api/account'
-import type { response } from '@composables/types'
+import type { Response, ResponseEnum } from '@composables/types'
 import type { User } from '@composables/user'
 import type { FormInstance, FormRules } from 'element-plus'
 import { authStore } from '@/store'
@@ -86,7 +86,7 @@ const verificationForm = reactive({
 })
 
 const verify = async () => {
-    const result = (await Verify(verificationForm)) as response
+    const result = (await Verify(verificationForm)) as Response<ResponseEnum>
     if (result.code == 204) {
         setTimeout(() => {
             verificationStatus.compeleted = true
@@ -139,10 +139,10 @@ const saveMyProfile = async (formEl: FormInstance | undefined) => {
     formEl.validate(async (valid) => {
         if (valid) {
             VerifyForm.email = email
-            const result = (await SaveMyProfile(VerifyForm)) as response
+            const result = (await SaveMyProfile(VerifyForm)) as Response<User>
             if (result.success) {
                 router.push({ name: 'origin' })
-                _authStore.setUser(result.data as User)
+                _authStore.setUser(result.data)
             } else {
                 ElMessage.error(result.message)
             }

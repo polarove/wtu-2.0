@@ -1,7 +1,7 @@
 // response from server
-export interface response {
+export interface Response<T> {
     code: number
-    data: any
+    data: T
     message: string
     success: boolean
     timestamp: number
@@ -12,4 +12,9 @@ export interface Page {
     pages: number
     size: number
     total: number
+}
+
+export interface ResponseEnum {
+    code: number
+    message: string
 }

@@ -12,6 +12,10 @@ export const ToggleTeamStatus = (data: any) => {
     return TeamController.post('/toggleTeamStatus', data)
 }
 
-export const RemoveTeam = (id: number) => {
-    return TeamController.get('/removeTeam', { id: id })
+export const RemoveTeam = (teamId: number) => {
+    return TeamController.get('/removeTeam', { teamId: teamId })
+}
+
+export const GetTeamById = (teamId: number) => {
+    return TeamController.get('/getTeamById', { teamId: teamId })
 }

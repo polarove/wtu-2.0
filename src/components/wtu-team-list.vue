@@ -156,7 +156,7 @@
 </template>
 
 <script setup lang="ts">
-import { response } from '@/composables/types'
+import { Response } from '@/composables/types'
 import { ToggleTeamStatus, RemoveTeam } from '@api/team'
 import { teamStore, authStore } from '@/store'
 import { ElNotification } from 'element-plus'
@@ -182,7 +182,7 @@ const toggleTeamStatus = async (uuid: string, status: number) => {
         uuid: uuid,
         status: status,
     }
-    const result = (await ToggleTeamStatus(param)) as response
+    const result = (await ToggleTeamStatus(param)) as Response<string>
     if (result.success) {
         loading.status = false
         return
@@ -194,7 +194,7 @@ const toggleTeamStatus = async (uuid: string, status: number) => {
 }
 const removeTeam = async (id: number) => {
     loading.delete = true
-    const result = (await RemoveTeam(id)) as response
+    const result = (await RemoveTeam(id)) as Response<string>
     if (result.success) {
         loading.delete = false
         _teamStore.removeTeam(id)

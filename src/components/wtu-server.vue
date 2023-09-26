@@ -9,7 +9,7 @@ import { authStore, teamStore } from '@/store'
 import { toUpperCase } from '@/util/StrUtil'
 import { ServerEnum } from '@composables/enums'
 import { ToggleServer } from '@api/account'
-import { response } from '@/composables/types'
+import { Response } from '@/composables/types'
 import type { User } from '@/composables/user'
 const route = useRoute()
 const _authStore = authStore()
@@ -29,10 +29,9 @@ defineProps({
 const toggleServer = async () => {
     const result = (await ToggleServer(
         _authStore.getServer() ? 0 : 1
-    )) as response
-
+    )) as Response<User>
     if (result.success) {
-        _authStore.setUser(result.data as User)
+        _authStore.setUser(result.data)
         _teamStore.initTeamList(route.name)
     } else {
         console.log(result.message)

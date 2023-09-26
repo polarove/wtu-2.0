@@ -5,7 +5,7 @@
             :disabled="tooltipDisabled"
         >
             <RyuSvg
-                @click="toggleOnlineStatus(OnlineStatusEnum.offline.getCode())"
+                @click="updateOnlineStatus(OnlineStatusEnum.offline.getCode())"
                 name="offline"
                 :size="size"
                 class="state offline"
@@ -18,7 +18,7 @@
             :disabled="tooltipDisabled"
         >
             <RyuSvg
-                @click="toggleOnlineStatus(OnlineStatusEnum.online.getCode())"
+                @click="updateOnlineStatus(OnlineStatusEnum.online.getCode())"
                 name="online"
                 :size="size"
                 class="state online"
@@ -32,7 +32,7 @@
         >
             <RyuSvg
                 @click="
-                    toggleOnlineStatus(
+                    updateOnlineStatus(
                         OnlineStatusEnum.online_in_game.getCode()
                     )
                 "
@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { UpdateOnlineStatus, Logout } from '@api/account'
-import { response } from '@/composables/types'
+import type { Response } from '@/composables/types'
 import { ElMessage } from 'element-plus'
 import { OnlineStatusEnum } from '@composables/enums'
 import { authStore } from '@/store'
@@ -95,7 +95,7 @@ const user_ingame = computed(() => {
 })
 
 const logout = async () => {
-    const result = (await Logout(_authStore.getUUID())) as response
+    const result = (await Logout(_authStore.getUUID())) as Response<string>
     if (result.code === 200) {
         _authStore.$reset()
         router.replace({ name: 'login' })
@@ -113,7 +113,7 @@ const UpdateOnlineStatusForm = reactive<UpdateOnlineStatusFormType>({
     uuid: _authStore.getUUID(),
 })
 
-const toggleOnlineStatus = async (onlineStatus: number) => {
+const updateOnlineStatus = async (onlineStatus: number) => {
     if (onlineStatus === _authStore.getOnlineStatus()) {
         return
     }
@@ -122,7 +122,7 @@ const toggleOnlineStatus = async (onlineStatus: number) => {
     UpdateOnlineStatusForm.onlineStatus = onlineStatus
     const result = (await UpdateOnlineStatus(
         UpdateOnlineStatusForm
-    )) as response
+    )) as Response<string>
     if (!result.success) {
         _authStore.setOnlineStatus(previosOnlineStatus as number)
         ElMessage.error(result.message)

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { response } from '@composables/types'
+import type { Response } from '@composables/types'
 import type { User } from '@composables/user'
 import { getUserVOByUUID } from '@api/account'
 import { ElMessage } from 'element-plus'
@@ -86,9 +86,9 @@ export const authStore = defineStore({
             if (isBlank(this.getUUID())) {
                 return
             }
-            const result = (await getUserVOByUUID()) as response
+            const result = (await getUserVOByUUID()) as Response<User>
             if (result.success) {
-                this.setUser(result.data as User)
+                this.setUser(result.data)
             } else {
                 ElMessage.error(result.message)
             }
@@ -169,7 +169,7 @@ export const teamStore = defineStore({
             return this.TeamPage
         },
         addTeam(team: TeamList) {
-            this.TeamPage.records.push(team)
+            this.TeamPage.records.splice(0, 0, team)
         },
         isEmpty(): boolean {
             return this.TeamPage.records.values().next().done ? true : false
