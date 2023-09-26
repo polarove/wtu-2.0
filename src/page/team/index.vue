@@ -87,8 +87,8 @@ if (e.isDefualtUserName(_authStore.getName())) {
         title: '提示',
         message: '左键双击 — 头像的右边的名字可更改用户名',
         type: 'info',
-        duration: 5000,
-        offset: 100,
+        duration: 10000,
+        offset: 70,
         position: 'top-right',
     })
 }
