@@ -129,7 +129,10 @@
             <template #footer>
                 <div class="flex-between">
                     <RyuSponsor />
-                    <el-button @click="publishTeam(createTeamFormRef)">
+                    <el-button
+                        :loading="loading"
+                        @click="publishTeam(createTeamFormRef)"
+                    >
                         发布
                     </el-button>
                 </div>
@@ -298,12 +301,16 @@ const toggleTooltipDisabled = () => {
     refs[`${teamDrawer.from}`].enablePopover()
 }
 
+const loading = ref<boolean>(false)
 const publishTeam = (formEl: FormInstance | undefined) => {
+    loading.value = true
     if (!formEl) {
+        loading.value = false
         return
     }
     formEl.validate((valid: boolean) => {
         if (!valid) {
+            loading.value = false
             return
         }
         createTeamForm.channel = routes.name
@@ -324,6 +331,7 @@ const publishTeam = (formEl: FormInstance | undefined) => {
                 ElMessage.error(err.message)
             })
             .finally(() => {
+                loading.value = false
                 teamDrawer.visible = false
             })
     })

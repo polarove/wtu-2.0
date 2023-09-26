@@ -72,7 +72,7 @@ export default defineConfig({
             },
         ],
         [
-            'flex-col',
+            'flex-col-start',
             {
                 display: 'flex',
                 'flex-direction': 'column',

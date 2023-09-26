@@ -7,39 +7,11 @@
             >
                 <template #header>
                     <div class="flex-between">
-                        <span>{{ instance.team.title }}2</span>
-                        <div class="invisible-max-900px">
-                            <el-button
-                                size="small"
-                                type="success"
-                                v-if="copyHistory.includes(instance.team.id)"
-                            >
-                                <span
-                                    class="i-ep:document-checked"
-                                    @click="
-                                        joinTeam(
-                                            instance.team.id,
-                                            instance.members.find(
-                                                (member) => member.leader
-                                            )?.user.name
-                                        )
-                                    "
-                                ></span>
-                            </el-button>
-                            <el-button
-                                size="small"
-                                v-else
-                                @click="
-                                    joinTeam(
-                                        instance.team.id,
-                                        instance.members.find(
-                                            (member) => member.leader
-                                        )?.user.name
-                                    )
-                                "
-                            >
-                                <span class="i-ep:document"></span>
-                            </el-button>
+                        <span class="flex-1">{{ instance.team.title }}</span>
+                        <div
+                            class="invisible-min-900px"
+                            v-if="isCreator(instance.team.creatorUuid)"
+                        >
                             <el-button
                                 v-if="
                                     instance.team.creatorUuid ===
@@ -67,16 +39,16 @@
                                     )
                                 "
                             >
-                                <div>
-                                    {{
+                                <div
+                                    :class="
                                         isPublic(
                                             instance.team.creatorUuid,
                                             instance.team.status
                                         )
-                                            ? '公开'
-                                            : '隐藏'
-                                    }}
-                                </div>
+                                            ? 'i-ep:view'
+                                            : 'i-ep:hide'
+                                    "
+                                ></div>
                             </el-button>
                             <el-popconfirm
                                 title="删除？"
@@ -95,7 +67,84 @@
                                 </template>
                             </el-popconfirm>
                         </div>
-                        <div class="visible-min-900px">2323</div>
+                        <el-dropdown
+                            class="invisible-max-900px"
+                            :hide-on-click="false"
+                            v-if="isCreator(instance.team.creatorUuid)"
+                        >
+                            <span class="i-ep:arrow-down"> </span>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item>
+                                        <el-button
+                                            v-if="
+                                                instance.team.creatorUuid ===
+                                                _authStore.getUUID()
+                                            "
+                                            :loading="loading.status"
+                                            size="small"
+                                            :type="
+                                                isPublic(
+                                                    instance.team.creatorUuid,
+                                                    instance.team.status
+                                                )
+                                                    ? 'success'
+                                                    : 'danger'
+                                            "
+                                            @click="
+                                                toggleTeamStatus(
+                                                    instance.team.uuid,
+                                                    isPublic(
+                                                        instance.team
+                                                            .creatorUuid,
+                                                        instance.team.status
+                                                    )
+                                                        ? 0
+                                                        : 1
+                                                )
+                                            "
+                                        >
+                                            <div
+                                                :class="
+                                                    isPublic(
+                                                        instance.team
+                                                            .creatorUuid,
+                                                        instance.team.status
+                                                    )
+                                                        ? 'i-ep:view'
+                                                        : 'i-ep:hide'
+                                                "
+                                            ></div> </el-button
+                                    ></el-dropdown-item>
+                                    <el-dropdown-item>
+                                        <el-popconfirm
+                                            title="删除？"
+                                            width="40"
+                                            confirm-button-text="是"
+                                            cancel-button-text="不了"
+                                            v-if="
+                                                isCreator(
+                                                    instance.team.creatorUuid
+                                                )
+                                            "
+                                            @confirm="
+                                                removeTeam(instance.team.id)
+                                            "
+                                            :hide-icon="true"
+                                            confirm-button-type="default"
+                                        >
+                                            <template #reference>
+                                                <el-button size="small">
+                                                    <div
+                                                        class="i-ep:close"
+                                                    ></div>
+                                                </el-button>
+                                            </template>
+                                        </el-popconfirm>
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
                     </div>
                 </template>
                 <el-row>
