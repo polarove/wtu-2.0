@@ -5,6 +5,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import UnoCSS from 'unocss/vite'
+import { compression } from 'vite-plugin-compression2'
 
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import path from 'path'
@@ -36,6 +37,7 @@ export default defineConfig({
              */
             customDomId: '__svg__icons__dom__',
         }),
+        compression(),
     ],
 
     server: {
