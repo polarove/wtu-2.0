@@ -20,7 +20,10 @@
 </template>
 
 <script setup lang="ts">
+import { TeamList, TeamPage } from '@/composables/team'
 import { teamStore } from '@/store'
+import { GetTeamList } from '@api/team'
+import type { Response } from '@/composables/types'
 const _teamStore = teamStore()
 const route = useRoute()
 
@@ -37,9 +40,21 @@ window.addEventListener('resize', () => {
     initLayouts()
 })
 
+const autoRefresh = (interval: number) => {
+    setInterval(() => {
+        GetTeamList(_teamStore.getParam()).then(
+            (res: Response<TeamPage> | any) => {
+                _teamStore.setTeam(res.data.records as Array<TeamList>)
+            }
+        )
+        console.log('重新获取队伍列表中...')
+    }, interval)
+}
+
 onMounted(() => {
     initLayouts()
     _teamStore.initTeamList(route.name)
+    autoRefresh(1000 * 60 * 10)
 })
 
 onBeforeUnmount(() => {
@@ -51,10 +66,6 @@ onBeforeUnmount(() => {
 onBeforeRouteUpdate((to) => {
     _teamStore.initTeamList(to.name)
 })
-
-// setInterval(() => {
-//     _teamStore.initTeamList(route.name)
-// }, 1000 * 60 * 3)
 </script>
 
 <style lang="scss" scoped>

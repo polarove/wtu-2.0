@@ -56,9 +56,9 @@ export default defineConfig({
             '@icon': resolve(__dirname, 'src/assets/icon'),
             '@img': resolve(__dirname, 'src/assets/img'),
             '@page': resolve(__dirname, 'src/page'),
-            '@util': resolve(__dirname, 'src/util'),
-            '@api': resolve(__dirname, 'src/request'),
             '@composables': resolve(__dirname, 'src/composables'),
+            '@util': resolve(__dirname, 'src/util'),
+            '@api': resolve(__dirname, 'src/api'),
         },
     },
 })
