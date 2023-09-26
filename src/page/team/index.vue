@@ -23,7 +23,7 @@
 import { TeamList, TeamPage } from '@/composables/team'
 import { teamStore } from '@/store'
 import { GetTeamList } from '@api/team'
-import type { Response } from '@/composables/types'
+import type { response } from '@/composables/types'
 const _teamStore = teamStore()
 const route = useRoute()
 
@@ -43,7 +43,7 @@ window.addEventListener('resize', () => {
 const autoRefresh = (interval: number) => {
     setInterval(() => {
         GetTeamList(_teamStore.getParam()).then(
-            (res: Response<TeamPage> | any) => {
+            (res: response<TeamPage> | any) => {
                 _teamStore.setTeam(res.data.records as Array<TeamList>)
             }
         )

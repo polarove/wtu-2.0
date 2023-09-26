@@ -1,5 +1,5 @@
 // response from server
-export interface Response<T> {
+export interface response<T> {
     code: number
     data: T
     message: string

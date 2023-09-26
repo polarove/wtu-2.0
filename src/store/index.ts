@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Response } from '@composables/types'
+import type { response } from '@composables/types'
 import type { User } from '@composables/user'
 import { getUserVOByUUID } from '@api/account'
 import { ElMessage } from 'element-plus'
@@ -86,7 +86,7 @@ export const authStore = defineStore({
             if (isBlank(this.getUUID())) {
                 return
             }
-            const result = (await getUserVOByUUID()) as Response<User>
+            const result = (await getUserVOByUUID()) as response<User>
             if (result.success) {
                 this.setUser(result.data)
             } else {

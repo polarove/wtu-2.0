@@ -148,7 +148,7 @@ import { type TeamInstance, type TeamList } from '@/composables/team'
 import { type warframe } from '@/composables/warframe'
 import { requirements } from '@composables/requirement'
 import { CreateTeam, GetTeamById } from '@api/team'
-import type { Response } from '@/composables/types'
+import type { response } from '@/composables/types'
 
 const routes = useRoute()
 const _authStore = authStore()
@@ -319,7 +319,7 @@ const publishTeam = (formEl: FormInstance | undefined) => {
                 if (res.success) {
                     const result = (await GetTeamById(
                         res.data
-                    )) as Response<TeamList>
+                    )) as response<TeamList>
                     if (result.success) {
                         _teamStore.addTeam(result.data)
                     } else {

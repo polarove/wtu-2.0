@@ -21,9 +21,24 @@
                     点击登录&nbsp;/&nbsp;注册
                 </div>
                 <div v-else class="vertical-middle">
-                    <div class="text-size-[1.2rem] font-bold">
+                    <el-input
+                        v-if="reviseNameForm.inputVisible"
+                        size="small"
+                        v-model="reviseNameForm.name"
+                        placeholder="按回车提交"
+                        @keyup.enter="submit()"
+                        @keyup.escape="toggleInputVisible(false)"
+                        class="mb-0.5em"
+                        ref="inputRef"
+                    ></el-input>
+                    <div
+                        v-else
+                        class="text-size-[1.2rem] font-bold"
+                        @dblclick="toggleInputVisible(true)"
+                    >
                         {{ _authStore.getName() }}
                     </div>
+
                     <WtuOnlineState />
                 </div>
             </div>
@@ -38,10 +53,36 @@
 <script setup lang="ts">
 import { isDark } from '@/composables/theme'
 import { isBlank } from '@util/StrUtil'
+import { SaveMyProfile } from '@/api/account'
 import { authStore } from '@/store'
+import type { response } from '@/composables/types'
+import type { User } from '@/composables/user'
 import router from '@/router'
 const _authStore = authStore()
+const reviseNameForm = reactive({
+    uuid: '',
+    name: '',
+    inputVisible: false,
+})
+const submit = async () => {
+    reviseNameForm.uuid = _authStore.getUUID()
+    const result = (await SaveMyProfile(reviseNameForm)) as response<User>
+    if (result.success) {
+        _authStore.setUser(result.data)
+        reviseNameForm.name = ''
+        toggleInputVisible(false)
+    }
+}
 
+const inputRef = ref<HTMLInputElement>()
+const toggleInputVisible = (visible: boolean) => {
+    reviseNameForm.inputVisible = visible
+    if (reviseNameForm.inputVisible) {
+        nextTick(() => {
+            inputRef.value?.focus()
+        })
+    }
+}
 onMounted(() => {
     _authStore.updateUser()
 })

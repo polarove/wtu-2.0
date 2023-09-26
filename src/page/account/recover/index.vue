@@ -66,7 +66,7 @@ import {
     type FormRules,
 } from 'element-plus'
 import { GetRecoverCode, SubmitCode, ChangePassword } from '@api/account'
-import type { Response } from '@/composables/types'
+import type { response } from '@/composables/types'
 import type { User } from '@composables/user'
 import router from '@/router'
 import { isNotBlank } from '@/util/StrUtil'
@@ -136,7 +136,7 @@ const recover = (formEl: FormInstance | undefined) => {
             }, 1000)
             const result = (await GetRecoverCode(
                 RecoverEmailForm.email
-            )) as Response<string>
+            )) as response<string>
             if (result.success) {
                 RecoverEmailForm.code = result.data
                 ElMessageBox.alert(RecoverEmailForm.code, '请记住您的验证码', {
@@ -175,7 +175,7 @@ const submitCode = async () => {
     RecoverEmailForm.uuid = uuid as string
     RecoverEmailForm.code = code.value
     RecoverEmailForm.email = recoverEmail as string
-    const result = (await SubmitCode(RecoverEmailForm)) as Response<boolean>
+    const result = (await SubmitCode(RecoverEmailForm)) as response<boolean>
     if (result.success) {
         VerifySuccess.value = true
     } else {
@@ -199,7 +199,7 @@ const submitPassword = (formEl: FormInstance | undefined) => {
             RecoverPasswordForm.email = recoverEmail as string
             const result = (await ChangePassword(
                 RecoverPasswordForm
-            )) as Response<User>
+            )) as response<User>
             if (result.success) {
                 ElMessage.success(result.message)
                 router.push({

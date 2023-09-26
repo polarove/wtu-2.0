@@ -226,7 +226,7 @@
 </template>
 
 <script setup lang="ts">
-import { Response } from '@/composables/types'
+import { response } from '@/composables/types'
 import { ToggleTeamStatus, RemoveTeam } from '@api/team'
 import { teamStore, authStore } from '@/store'
 const _teamStore = teamStore()
@@ -252,7 +252,7 @@ const toggleTeamStatus = async (uuid: string, status: number) => {
         uuid: uuid,
         status: status,
     }
-    const result = (await ToggleTeamStatus(param)) as Response<string>
+    const result = (await ToggleTeamStatus(param)) as response<string>
     if (result.success) {
         loading.status = false
         return
@@ -264,7 +264,7 @@ const toggleTeamStatus = async (uuid: string, status: number) => {
 }
 const removeTeam = async (id: number) => {
     loading.delete = true
-    const result = (await RemoveTeam(id)) as Response<string>
+    const result = (await RemoveTeam(id)) as response<string>
     if (result.success) {
         loading.delete = false
         _teamStore.removeTeam(id)

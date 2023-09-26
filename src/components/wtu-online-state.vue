@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { UpdateOnlineStatus, Logout } from '@api/account'
-import type { Response } from '@/composables/types'
+import type { response } from '@/composables/types'
 import { ElMessage } from 'element-plus'
 import { OnlineStatusEnum } from '@composables/enums'
 import { authStore } from '@/store'
@@ -95,7 +95,7 @@ const user_ingame = computed(() => {
 })
 
 const logout = async () => {
-    const result = (await Logout(_authStore.getUUID())) as Response<string>
+    const result = (await Logout(_authStore.getUUID())) as response<string>
     if (result.code === 200) {
         _authStore.$reset()
         router.replace({ name: 'login' })
@@ -122,7 +122,7 @@ const updateOnlineStatus = async (onlineStatus: number) => {
     UpdateOnlineStatusForm.onlineStatus = onlineStatus
     const result = (await UpdateOnlineStatus(
         UpdateOnlineStatusForm
-    )) as Response<string>
+    )) as response<string>
     if (!result.success) {
         _authStore.setOnlineStatus(previosOnlineStatus as number)
         ElMessage.error(result.message)
