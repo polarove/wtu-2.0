@@ -148,29 +148,6 @@ onMounted(() => {
     _teamStore.initTeamList()
     createConnection()
     autoRefresh(1000 * 60 * 10)
-    // wss.createConnection(() => {
-    //     wss.disconnect(
-    //         route.name,
-    //         _authStore.getUUID(),
-    //         _authStore.getServer(),
-    //         (res: WssConnectionResponse) => {
-    //             clients.value = res.clients
-    //             console.log(12424)
-
-    //             console.log('组件加载，断开连接')
-    //         }
-    //     )
-    // wss.joinChannel(
-    //     route.name,
-    //     _authStore.getUUID(),
-    //     _authStore.getServer(),
-    //     (res: WssConnectionResponse) => {
-    //         clients.value = res.clients
-    //         console.log(res)
-    //         console.log('组件加载，重新连接')
-    //     }
-    // )
-    // })
 })
 
 onBeforeRouteUpdate((to, from) => {
@@ -178,22 +155,6 @@ onBeforeRouteUpdate((to, from) => {
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
     switchChannel(from.name, to.name)
-    // wss.disconnect(
-    //     from.name,
-    //     _authStore.getUUID(),
-    //     _authStore.getServer(),
-    //     () => {
-    //         console.log('路由变化，断开连接')
-    //     }
-    // )
-    // wss.joinChannel(
-    //     to.name,
-    //     _authStore.getUUID(),
-    //     _authStore.getServer(),
-    //     () => {
-    //         console.log('路由变化，重新连接')
-    //     }
-    // )
 })
 
 onBeforeUnmount(() => {
