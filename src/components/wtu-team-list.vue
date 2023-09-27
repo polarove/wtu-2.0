@@ -169,11 +169,7 @@
                 </template>
                 <el-row>
                     <el-col :span="6" v-for="build in instance.members">
-                        <WtuTeamMember
-                            :member="build"
-                            @click="$emit('emitTeamSlot', build)"
-                        >
-                        </WtuTeamMember>
+                        <WtuTeamMember :member="build"> </WtuTeamMember>
                     </el-col>
                 </el-row>
                 <el-collapse

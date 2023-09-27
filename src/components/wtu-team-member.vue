@@ -39,7 +39,7 @@
                     >
                     </WtuBooster>
                 </div>
-                <div class="flex-1">
+                <div class="equipments">
                     <div class="invisible-max-900px">
                         <div
                             class="font-bold"
@@ -116,12 +116,16 @@ const user_ingame = (status: number) => {
     display: flex;
     flex-direction: column;
     justify-content: start;
-    padding-right: 0.5em;
-    margin-right: 0.5em;
-    border-right: 1px solid rgba(179, 179, 179, 0.2);
+    align-items: center;
 
     .booster:nth-child(n + 2) {
         margin-top: 0.5em;
     }
+}
+.equipments {
+    flex: 1;
+    margin-left: 0.4em;
+    padding-left: 0.4em;
+    border-left: 1px solid var(--el-border-color);
 }
 </style>
