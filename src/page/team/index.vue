@@ -36,6 +36,7 @@ import { websocket } from '@util/WebsocketUtil'
 import type { RouteRecordName } from 'vue-router'
 
 enum WSS_ACTION {
+    PING = 0,
     CONNECT = 1,
     DISCONNECT = 2,
     MESSAGE = 3,
@@ -79,13 +80,8 @@ const ChannelParam = reactive({
     action: 1,
 })
 
-wss.on_message((data: WssConnectionResponse) => {
-    console.log(data)
-})
-
 const createConnection = () => {
     wss.on_open(() => {
-        console.log('连接成功')
         joinChannel()
     })
 }
@@ -124,11 +120,6 @@ const switchChannel = (
         joinChannel(to)
     })
 }
-
-wss.on_message((data: WssConnectionResponse) => {
-    clients.value = data.clients
-    console.log(data)
-})
 
 const autoRefresh = (interval: number) => {
     setInterval(() => {

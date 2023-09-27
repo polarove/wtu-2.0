@@ -15,11 +15,9 @@
 
 <script setup lang="ts">
 import router from '@/router'
-import { authStore } from '@/store'
 import { isBlank } from '@/util/StrUtil'
-
+import { authStore } from '@/store'
 const _authStore = authStore()
-
 provide('showServer', false)
 
 const close = () => {
