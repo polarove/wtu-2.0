@@ -1,54 +1,66 @@
+import type { RouteRecordName } from 'vue-router'
+import { wssStore } from '@/store'
+const _wssStore = wssStore()
 export class websocket {
     public wss: WebSocket
 
-    private full_address: string
+    private static readonly CONNECT = 1
 
-    private route: string
+    private static readonly DISCONNECT = 2
 
-    private static readonly INSERT = 1
-
-    private static readonly UPDATE = 2
-
-    private static readonly DELETE = 3
-
-    private static readonly SELECT = 4
-
-    private static readonly CONNECT = 5
-
-    private static readonly DISCONNECT = 6
+    private static readonly MESSAGE = 3
 
     constructor(address: string, route: string) {
-        this.route = route
-        this.full_address = address + route
-        this.wss = new WebSocket(this.full_address)
+        let full_address = address + route
+        this.wss = new WebSocket(full_address)
     }
 
-    join(channelId: number, uuid: string, data: any) {
+    createConnection(callback: Function) {
         this.wss.onopen = () => {
-            this.wss.send(
-                JSON.stringify({
-                    channelId: channelId,
-                    uuid: uuid,
-                    data: data,
-                    type: websocket.CONNECT,
-                })
-            )
-            this.wss.onmessage = (event) => {
-                console.log(event.data)
+            if (callback) {
+                callback()
             }
         }
     }
 
-    disconnect(channelId: number, uuid: string, data: any) {
-        this.wss.onopen = () => {
-            this.wss.send(
-                JSON.stringify({
-                    channelId: channelId,
-                    uuid: uuid,
-                    data: data,
-                    type: websocket.DISCONNECT,
-                })
-            )
+    joinChannel(route: RouteRecordName | null | undefined, uuid: string) {
+        this.wss.send(
+            JSON.stringify({
+                route: route,
+                uuid: uuid,
+                action: websocket.CONNECT,
+            })
+        )
+        this.wss.onmessage = (event) => {
+            let data = JSON.parse(event.data)
+            let onlineNumber = data.data
+            _wssStore.setOnlineNumber(onlineNumber)
+        }
+    }
+
+    disconnect(route: RouteRecordName | null | undefined, uuid: string) {
+        this.wss.send(
+            JSON.stringify({
+                route: route,
+                uuid: uuid,
+                action: websocket.DISCONNECT,
+            })
+        )
+    }
+
+    message(from: string, receiver: string, data: any, callback: Function) {
+        this.wss.send(
+            JSON.stringify({
+                from: from,
+                receiver: receiver,
+                data: data,
+                action: websocket.MESSAGE,
+            })
+        )
+        this.wss.onmessage = (event) => {
+            if (callback) {
+                callback(event)
+            }
         }
     }
 }

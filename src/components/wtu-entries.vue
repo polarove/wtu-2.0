@@ -5,22 +5,34 @@
             class="entry"
             @click="navi(entries.durivi)"
         >
-            <img
-                :style="{ transform: `scale(${scale})` }"
-                src="@img/durivi.png"
-                alt="双衍王境"
-            />
+            <el-badge
+                :value="_wssStore.getOnlineNumber()"
+                :max="999"
+                :hidden="!isDurivi"
+            >
+                <img
+                    :style="{ transform: `scale(${scale})` }"
+                    src="@img/durivi.png"
+                    alt="双衍王境"
+                />
+            </el-badge>
         </div>
         <div
             :class="{ activated: isEmpyrean }"
             class="entry"
             @click="navi(entries.empyrean)"
         >
-            <img
-                :style="{ transform: `scale(${scale})` }"
-                src="@img/railjet.png"
-                alt="九重天"
-            />
+            <el-badge
+                :value="_wssStore.getOnlineNumber()"
+                :max="999"
+                :hidden="!isEmpyrean"
+            >
+                <img
+                    :style="{ transform: `scale(${scale})` }"
+                    src="@img/railjet.png"
+                    alt="九重天"
+                />
+            </el-badge>
         </div>
     </div>
 </template>
@@ -28,6 +40,8 @@
 <script setup lang="ts">
 import entries from '@/composables/entries'
 import router from '@/router'
+import { wssStore } from '@/store'
+const _wssStore = wssStore()
 defineProps({
     scale: {
         type: Number,
@@ -56,8 +70,8 @@ const navi = (entry: string) => {
     grid-gap: 1rem;
     align-items: center;
     user-select: none;
+
     .activated {
-        background-color: var(--el-color-primary);
         width: 200px !important;
     }
 
@@ -70,6 +84,7 @@ const navi = (entry: string) => {
         height: 50px;
         border-radius: 0.5rem;
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        background-color: var(--el-bg-color-overlay);
         cursor: pointer;
         transition: all 0.3s ease-in-out;
 
@@ -83,12 +98,6 @@ const navi = (entry: string) => {
             user-select: none;
             object-fit: cover;
             transition: all 0.3s ease-in-out;
-        }
-
-        .state {
-            padding: 0 20px;
-            word-wrap: nowrap;
-            user-select: none;
         }
     }
 }

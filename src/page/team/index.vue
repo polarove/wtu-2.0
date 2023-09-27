@@ -30,8 +30,9 @@ import { websocket } from '@util/WebsocketUtil'
 const _teamStore = teamStore()
 const _authStore = authStore()
 const route = useRoute()
-const socket = new websocket(import.meta.env.VITE_APP_WSS_ORIGIN, '/')
-socket.join(1, 'test', { name: 'test' })
+
+const socket = new websocket(import.meta.env.VITE_APP_WSS_ORIGIN, '/team')
+
 const wideMode = ref(true)
 const TeamParams = reactive<TeamListParams>({
     page: 1,
@@ -52,6 +53,25 @@ window.addEventListener('resize', () => {
     initLayouts()
 })
 
+onMounted(() => {
+    initLayouts()
+    TeamParams.channel = route.name
+    _teamStore.setParam(TeamParams)
+    _teamStore.initTeamList()
+    autoRefresh(1000 * 60 * 10)
+    socket.createConnection(() => {
+        socket.joinChannel(route.name, _authStore.getUUID())
+    })
+})
+
+onBeforeRouteUpdate((to, from) => {
+    TeamParams.channel = to.name
+    _teamStore.setParam(TeamParams)
+    _teamStore.initTeamList()
+    socket.disconnect(from.name, _authStore.getUUID())
+    socket.joinChannel(to.name, _authStore.getUUID())
+})
+
 const autoRefresh = (interval: number) => {
     setInterval(() => {
         GetTeamList(_teamStore.getParam()).then(
@@ -63,24 +83,11 @@ const autoRefresh = (interval: number) => {
     }, interval)
 }
 
-onMounted(() => {
-    initLayouts()
-    TeamParams.channel = route.name
-    _teamStore.setParam(TeamParams)
-    // _teamStore.initTeamList()
-    autoRefresh(1000 * 60 * 10)
-})
-
 onBeforeUnmount(() => {
     window.removeEventListener('resize', () => {
         initLayouts()
     })
-})
-
-onBeforeRouteUpdate((to) => {
-    TeamParams.channel = to.name
-    _teamStore.setParam(TeamParams)
-    _teamStore.initTeamList()
+    socket.disconnect(route.name, _authStore.getUUID())
 })
 
 const e = new defaults()

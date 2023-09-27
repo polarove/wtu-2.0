@@ -169,7 +169,11 @@
                 </template>
                 <el-row>
                     <el-col :span="6" v-for="build in instance.members">
-                        <WtuTeamMember :member="build"> </WtuTeamMember>
+                        <WtuTeamMember
+                            :member="build"
+                            @click="$emit('emitTeamSlot', build)"
+                        >
+                        </WtuTeamMember>
                     </el-col>
                 </el-row>
                 <el-collapse
@@ -240,12 +244,14 @@ import { response } from '@/composables/types'
 import { ToggleTeamStatus, RemoveTeam } from '@api/team'
 import { teamStore, authStore } from '@/store'
 import { isDark } from '@composables/theme'
+
 defineProps({
     showChannel: {
         type: Boolean,
         default: true,
     },
 })
+
 const _teamStore = teamStore()
 const _authStore = authStore()
 const route = useRouter()

@@ -7,6 +7,7 @@ import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { warframe } from '@/composables/warframe'
 import type { TeamList, TeamPage, TeamListParams } from '@composables/team'
 import { GetTeamList } from '@api/team'
+import { websocket } from '@util/WebsocketUtil'
 
 export const authStore = defineStore({
     id: 'session',
@@ -165,6 +166,28 @@ export const teamStore = defineStore({
         },
         addTeam(team: TeamList) {
             this.TeamPage.records.splice(0, 0, team)
+        },
+    },
+})
+
+export const wssStore = defineStore({
+    id: 'wss',
+    state: () => ({
+        onlineNumber: 0,
+        wss: {} as websocket,
+    }),
+    actions: {
+        getOnlineNumber(): number {
+            return this.onlineNumber
+        },
+        setOnlineNumber(onlineNumber: number) {
+            this.onlineNumber = onlineNumber
+        },
+        getWss(): websocket {
+            return this.wss
+        },
+        setWss(wss: websocket) {
+            this.wss = wss
         },
     },
 })
