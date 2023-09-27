@@ -5,10 +5,7 @@
             class="tab"
             :class="{ active: routes.name === entries.origin }"
         >
-            <el-badge
-                :value="_wssStore.getOnlineNumber()"
-                :hidden="routes.name !== entries.origin"
-            >
+            <el-badge :value="clients" :hidden="routes.name !== entries.origin">
                 <RyuSvg name="origin" size="1.4em" />
             </el-badge>
         </span>
@@ -21,7 +18,7 @@
                 v-for="(activity, index) in childRoutes"
             >
                 <el-badge
-                    :value="_wssStore.getOnlineNumber()"
+                    :value="clients"
                     :hidden="activity.name !== routes.name"
                 >
                     <RyuSvg :index="index" :name="activity.name" size="1.4em" />
@@ -36,7 +33,7 @@
                 v-for="(activity, index) in easyModeRoutes"
             >
                 <el-badge
-                    :value="_wssStore.getOnlineNumber()"
+                    :value="clients"
                     :hidden="activity.name !== routes.name"
                 >
                     <RyuSvg :index="index" :name="activity.name" size="1.4em" />
@@ -47,12 +44,19 @@
 </template>
 
 <script setup lang="ts">
-import { authStore, wssStore } from '@/store'
+import { authStore } from '@/store'
 import entries from '@composables/entries'
 import router from '@/router'
 const routes = useRoute()
 const _authStore = authStore()
-const _wssStore = wssStore()
+
+defineProps({
+    clients: {
+        type: Number,
+        default: 0,
+    },
+})
+
 const childRoutes = routes.matched
     .find((item) => item.name === 'index')
     ?.children.find((item) => item.name === 'activity')?.children

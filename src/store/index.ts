@@ -182,4 +182,5 @@ export const wssStore = defineStore({
             this.onlineNumber = onlineNumber
         },
     },
+    persist: true,
 })

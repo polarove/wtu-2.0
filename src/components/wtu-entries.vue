@@ -5,11 +5,7 @@
             class="entry"
             @click="navi(entries.durivi)"
         >
-            <el-badge
-                :value="_wssStore.getOnlineNumber()"
-                :max="999"
-                :hidden="!isDurivi"
-            >
+            <el-badge :value="clients" :max="999" :hidden="!isDurivi">
                 <img
                     :style="{ transform: `scale(${scale})` }"
                     src="@img/durivi.png"
@@ -22,11 +18,7 @@
             class="entry"
             @click="navi(entries.empyrean)"
         >
-            <el-badge
-                :value="_wssStore.getOnlineNumber()"
-                :max="999"
-                :hidden="!isEmpyrean"
-            >
+            <el-badge :value="clients" :max="999" :hidden="!isEmpyrean">
                 <img
                     :style="{ transform: `scale(${scale})` }"
                     src="@img/railjet.png"
@@ -40,12 +32,14 @@
 <script setup lang="ts">
 import entries from '@/composables/entries'
 import router from '@/router'
-import { wssStore } from '@/store'
-const _wssStore = wssStore()
 defineProps({
     scale: {
         type: Number,
         default: 1,
+    },
+    clients: {
+        type: Number,
+        default: 0,
     },
 })
 const isDurivi = computed(

@@ -1,22 +1,28 @@
 <template>
-    <WtuHeader />
-    <div class="selections">
-        <WtuDifficulty />
-    </div>
-    <div class="wrapper">
-        <div :class="{ wideScreen: wideMode, compactScreen: !wideMode }">
-            <div>
-                <WtuActivity class="mb-0.75em mt-0.5em" />
-                <WtuTeamSet class="center-min-900px" />
-            </div>
-            <WtuEntries
-                :class="{ compactOnly: !wideMode }"
-                :scale="wideMode ? 1 : 0.8"
-            />
+    <div>
+        <WtuHeader />
+        <div class="selections">
+            <WtuDifficulty />
         </div>
-        <div class="w-70vw h-100% ma-auto"><RouterView /></div>
+        <div class="wrapper">
+            <div :class="{ wideScreen: wideMode, compactScreen: !wideMode }">
+                <div>
+                    <WtuActivity
+                        :clients="clients"
+                        class="mb-0.75em mt-0.5em"
+                    />
+                    <WtuTeamSet class="center-min-900px" />
+                </div>
+                <WtuEntries
+                    :class="{ compactOnly: !wideMode }"
+                    :scale="wideMode ? 1 : 0.8"
+                    :clients="clients"
+                />
+            </div>
+            <div class="w-70vw h-100% ma-auto"><RouterView /></div>
+        </div>
+        <WtuFooter />
     </div>
-    <WtuFooter />
 </template>
 
 <script setup lang="ts">
@@ -27,6 +33,14 @@ import type { response } from '@/composables/types'
 import { defaults } from '@/composables/defaults'
 import { ElNotification } from 'element-plus'
 import { websocket } from '@util/WebsocketUtil'
+import type { RouteRecordName } from 'vue-router'
+
+enum WSS_ACTION {
+    CONNECT = 1,
+    DISCONNECT = 2,
+    MESSAGE = 3,
+}
+
 const _teamStore = teamStore()
 const _authStore = authStore()
 const route = useRoute()
@@ -51,60 +65,69 @@ window.addEventListener('resize', () => {
 })
 
 const wss = new websocket(_authStore.getServer())
-onMounted(() => {
-    initLayouts()
-    TeamParams.channel = route.name
-    _teamStore.setParam(TeamParams)
-    _teamStore.initTeamList()
-    autoRefresh(1000 * 60 * 10)
-    wss.createConnection(() => {
-        wss.joinChannel(
-            route.name,
-            _authStore.getUUID(),
-            _authStore.getServer(),
-            () => {
-                console.log('组件加载，重新连接')
-            }
-        )
-    })
+
+const clients = ref<number>(0)
+
+interface WssConnectionResponse {
+    total: number
+    clients: number
+}
+const ChannelParam = reactive({
+    route: route.name,
+    uuid: _authStore.getUUID(),
+    server: _authStore.getServer(),
+    action: 1,
 })
-watch(
-    () => _authStore.getServer(),
-    (newValue) => {
-        // 服务器变化，需要重新建立连接
-        const wss = new websocket(newValue)
-        wss.createConnection(() => {
-            wss.joinChannel(
-                route.name,
-                _authStore.getUUID(),
-                _authStore.getServer(),
-                () => {
-                    console.log('所处服务器变化，重新建立连接')
-                }
-            )
+
+wss.on_message((data: WssConnectionResponse) => {
+    console.log(data)
+})
+
+const createConnection = () => {
+    wss.on_open(() => {
+        console.log('连接成功')
+        joinChannel()
+    })
+}
+
+const joinChannel = (to?: RouteRecordName | null | undefined) => {
+    ChannelParam.action = WSS_ACTION.CONNECT
+    to ? (ChannelParam.route = to) : (ChannelParam.route = route.name)
+    wss.send(ChannelParam, () => {
+        wss.on_message((data: WssConnectionResponse) => {
+            clients.value = data.clients
         })
+    })
+}
+
+const disconnect = (
+    from?: RouteRecordName | null | undefined,
+    callback?: Function
+) => {
+    ChannelParam.action = WSS_ACTION.DISCONNECT
+    from ? (ChannelParam.route = from) : (ChannelParam.route = route.name)
+    wss.send(ChannelParam, () => {
+        wss.on_message((data: WssConnectionResponse) => {
+            clients.value = data.clients
+        })
+    })
+    if (callback) {
+        callback()
     }
-)
-onBeforeRouteUpdate((to, from) => {
-    TeamParams.channel = to.name
-    _teamStore.setParam(TeamParams)
-    _teamStore.initTeamList()
-    wss.disconnect(
-        from.name,
-        _authStore.getUUID(),
-        _authStore.getServer(),
-        () => {
-            console.log('路由变化，断开连接')
-        }
-    )
-    wss.joinChannel(
-        to.name,
-        _authStore.getUUID(),
-        _authStore.getServer(),
-        () => {
-            console.log('路由变化，重新连接')
-        }
-    )
+}
+
+const switchChannel = (
+    from: RouteRecordName | null | undefined,
+    to: RouteRecordName | null | undefined
+) => {
+    disconnect(from, () => {
+        joinChannel(to)
+    })
+}
+
+wss.on_message((data: WssConnectionResponse) => {
+    clients.value = data.clients
+    console.log(data)
 })
 
 const autoRefresh = (interval: number) => {
@@ -118,18 +141,67 @@ const autoRefresh = (interval: number) => {
     }, interval)
 }
 
+onMounted(() => {
+    initLayouts()
+    TeamParams.channel = route.name
+    _teamStore.setParam(TeamParams)
+    _teamStore.initTeamList()
+    createConnection()
+    autoRefresh(1000 * 60 * 10)
+    // wss.createConnection(() => {
+    //     wss.disconnect(
+    //         route.name,
+    //         _authStore.getUUID(),
+    //         _authStore.getServer(),
+    //         (res: WssConnectionResponse) => {
+    //             clients.value = res.clients
+    //             console.log(12424)
+
+    //             console.log('组件加载，断开连接')
+    //         }
+    //     )
+    // wss.joinChannel(
+    //     route.name,
+    //     _authStore.getUUID(),
+    //     _authStore.getServer(),
+    //     (res: WssConnectionResponse) => {
+    //         clients.value = res.clients
+    //         console.log(res)
+    //         console.log('组件加载，重新连接')
+    //     }
+    // )
+    // })
+})
+
+onBeforeRouteUpdate((to, from) => {
+    TeamParams.channel = to.name
+    _teamStore.setParam(TeamParams)
+    _teamStore.initTeamList()
+    switchChannel(from.name, to.name)
+    // wss.disconnect(
+    //     from.name,
+    //     _authStore.getUUID(),
+    //     _authStore.getServer(),
+    //     () => {
+    //         console.log('路由变化，断开连接')
+    //     }
+    // )
+    // wss.joinChannel(
+    //     to.name,
+    //     _authStore.getUUID(),
+    //     _authStore.getServer(),
+    //     () => {
+    //         console.log('路由变化，重新连接')
+    //     }
+    // )
+})
+
 onBeforeUnmount(() => {
     window.removeEventListener('resize', () => {
         initLayouts()
     })
-    wss.disconnect(
-        route.name,
-        _authStore.getUUID(),
-        _authStore.getServer(),
-        () => {
-            console.log('组件卸载，断开连接')
-        }
-    )
+    disconnect(route.name)
+    wss.close()
 })
 
 const e = new defaults()

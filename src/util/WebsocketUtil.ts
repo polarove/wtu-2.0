@@ -2,8 +2,6 @@ import type { RouteRecordName } from 'vue-router'
 import { wssStore } from '@/store'
 import { parseData } from '@/util/ObjectUtil'
 
-const _wssStore = wssStore()
-
 interface AfterConnectionVO {
     currentChannel: number
     total: number
@@ -28,78 +26,122 @@ export class websocket {
         this.wss = new WebSocket(full_address)
     }
 
-    createConnection(callback: Function) {
-        this.wss.onopen = () => {
+    on_open(callback: Function) {
+        this.wss.onopen = (event) => {
+            callback()
+        }
+    }
+
+    on_message(callback: Function) {
+        this.wss.onmessage = (event) => {
+            callback(parseData(event.data, 'data'))
+        }
+    }
+
+    on_error(data: any, callback: Function) {
+        this.wss.onerror = () => {
             if (callback) {
                 callback()
             }
         }
     }
 
-    joinChannel(
-        route: RouteRecordName | null | undefined,
-        uuid: string,
-        server: number,
-        callback: Function
-    ) {
-        this.wss.send(
-            JSON.stringify({
-                route: route,
-                uuid: uuid,
-                action: websocket.CONNECT,
-                server: server,
-            })
-        )
-        this.wss.onmessage = (event) => {
-            let result = parseData(event.data, 'data') as AfterConnectionVO
-            _wssStore.setOnlineNumber(result.currentChannel)
+    on_close(data: any, callback: Function) {
+        this.wss.onclose = () => {
             if (callback) {
-                callback(JSON.parse(event.data))
+                callback()
             }
         }
     }
 
-    disconnect(
-        route: RouteRecordName | null | undefined,
-        uuid: string,
-        server: number,
-        callback: Function
-    ) {
-        this.wss.send(
-            JSON.stringify({
-                route: route,
-                uuid: uuid,
-                action: websocket.DISCONNECT,
-                server: server,
-            })
-        )
-        this.wss.onmessage = (event) => {
-            if (callback) {
-                callback(JSON.parse(event.data))
-            }
+    send(data: any, callback: Function) {
+        this.wss.send(JSON.stringify(data))
+        if (callback) {
+            callback()
         }
     }
 
-    message(
-        from: string,
-        receiver: string,
-        server: number,
-        data: any,
-        callback: Function
-    ) {
-        this.wss.send(
-            JSON.stringify({
-                from: from,
-                receiver: receiver,
-                data: data,
-                server: server,
-                action: websocket.MESSAGE,
-            })
-        )
-        this.wss.onmessage = (event) => {
-            if (callback) {
-                callback(JSON.parse(event.data))
-            }
-        }
+    close() {
+        console.log('closing...')
+
+        this.wss.close()
     }
+
+    // createConnection(callback: Function) {
+    //     this.wss.onopen = () => {
+    //         if (callback) {
+    //             callback()
+    //         }
+    //     }
+    // }
+
+    // joinChannel(
+    //     route: RouteRecordName | null | undefined,
+    //     uuid: string,
+    //     server: number,
+    //     callback: Function
+    // ) {
+    //     this.wss.send(
+    //         JSON.stringify({
+    //             route: route,
+    //             uuid: uuid,
+    //             action: websocket.CONNECT,
+    //             server: server,
+    //         })
+    //     )
+    //     this.wss.onmessage = (event) => {
+    //         console.log(1)
+
+    //         let result = parseData(event.data, 'data') as AfterConnectionVO
+    //         if (callback) {
+    //             callback(result)
+    //         }
+    //     }
+    // }
+
+    // disconnect(
+    //     route: RouteRecordName | null | undefined,
+    //     uuid: string,
+    //     server: number,
+    //     callback: Function
+    // ) {
+    //     this.wss.send(
+    //         JSON.stringify({
+    //             route: route,
+    //             uuid: uuid,
+    //             action: websocket.DISCONNECT,
+    //             server: server,
+    //         })
+    //     )
+    //     this.wss.onmessage = (event) => {
+    //         console.log(event.data)
+
+    //         if (callback) {
+    //             callback(JSON.parse(event.data))
+    //         }
+    //     }
+    // }
+
+    // message(
+    //     from: string,
+    //     receiver: string,
+    //     server: number,
+    //     data: any,
+    //     callback: Function
+    // ) {
+    //     this.wss.send(
+    //         JSON.stringify({
+    //             from: from,
+    //             receiver: receiver,
+    //             data: data,
+    //             server: server,
+    //             action: websocket.MESSAGE,
+    //         })
+    //     )
+    //     this.wss.onmessage = (event) => {
+    //         if (callback) {
+    //             callback(JSON.parse(event.data))
+    //         }
+    //     }
+    // }
 }
