@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { authStore, teamStore } from '@/store'
+import { authStore, teamStore, wssStore } from '@/store'
 import { toUpperCase } from '@/util/StrUtil'
 import { ServerEnum } from '@composables/enums'
 import { ToggleServer } from '@api/account'
@@ -13,6 +13,8 @@ import { response } from '@/composables/types'
 import type { User } from '@/composables/user'
 const _authStore = authStore()
 const _teamStore = teamStore()
+const _wssStore = wssStore()
+const route = useRoute()
 const server = computed(() => {
     return ServerEnum.types.find((item) => item.code == _authStore.getServer())
         ?.shortcut
@@ -36,6 +38,13 @@ const toggleServer = async () => {
             server: _authStore.getServer(),
         })
         _teamStore.initTeamList()
+        _wssStore
+            .getWss()
+            .joinChannel(
+                route.name,
+                _authStore.getUUID(),
+                _authStore.getServer()
+            )
     } else {
         console.log(result.message)
     }

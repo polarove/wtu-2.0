@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import type { TeamList, TeamListParams, TeamPage } from '@/composables/team'
-import { teamStore, authStore } from '@/store'
+import { teamStore, authStore, wssStore } from '@/store'
 import { GetTeamList } from '@api/team'
 import type { response } from '@/composables/types'
 import { defaults } from '@/composables/defaults'
@@ -29,10 +29,8 @@ import { ElNotification } from 'element-plus'
 import { websocket } from '@util/WebsocketUtil'
 const _teamStore = teamStore()
 const _authStore = authStore()
+const _wssStore = wssStore()
 const route = useRoute()
-
-const socket = new websocket(import.meta.env.VITE_APP_WSS_ORIGIN, '/team')
-
 const wideMode = ref(true)
 const TeamParams = reactive<TeamListParams>({
     page: 1,
@@ -54,13 +52,18 @@ window.addEventListener('resize', () => {
 })
 
 onMounted(() => {
+    _wssStore.setWss(new websocket())
     initLayouts()
     TeamParams.channel = route.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
     autoRefresh(1000 * 60 * 10)
-    socket.createConnection(() => {
-        socket.joinChannel(route.name, _authStore.getUUID())
+    _wssStore.wss.createConnection(() => {
+        _wssStore.wss.joinChannel(
+            route.name,
+            _authStore.getUUID(),
+            _authStore.getServer()
+        )
     })
 })
 
@@ -68,8 +71,12 @@ onBeforeRouteUpdate((to, from) => {
     TeamParams.channel = to.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
-    socket.disconnect(from.name, _authStore.getUUID())
-    socket.joinChannel(to.name, _authStore.getUUID())
+    _wssStore.wss.disconnect(from.name, _authStore.getUUID())
+    _wssStore.wss.joinChannel(
+        to.name,
+        _authStore.getUUID(),
+        _authStore.getServer()
+    )
 })
 
 const autoRefresh = (interval: number) => {
@@ -87,7 +94,7 @@ onBeforeUnmount(() => {
     window.removeEventListener('resize', () => {
         initLayouts()
     })
-    socket.disconnect(route.name, _authStore.getUUID())
+    _wssStore.wss.disconnect(route.name, _authStore.getUUID())
 })
 
 const e = new defaults()
