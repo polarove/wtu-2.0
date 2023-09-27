@@ -1,9 +1,8 @@
 import type { RouteRecordName } from 'vue-router'
-import { wssStore, authStore } from '@/store'
+import { wssStore } from '@/store'
 import { parseData } from '@/util/ObjectUtil'
 
 const _wssStore = wssStore()
-const _authStore = authStore()
 
 interface AfterConnectionVO {
     currentChannel: number

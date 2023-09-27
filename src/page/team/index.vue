@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import type { TeamList, TeamListParams, TeamPage } from '@/composables/team'
-import { teamStore, authStore, wssStore } from '@/store'
+import { teamStore, authStore } from '@/store'
 import { GetTeamList } from '@api/team'
 import type { response } from '@/composables/types'
 import { defaults } from '@/composables/defaults'
@@ -29,7 +29,6 @@ import { ElNotification } from 'element-plus'
 import { websocket } from '@util/WebsocketUtil'
 const _teamStore = teamStore()
 const _authStore = authStore()
-const _wssStore = wssStore()
 const route = useRoute()
 const wideMode = ref(true)
 const TeamParams = reactive<TeamListParams>({
@@ -50,15 +49,16 @@ const initLayouts = () => {
 window.addEventListener('resize', () => {
     initLayouts()
 })
-_wssStore.setWss(new websocket(_authStore.getServer()))
+
+window.wss = new websocket(_authStore.getServer())
 onMounted(() => {
     initLayouts()
     TeamParams.channel = route.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
     autoRefresh(1000 * 60 * 10)
-    _wssStore.wss.createConnection(() => {
-        _wssStore.wss.joinChannel(
+    window.wss.createConnection(() => {
+        window.wss.joinChannel(
             route.name,
             _authStore.getUUID(),
             _authStore.getServer(),
@@ -71,18 +71,16 @@ onMounted(() => {
 watch(
     () => _authStore.getServer(),
     (newValue) => {
-        _wssStore.setWss(new websocket(newValue))
-        _wssStore.getWss().createConnection(() => {
-            _wssStore
-                .getWss()
-                .joinChannel(
-                    route.name,
-                    _authStore.getUUID(),
-                    _authStore.getServer(),
-                    () => {
-                        console.log('所处服务器变化，重新连接')
-                    }
-                )
+        window.wss = new websocket(newValue)
+        window.wss.createConnection(() => {
+            window.wss.joinChannel(
+                route.name,
+                _authStore.getUUID(),
+                _authStore.getServer(),
+                () => {
+                    console.log('所处服务器变化，重新连接')
+                }
+            )
         })
     }
 )
@@ -90,7 +88,7 @@ onBeforeRouteUpdate((to, from) => {
     TeamParams.channel = to.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
-    _wssStore.wss.disconnect(
+    window.wss.disconnect(
         from.name,
         _authStore.getUUID(),
         _authStore.getServer(),
@@ -98,7 +96,7 @@ onBeforeRouteUpdate((to, from) => {
             console.log('路由变化，断开连接')
         }
     )
-    _wssStore.wss.joinChannel(
+    window.wss.joinChannel(
         to.name,
         _authStore.getUUID(),
         _authStore.getServer(),
@@ -123,7 +121,7 @@ onBeforeUnmount(() => {
     window.removeEventListener('resize', () => {
         initLayouts()
     })
-    _wssStore.wss.disconnect(
+    window.wss.disconnect(
         route.name,
         _authStore.getUUID(),
         _authStore.getServer(),
