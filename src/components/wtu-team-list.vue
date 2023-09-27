@@ -219,7 +219,10 @@
                 </el-collapse>
                 <RyuClipboard
                     v-else
-                    :content="copyContent"
+                    :content="
+                        instance.members.find((member) => member.leader)?.user
+                            .name
+                    "
                     prefix="/join"
                     icon="i-ep:document"
                     checked="i-ep:document-checked"
