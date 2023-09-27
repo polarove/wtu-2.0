@@ -48,7 +48,7 @@ const props = defineProps({
 const copied = ref(false)
 const copy = () => {
     navigator.clipboard
-        .writeText(props.content)
+        .writeText(props.prefix + '\xa0' + props.content)
         .then(() => {
             copied.value = true
         })

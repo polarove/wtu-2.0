@@ -36,6 +36,7 @@ export class websocket {
         uuid: string,
         server: number
     ) {
+        console.log('joinChannel')
         this.wss.send(
             JSON.stringify({
                 route: route,
@@ -46,7 +47,16 @@ export class websocket {
         )
         this.wss.onmessage = (event) => {
             let res = JSON.parse(event.data)
-            _wssStore.setOnlineNumber(res.data)
+            Object.keys(res).forEach((key) => {
+                if (key === 'res') {
+                    let online_state = JSON.parse(res[key])
+                    if (online_state.currentChannel === undefined || null) {
+                        ElMessage.error('服务器错误,获取当前频道的在线人数失败')
+                        return
+                    }
+                    _wssStore.setOnlineNumber(online_state.currentChannel)
+                }
+            })
         }
     }
 

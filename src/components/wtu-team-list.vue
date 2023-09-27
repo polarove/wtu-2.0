@@ -201,7 +201,10 @@
                             </span>
                         </div>
                         <RyuClipboard
-                            :content="copyContent(instance.members)"
+                            :content="
+                                instance.members.find((member) => member.leader)
+                                    ?.user.name
+                            "
                             prefix="/join"
                             icon="i-ep:document"
                             checked="i-ep:document-checked"
@@ -216,7 +219,7 @@
                 </el-collapse>
                 <RyuClipboard
                     v-else
-                    :content="copyContent(instance.members)"
+                    :content="copyContent"
                     prefix="/join"
                     icon="i-ep:document"
                     checked="i-ep:document-checked"
@@ -238,7 +241,6 @@ import { response } from '@/composables/types'
 import { ToggleTeamStatus, RemoveTeam } from '@api/team'
 import { teamStore, authStore } from '@/store'
 import { isDark } from '@composables/theme'
-import type { TeamMemberBO } from '@/composables/team'
 
 defineProps({
     showChannel: {
@@ -249,10 +251,6 @@ defineProps({
 
 const _teamStore = teamStore()
 const _authStore = authStore()
-const copyContent = (members: TeamMemberBO[]) => {
-    let name = members.find((member) => member.leader)?.user.name
-    return '/join ' + name
-}
 const route = useRouter()
 const getChannel = (routeName: string) => {
     return route.getRoutes().filter((item) => item.name === routeName)[0].meta
