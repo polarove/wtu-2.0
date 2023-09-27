@@ -1,8 +1,14 @@
 import type { RouteRecordName } from 'vue-router'
 import { wssStore, authStore } from '@/store'
+import { parseData } from '@/util/ObjectUtil'
 
 const _wssStore = wssStore()
 const _authStore = authStore()
+
+interface AfterConnectionVO {
+    currentChannel: number
+    total: number
+}
 
 export class websocket {
     public wss: WebSocket
@@ -13,9 +19,9 @@ export class websocket {
 
     private static readonly MESSAGE = 3
 
-    constructor() {
+    constructor(server: number) {
         let full_address
-        if (_authStore.getServer()) {
+        if (server === 1) {
             full_address = import.meta.env.VITE_APP_WSS_EN_ORIGIN + '/en'
         } else {
             full_address = import.meta.env.VITE_APP_WSS_CN_ORIGIN + '/cn'
@@ -34,9 +40,9 @@ export class websocket {
     joinChannel(
         route: RouteRecordName | null | undefined,
         uuid: string,
-        server: number
+        server: number,
+        callback: Function
     ) {
-        console.log('joinChannel')
         this.wss.send(
             JSON.stringify({
                 route: route,
@@ -46,42 +52,54 @@ export class websocket {
             })
         )
         this.wss.onmessage = (event) => {
-            let res = JSON.parse(event.data)
-            Object.keys(res).forEach((key) => {
-                if (key === 'res') {
-                    let online_state = JSON.parse(res[key])
-                    if (online_state.currentChannel === undefined || null) {
-                        ElMessage.error('服务器错误,获取当前频道的在线人数失败')
-                        return
-                    }
-                    _wssStore.setOnlineNumber(online_state.currentChannel)
-                }
-            })
+            let result = parseData(event.data, 'data') as AfterConnectionVO
+            _wssStore.setOnlineNumber(result.currentChannel)
+            if (callback) {
+                callback(JSON.parse(event.data))
+            }
         }
     }
 
-    disconnect(route: RouteRecordName | null | undefined, uuid: string) {
+    disconnect(
+        route: RouteRecordName | null | undefined,
+        uuid: string,
+        server: number,
+        callback: Function
+    ) {
         this.wss.send(
             JSON.stringify({
                 route: route,
                 uuid: uuid,
                 action: websocket.DISCONNECT,
+                server: server,
             })
         )
+        this.wss.onmessage = (event) => {
+            if (callback) {
+                callback(JSON.parse(event.data))
+            }
+        }
     }
 
-    message(from: string, receiver: string, data: any, callback: Function) {
+    message(
+        from: string,
+        receiver: string,
+        server: number,
+        data: any,
+        callback: Function
+    ) {
         this.wss.send(
             JSON.stringify({
                 from: from,
                 receiver: receiver,
                 data: data,
+                server: server,
                 action: websocket.MESSAGE,
             })
         )
         this.wss.onmessage = (event) => {
             if (callback) {
-                callback(event)
+                callback(JSON.parse(event.data))
             }
         }
     }

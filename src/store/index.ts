@@ -181,7 +181,6 @@ export const wssStore = defineStore({
             return this.onlineNumber
         },
         setOnlineNumber(onlineNumber: number) {
-            console.log('setOnlineNumber')
             this.onlineNumber = onlineNumber
         },
         getWss(): websocket {

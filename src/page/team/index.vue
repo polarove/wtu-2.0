@@ -50,9 +50,8 @@ const initLayouts = () => {
 window.addEventListener('resize', () => {
     initLayouts()
 })
-
+_wssStore.setWss(new websocket(_authStore.getServer()))
 onMounted(() => {
-    _wssStore.setWss(new websocket())
     initLayouts()
     TeamParams.channel = route.name
     _teamStore.setParam(TeamParams)
@@ -62,20 +61,50 @@ onMounted(() => {
         _wssStore.wss.joinChannel(
             route.name,
             _authStore.getUUID(),
-            _authStore.getServer()
+            _authStore.getServer(),
+            () => {
+                console.log('组件加载，重新连接')
+            }
         )
     })
 })
-
+watch(
+    () => _authStore.getServer(),
+    (newValue) => {
+        _wssStore.setWss(new websocket(newValue))
+        _wssStore.getWss().createConnection(() => {
+            _wssStore
+                .getWss()
+                .joinChannel(
+                    route.name,
+                    _authStore.getUUID(),
+                    _authStore.getServer(),
+                    () => {
+                        console.log('所处服务器变化，重新连接')
+                    }
+                )
+        })
+    }
+)
 onBeforeRouteUpdate((to, from) => {
     TeamParams.channel = to.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
-    _wssStore.wss.disconnect(from.name, _authStore.getUUID())
+    _wssStore.wss.disconnect(
+        from.name,
+        _authStore.getUUID(),
+        _authStore.getServer(),
+        () => {
+            console.log('路由变化，断开连接')
+        }
+    )
     _wssStore.wss.joinChannel(
         to.name,
         _authStore.getUUID(),
-        _authStore.getServer()
+        _authStore.getServer(),
+        () => {
+            console.log('路由变化，重新连接')
+        }
     )
 })
 
@@ -94,7 +123,14 @@ onBeforeUnmount(() => {
     window.removeEventListener('resize', () => {
         initLayouts()
     })
-    _wssStore.wss.disconnect(route.name, _authStore.getUUID())
+    _wssStore.wss.disconnect(
+        route.name,
+        _authStore.getUUID(),
+        _authStore.getServer(),
+        () => {
+            console.log('组件卸载，断开连接')
+        }
+    )
 })
 
 const e = new defaults()
