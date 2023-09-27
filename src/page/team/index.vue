@@ -50,15 +50,15 @@ window.addEventListener('resize', () => {
     initLayouts()
 })
 
-window.wss = new websocket(_authStore.getServer())
+const wss = new websocket(_authStore.getServer())
 onMounted(() => {
     initLayouts()
     TeamParams.channel = route.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
     autoRefresh(1000 * 60 * 10)
-    window.wss.createConnection(() => {
-        window.wss.joinChannel(
+    wss.createConnection(() => {
+        wss.joinChannel(
             route.name,
             _authStore.getUUID(),
             _authStore.getServer(),
@@ -71,14 +71,15 @@ onMounted(() => {
 watch(
     () => _authStore.getServer(),
     (newValue) => {
-        window.wss = new websocket(newValue)
-        window.wss.createConnection(() => {
-            window.wss.joinChannel(
+        // 服务器变化，需要重新建立连接
+        const wss = new websocket(newValue)
+        wss.createConnection(() => {
+            wss.joinChannel(
                 route.name,
                 _authStore.getUUID(),
                 _authStore.getServer(),
                 () => {
-                    console.log('所处服务器变化，重新连接')
+                    console.log('所处服务器变化，重新建立连接')
                 }
             )
         })
@@ -88,7 +89,7 @@ onBeforeRouteUpdate((to, from) => {
     TeamParams.channel = to.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
-    window.wss.disconnect(
+    wss.disconnect(
         from.name,
         _authStore.getUUID(),
         _authStore.getServer(),
@@ -96,7 +97,7 @@ onBeforeRouteUpdate((to, from) => {
             console.log('路由变化，断开连接')
         }
     )
-    window.wss.joinChannel(
+    wss.joinChannel(
         to.name,
         _authStore.getUUID(),
         _authStore.getServer(),
@@ -121,7 +122,7 @@ onBeforeUnmount(() => {
     window.removeEventListener('resize', () => {
         initLayouts()
     })
-    window.wss.disconnect(
+    wss.disconnect(
         route.name,
         _authStore.getUUID(),
         _authStore.getServer(),
