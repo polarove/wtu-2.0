@@ -30,3 +30,8 @@ export enum DELETE_OR_NOT {
     DELETE = 1,
     NOT_DELETE = 0,
 }
+
+export enum TEAM_STATUS {
+    PUBLIC = 1,
+    PRIVATE = 0,
+}
