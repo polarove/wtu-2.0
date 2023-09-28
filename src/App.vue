@@ -6,4 +6,3 @@
 import { authStore } from '@/store'
 const _authStore = authStore()
 </script>
-```

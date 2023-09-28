@@ -46,6 +46,7 @@ import type { response } from '@/composables/types'
 import { websocket } from '@util/WebsocketUtil'
 import type { RouteRecordName } from 'vue-router'
 import { WSS_ACTION } from '@composables/enums'
+import { defaults } from '@/composables/defaults'
 import { qa } from '@composables/qa'
 
 const _teamStore = teamStore()
@@ -162,6 +163,16 @@ onBeforeUnmount(() => {
     wss.close()
 })
 
+const d = new defaults()
+if (d.isDefualtUserName(_authStore.getName())) {
+    ElNotification.info({
+        title: '提示',
+        message: '双击上方的昵称可进行修改，以便大家加入你的队伍',
+        duration: 0,
+        offset: 67,
+    })
+}
+
 const helpDialog = reactive({
     visible: false,
 })
@@ -202,7 +213,7 @@ const helpDialog = reactive({
 
 .help {
     position: fixed;
+    left: 0.75rem;
     bottom: 1em;
-    left: 1em;
 }
 </style>
