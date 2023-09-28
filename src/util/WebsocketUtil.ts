@@ -1,5 +1,5 @@
 import { parseData } from '@/util/ObjectUtil'
-import { RouteRecordName } from 'vue-router'
+import { ServerCodeEnum } from '@/composables/enums'
 export class websocket {
     public wss: WebSocket
 
@@ -7,7 +7,7 @@ export class websocket {
 
     constructor(server: number) {
         let full_address
-        if (server === 1) {
+        if (server === ServerCodeEnum.en) {
             full_address = import.meta.env.VITE_APP_WSS_EN_ORIGIN + '/en'
         } else {
             full_address = import.meta.env.VITE_APP_WSS_CN_ORIGIN + '/cn'
