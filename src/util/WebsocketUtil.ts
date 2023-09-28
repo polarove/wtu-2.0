@@ -1,7 +1,9 @@
 import { parseData } from '@/util/ObjectUtil'
-
+import { RouteRecordName } from 'vue-router'
 export class websocket {
     public wss: WebSocket
+
+    public server: number
 
     constructor(server: number) {
         let full_address
@@ -10,6 +12,7 @@ export class websocket {
         } else {
             full_address = import.meta.env.VITE_APP_WSS_CN_ORIGIN + '/cn'
         }
+        this.server = server
         this.wss = new WebSocket(full_address)
     }
 

@@ -1,11 +1,8 @@
 <template>
     <div class="states">
-        <el-tooltip
-            :content="OnlineStatusEnum.offline.getType()"
-            :disabled="tooltipDisabled"
-        >
+        <el-tooltip content="离线" :disabled="tooltipDisabled">
             <RyuSvg
-                @click="updateOnlineStatus(OnlineStatusEnum.offline.getCode())"
+                @click="updateOnlineStatus(OnlineStatusEnum.offline)"
                 name="offline"
                 :size="size"
                 class="state offline"
@@ -13,12 +10,9 @@
             >
             </RyuSvg>
         </el-tooltip>
-        <el-tooltip
-            :content="OnlineStatusEnum.online.getType()"
-            :disabled="tooltipDisabled"
-        >
+        <el-tooltip content="在线" :disabled="tooltipDisabled">
             <RyuSvg
-                @click="updateOnlineStatus(OnlineStatusEnum.online.getCode())"
+                @click="updateOnlineStatus(OnlineStatusEnum.online)"
                 name="online"
                 :size="size"
                 class="state online"
@@ -26,16 +20,9 @@
             >
             </RyuSvg>
         </el-tooltip>
-        <el-tooltip
-            :content="OnlineStatusEnum.online_in_game.getType()"
-            :disabled="tooltipDisabled"
-        >
+        <el-tooltip content="游戏中" :disabled="tooltipDisabled">
             <RyuSvg
-                @click="
-                    updateOnlineStatus(
-                        OnlineStatusEnum.online_in_game.getCode()
-                    )
-                "
+                @click="updateOnlineStatus(OnlineStatusEnum.online_in_game)"
                 name="wifi-solid"
                 :size="size"
                 class="state ingame"
@@ -80,18 +67,15 @@ defineProps({
 })
 
 const user_offline = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.offline.getCode()
+    return _authStore.getOnlineStatus() === OnlineStatusEnum.offline
 })
 
 const user_online = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.online.getCode()
+    return _authStore.getOnlineStatus() === OnlineStatusEnum.online
 })
 
 const user_ingame = computed(() => {
-    return (
-        _authStore.getOnlineStatus() ===
-        OnlineStatusEnum.online_in_game.getCode()
-    )
+    return _authStore.getOnlineStatus() === OnlineStatusEnum.online_in_game
 })
 
 const logout = async () => {

@@ -63,18 +63,15 @@ const user_unknown = computed(() => {
 })
 
 const user_offline = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.offline.getCode()
+    return _authStore.getOnlineStatus() === OnlineStatusEnum.offline
 })
 
 const user_online = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.online.getCode()
+    return _authStore.getOnlineStatus() === OnlineStatusEnum.online
 })
 
 const user_ingame = computed(() => {
-    return (
-        _authStore.getOnlineStatus() ===
-        OnlineStatusEnum.online_in_game.getCode()
-    )
+    return _authStore.getOnlineStatus() === OnlineStatusEnum.online_in_game
 })
 
 defineProps({
@@ -120,10 +117,10 @@ const toggleBooster = async (booster: string) => {
 
     if (_authStore.hasBooster(booster)) {
         _authStore.removeBooster(booster)
-        UpdateBoosterForm.action = ActionEnum.REMOVE
+        UpdateBoosterForm.action = ActionEnum.remove
     } else {
         _authStore.addBooster(booster)
-        UpdateBoosterForm.action = ActionEnum.ADD
+        UpdateBoosterForm.action = ActionEnum.add
     }
     UpdateBoosterForm.booster = booster
     await UpdateUserBooster(UpdateBoosterForm)

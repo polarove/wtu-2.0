@@ -1,37 +1,29 @@
 <template>
-    <div class="tabs flex-between">
-        <div v-if="_authStore.getDifficulty()">
-            <span
-                class="tab"
-                @click="touch(activity)"
-                :class="{ active: activity.name === routes.name }"
-                v-for="(activity, index) in childRoutes"
-            >
-                <el-badge
-                    :value="clients"
-                    :hidden="activity.name !== routes.name"
-                >
-                    <RyuSvg :index="index" :name="activity.name" size="1.4em" />
-                </el-badge>
-            </span>
-        </div>
-        <div v-else>
-            <span
-                class="tab"
-                @click="touch(activity)"
-                :class="{ active: activity.name === routes.name }"
-                v-for="(activity, index) in childRoutes?.filter(
-                    (item) => item.name !== 'steelpath'
-                )"
-            >
-                <el-badge
-                    :value="clients"
-                    :hidden="activity.name !== routes.name"
-                >
-                    <RyuSvg :index="index" :name="activity.name" size="1.4em" />
-                </el-badge>
-            </span>
-        </div>
+    <div class="tabs flex-between" v-if="_authStore.getDifficulty()">
+        <span
+            class="tab"
+            @click="touch(activity)"
+            :class="{ active: activity.name === routes.name }"
+            v-for="(activity, index) in childRoutes"
+        >
+            <el-badge :value="clients" :hidden="activity.name !== routes.name">
+                <RyuSvg :index="index" :name="activity.name" size="1.4em" />
+            </el-badge>
+        </span>
+    </div>
+    <div class="tabs flex-between" v-else>
+        <span
+            class="tab"
+            @click="touch(activity)"
+            :class="{ active: activity.name === routes.name }"
+            v-for="(activity, index) in childRoutes?.filter(
+                (item) => item.name !== 'steelpath'
+            )"
+        >
+            <el-badge :value="clients" :hidden="activity.name !== routes.name">
+                <RyuSvg :index="index" :name="activity.name" size="1.4em" />
+            </el-badge>
+        </span>
     </div>
 </template>
 

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { ReponseCodeEnum } from '@composables/enums'
+import { ReponseCodeEnum } from '@composables/code'
 import router from '@/router'
 export default class request {
     private instance: AxiosInstance | undefined

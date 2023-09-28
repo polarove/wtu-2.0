@@ -34,13 +34,7 @@ import { defaults } from '@/composables/defaults'
 import { ElNotification } from 'element-plus'
 import { websocket } from '@util/WebsocketUtil'
 import type { RouteRecordName } from 'vue-router'
-
-enum WSS_ACTION {
-    PING = 0,
-    CONNECT = 1,
-    DISCONNECT = 2,
-    MESSAGE = 3,
-}
+import { WSS_ACTION } from '@composables/enums'
 
 const _teamStore = teamStore()
 const _authStore = authStore()
