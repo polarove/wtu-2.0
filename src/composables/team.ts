@@ -41,6 +41,7 @@ export interface TeamBO {
     status: number
     creatorUuid: string
     isDeleted: number
+    updateTime: string
 }
 
 export interface TeamMemberBO {

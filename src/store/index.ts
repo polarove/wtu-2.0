@@ -165,7 +165,7 @@ export const teamStore = defineStore({
             return this.TeamPage
         },
         addTeam(team: TeamList) {
-            this.TeamPage.records.splice(0, 0, team)
+            this.TeamPage.records.unshift(team)
         },
     },
 })

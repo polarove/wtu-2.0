@@ -321,6 +321,7 @@ const publishTeam = (formEl: FormInstance | undefined) => {
                         res.data
                     )) as response<TeamList>
                     if (result.success) {
+                        console.log(result.data)
                         _teamStore.addTeam(result.data)
                     } else {
                         ElMessage.error(result.message)

@@ -1,5 +1,5 @@
 <template>
-    <el-skeleton animated :loading="loading">
+    <el-skeleton animated :loading="loading" class="animate__animated">
         <template #template>
             <el-skeleton-item variant="text" :style="{ height: height }" />
             <el-skeleton-item variant="text" :style="{ height: height }" />

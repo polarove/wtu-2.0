@@ -7,7 +7,14 @@
             class="mt-1em"
         >
             <el-card
-                class="team"
+                class="team animate__animated animate__faster"
+                :class="{
+                    animate__fadeOutDown:
+                        instance.team.isDeleted === DELETE_OR_NOT.DELETE,
+                    animate__fadeInUp:
+                        instance.team.isDeleted === DELETE_OR_NOT.NOT_DELETE,
+                }"
+                :key="index"
                 v-for="(instance, index) in _teamStore.getTeam()"
             >
                 <template #header>
@@ -23,64 +30,72 @@
                                 {{ instance.team.title }}
                             </span>
                         </div>
-                        <div
-                            class="invisible-min-900px flex"
-                            v-if="isCreator(instance.team.creatorUuid)"
-                        >
-                            <el-button
-                                v-if="
-                                    instance.team.creatorUuid ===
-                                    _authStore.getUUID()
-                                "
-                                :loading="loading.status"
-                                size="small"
-                                :type="
-                                    isPublic(
-                                        instance.team.creatorUuid,
-                                        instance.team.status
-                                    )
-                                        ? 'success'
-                                        : 'danger'
-                                "
-                                @click="
-                                    toggleTeamStatus(
-                                        instance.team.uuid,
-                                        isPublic(
-                                            instance.team.creatorUuid,
-                                            instance.team.status
-                                        )
-                                            ? 0
-                                            : 1
-                                    )
-                                "
-                            >
-                                <div
-                                    :class="
-                                        isPublic(
-                                            instance.team.creatorUuid,
-                                            instance.team.status
-                                        )
-                                            ? 'i-ep:view'
-                                            : 'i-ep:hide'
-                                    "
-                                ></div>
-                            </el-button>
-                            <el-popconfirm
-                                title="删除？"
-                                width="40"
-                                confirm-button-text="是"
-                                cancel-button-text="不了"
+                        <div class="text-end">
+                            <span class="date">{{
+                                DateBefore(instance.team.updateTime)
+                            }}</span>
+                            <div
+                                class="invisible-min-900px flex justify-end mt-3px"
                                 v-if="isCreator(instance.team.creatorUuid)"
-                                @confirm="removeTeam(instance.team.id)"
-                                :hide-icon="true"
-                                confirm-button-type="default"
                             >
-                                <template #reference>
-                                    <el-button size="small">
-                                        <div class="i-ep:close"></div>
-                                    </el-button>
-                                </template>
-                            </el-popconfirm>
+                                <el-button
+                                    v-if="
+                                        instance.team.creatorUuid ===
+                                        _authStore.getUUID()
+                                    "
+                                    :loading="loading.status"
+                                    size="small"
+                                    :type="
+                                        isPublic(
+                                            instance.team.creatorUuid,
+                                            instance.team.status
+                                        )
+                                            ? 'success'
+                                            : 'danger'
+                                    "
+                                    @click="
+                                        toggleTeamStatus(
+                                            instance.team.uuid,
+                                            isPublic(
+                                                instance.team.creatorUuid,
+                                                instance.team.status
+                                            )
+                                                ? 0
+                                                : 1
+                                        )
+                                    "
+                                >
+                                    <div
+                                        :class="
+                                            isPublic(
+                                                instance.team.creatorUuid,
+                                                instance.team.status
+                                            )
+                                                ? 'i-ep:view'
+                                                : 'i-ep:hide'
+                                        "
+                                    ></div>
+                                </el-button>
+                                <el-popconfirm
+                                    title="删除？"
+                                    width="40"
+                                    confirm-button-text="是"
+                                    cancel-button-text="不了"
+                                    v-if="isCreator(instance.team.creatorUuid)"
+                                    @confirm="
+                                        removeTeam(instance.team.id),
+                                            (instance.team.isDeleted = 1)
+                                    "
+                                    :hide-icon="true"
+                                    confirm-button-type="default"
+                                >
+                                    <template #reference>
+                                        <el-button size="small">
+                                            <div class="i-ep:close"></div>
+                                        </el-button>
+                                    </template>
+                                </el-popconfirm>
+                            </div>
                         </div>
 
                         <div class="invisible-max-900px">
@@ -240,6 +255,8 @@ import { response } from '@/composables/types'
 import { ToggleTeamStatus, RemoveTeam } from '@api/team'
 import { teamStore, authStore } from '@/store'
 import { isDark } from '@composables/theme'
+import { DateBefore } from '@util/DateUtil'
+import { DELETE_OR_NOT } from '@/composables/enums'
 
 defineProps({
     showChannel: {
@@ -314,6 +331,7 @@ watchEffect(() => {
     border-radius: 0.5rem;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    position: relative;
 
     .requirement {
         user-select: none;
@@ -330,5 +348,9 @@ watchEffect(() => {
     .requirement:nth-child(n + 2) {
         margin-top: 0.3em;
     }
+}
+.date {
+    font-size: 0.8em;
+    color: #909399;
 }
 </style>

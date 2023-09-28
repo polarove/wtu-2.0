@@ -25,3 +25,8 @@ export enum WSS_ACTION {
     DISCONNECT = 2,
     MESSAGE = 3,
 }
+
+export enum DELETE_OR_NOT {
+    DELETE = 1,
+    NOT_DELETE = 0,
+}
