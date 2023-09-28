@@ -84,15 +84,15 @@ const user_unknown = (status: number) => {
 }
 
 const user_offline = (status: number) => {
-    return status === OnlineStatusEnum.offline.getCode()
+    return status === OnlineStatusEnum.offline
 }
 
 const user_online = (status: number) => {
-    return status === OnlineStatusEnum.online.getCode()
+    return status === OnlineStatusEnum.online
 }
 
 const user_ingame = (status: number) => {
-    return status === OnlineStatusEnum.online_in_game.getCode()
+    return status === OnlineStatusEnum.online_in_game
 }
 </script>
 
