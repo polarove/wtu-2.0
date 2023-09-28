@@ -1,16 +1,6 @@
 <template>
     <div class="tabs flex-between">
-        <span
-            @click="router.push({ name: 'origin' })"
-            class="tab"
-            :class="{ active: routes.name === entries.origin }"
-        >
-            <el-badge :value="clients" :hidden="routes.name !== entries.origin">
-                <RyuSvg name="origin" size="1.4em" />
-            </el-badge>
-        </span>
-
-        <span v-if="_authStore.getDifficulty()">
+        <div v-if="_authStore.getDifficulty()">
             <span
                 class="tab"
                 @click="touch(activity)"
@@ -24,13 +14,15 @@
                     <RyuSvg :index="index" :name="activity.name" size="1.4em" />
                 </el-badge>
             </span>
-        </span>
-        <span v-else>
+        </div>
+        <div v-else>
             <span
                 class="tab"
                 @click="touch(activity)"
                 :class="{ active: activity.name === routes.name }"
-                v-for="(activity, index) in easyModeRoutes"
+                v-for="(activity, index) in childRoutes?.filter(
+                    (item) => item.name !== 'steelpath'
+                )"
             >
                 <el-badge
                     :value="clients"
@@ -39,7 +31,7 @@
                     <RyuSvg :index="index" :name="activity.name" size="1.4em" />
                 </el-badge>
             </span>
-        </span>
+        </div>
     </div>
 </template>
 
@@ -47,6 +39,7 @@
 import { authStore } from '@/store'
 import entries from '@composables/entries'
 import router from '@/router'
+import { RouteRecord } from 'vue-router'
 const routes = useRoute()
 const _authStore = authStore()
 
@@ -59,9 +52,22 @@ defineProps({
 
 const childRoutes = routes.matched
     .find((item) => item.name === 'index')
-    ?.children.find((item) => item.name === 'activity')?.children
+    ?.children.filter((item) => item.path.includes('/team'))
+    .filter((item) => {
+        if (item.name === 'activity') {
+            let origin = routes.matched
+                .find((item) => item.redirect == '/team/origin')
+                ?.children.find(
+                    (item) => item.name === entries.origin
+                ) as RouteRecord
+            if (item.children?.includes(origin)) {
+                return item.children
+            } else {
+                return item.children?.unshift(origin)
+            }
+        }
+    })[0].children
 
-const easyModeRoutes = childRoutes?.filter((item) => item.name !== 'steelpath')
 const touch = (activity: any) => {
     router.push({ name: activity.name })
 }
