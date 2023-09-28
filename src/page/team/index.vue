@@ -23,6 +23,19 @@
         </div>
         <WtuFooter />
     </div>
+    <el-button class="vertical-middle help" @click="helpDialog.visible = true">
+        <span class="mr-5px">我需要帮助</span
+        ><span class="i-ep:warning text-size-[1.2em]"></span>
+    </el-button>
+    <el-dialog v-model="helpDialog.visible">
+        <template #header> 常见问题 Q&A </template>
+        <el-card v-for="z in qa" class="mb-2em">
+            <template #header>
+                <span class="text-size-[1.5em]">Q: {{ z.q }} </span>
+            </template>
+            <span class="text-size-[1.2em]"> A: {{ z.a }}</span>
+        </el-card>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -30,11 +43,10 @@ import type { TeamList, TeamListParams, TeamPage } from '@/composables/team'
 import { teamStore, authStore } from '@/store'
 import { GetTeamList } from '@api/team'
 import type { response } from '@/composables/types'
-import { defaults } from '@/composables/defaults'
-import { ElNotification } from 'element-plus'
 import { websocket } from '@util/WebsocketUtil'
 import type { RouteRecordName } from 'vue-router'
 import { WSS_ACTION } from '@composables/enums'
+import { qa } from '@composables/qa'
 
 const _teamStore = teamStore()
 const _authStore = authStore()
@@ -150,17 +162,9 @@ onBeforeUnmount(() => {
     wss.close()
 })
 
-const e = new defaults()
-if (e.isDefualtUserName(_authStore.getName())) {
-    ElNotification({
-        title: '提示',
-        message: '左键双击 — 头像的右边的名字可更改用户名',
-        type: 'info',
-        duration: 10000,
-        offset: 70,
-        position: 'top-right',
-    })
-}
+const helpDialog = reactive({
+    visible: false,
+})
 </script>
 
 <style lang="scss" scoped>
@@ -194,5 +198,11 @@ if (e.isDefualtUserName(_authStore.getName())) {
         align-items: center;
         justify-content: center;
     }
+}
+
+.help {
+    position: fixed;
+    bottom: 1em;
+    left: 1em;
 }
 </style>
