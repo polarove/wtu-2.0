@@ -46,7 +46,7 @@ import type { response } from '@/composables/types'
 import { websocket } from '@util/WebsocketUtil'
 import type { RouteRecordName } from 'vue-router'
 import { WSS_ACTION } from '@composables/enums'
-import { defaults } from '@/composables/defaults'
+import { isDefualtUserName, isNotDefualtUserName } from '@/composables/enums'
 import { qa } from '@composables/qa'
 
 const _teamStore = teamStore()
@@ -164,10 +164,9 @@ onBeforeUnmount(() => {
 })
 
 // watcher
-const d = new defaults()
 const notified = ref<boolean>(false)
 watchEffect(() => {
-    if (d.isDefualtUserName(_authStore.getName()) && !notified.value) {
+    if (isDefualtUserName(_authStore.getName()) && !notified.value) {
         notified.value = true
         ElNotification({
             title: '提示',
@@ -178,7 +177,7 @@ watchEffect(() => {
             showClose: false,
         })
     }
-    if (d.isNotDefualtUserName(_authStore.getName())) {
+    if (isNotDefualtUserName(_authStore.getName())) {
         ElNotification.closeAll()
     }
 })

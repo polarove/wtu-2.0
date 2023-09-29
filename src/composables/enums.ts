@@ -42,3 +42,15 @@ export enum BOOSTER_STATUS {
     ACTIVE = 1,
     INACTIVE = 0,
 }
+
+export enum DEFAULT {
+    name = '一般路过Tenno',
+}
+
+export const isDefualtUserName = (name: string): boolean => {
+    return name === DEFAULT.name
+}
+
+export const isNotDefualtUserName = (name: string): boolean => {
+    return name !== DEFAULT.name
+}

@@ -64,7 +64,4 @@ declare module 'vue' {
     WtuWarframe: typeof import('./src/components/wtu-warframe.vue')['default']
     WtuWarframeList: typeof import('./src/components/wtu-warframe-list.vue')['default']
   }
-  export interface ComponentCustomProperties {
-    vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
-  }
 }

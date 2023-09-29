@@ -15,6 +15,7 @@
                 </div>
             </div>
             <el-form
+                v-if="isNotDefualtUserName(_authStore.getName())"
                 class="mt-20px"
                 ref="VerifyFormRef"
                 :model="VerifyForm"
@@ -65,8 +66,7 @@ import type { User } from '@composables/user'
 import type { FormInstance, FormRules } from 'element-plus'
 import { authStore } from '@/store'
 import { ElMessage } from 'element-plus'
-import { defaults } from '@composables/defaults'
-const Default = new defaults()
+import { isDefualtUserName, isNotDefualtUserName } from '@composables/enums'
 
 const _authStore = authStore()
 const email = router.currentRoute.value.query.email as string
@@ -95,7 +95,7 @@ const verify = async () => {
     } else if (result.code == 205) {
         setTimeout(() => {
             verificationStatus.compeleted = true
-            if (Default.isDefualtUserName(_authStore.getName())) {
+            if (isDefualtUserName(_authStore.getName())) {
                 verificationStatus.succeed = true
                 verificationStatus.message = '别忘了输入用户名哦^_^'
             } else {
