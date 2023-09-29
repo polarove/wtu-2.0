@@ -1,8 +1,12 @@
 <template>
-    <div>
+    <div ref="el">
         <WtuHeader />
         <div class="selections">
             <WtuDifficulty />
+            <span
+                class="i-ant-design:question-circle-outlined text-size-[1.8em] hover-color-blue cursor-pointer mt-1em"
+                @click="helpDrawer.visible = true"
+            ></span>
         </div>
         <div class="wrapper">
             <div :class="{ wideScreen: wideMode, compactScreen: !wideMode }">
@@ -23,19 +27,15 @@
         </div>
         <WtuFooter />
     </div>
-    <el-button class="vertical-middle help" @click="helpDialog.visible = true">
-        <span class="mr-5px">我需要帮助</span
-        ><span class="i-ep:warning text-size-[1.2em]"></span>
-    </el-button>
-    <el-dialog v-model="helpDialog.visible">
-        <template #header> 常见问题 Q&A </template>
+    <el-drawer v-model="helpDrawer.visible" :size="wideMode ? '50%' : '100%'">
+        <template #header> <div>常见问题 Q&A</div></template>
         <el-card v-for="z in qa" class="mb-2em">
             <template #header>
                 <span class="text-size-[1.5em]">Q: {{ z.q }} </span>
             </template>
             <span class="text-size-[1.2em]"> A: {{ z.a }}</span>
         </el-card>
-    </el-dialog>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -68,9 +68,6 @@ const initLayouts = () => {
         wideMode.value = true
     }
 }
-window.addEventListener('resize', () => {
-    initLayouts()
-})
 
 const wss = new websocket(_authStore.getServer())
 
@@ -139,8 +136,11 @@ const autoRefresh = (interval: number) => {
     }, interval)
 }
 
+// component life cycle
 onMounted(() => {
     initLayouts()
+    // event listener
+    window.addEventListener('resize', initLayouts)
     TeamParams.channel = route.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
@@ -148,21 +148,22 @@ onMounted(() => {
     autoRefresh(1000 * 60 * 10)
 })
 
+//component life cycle
 onBeforeRouteUpdate((to, from) => {
     TeamParams.channel = to.name
+    _teamStore.resetPage()
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
     switchChannel(from.name, to.name)
 })
 
 onBeforeUnmount(() => {
-    window.removeEventListener('resize', () => {
-        initLayouts()
-    })
+    window.removeEventListener('resize', initLayouts)
     disconnect(route.name)
     wss.close()
 })
 
+// watcher
 const d = new defaults()
 const notified = ref<boolean>(false)
 watchEffect(() => {
@@ -182,7 +183,7 @@ watchEffect(() => {
     }
 })
 
-const helpDialog = reactive({
+const helpDrawer = reactive({
     visible: false,
 })
 </script>
@@ -192,6 +193,10 @@ const helpDialog = reactive({
     position: fixed;
     right: 0.75rem;
     top: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 .wrapper {
     padding: 1em 2em;
@@ -218,11 +223,5 @@ const helpDialog = reactive({
         align-items: center;
         justify-content: center;
     }
-}
-
-.help {
-    position: fixed;
-    left: 0.75rem;
-    bottom: 1em;
 }
 </style>

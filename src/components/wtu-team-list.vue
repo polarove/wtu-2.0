@@ -1,11 +1,6 @@
 <template>
     <RyuLoading :loading="_teamStore.getLoading()" class="mt-1em">
-        <RyuEmpty
-            iconSize="6em"
-            tip="当前暂无组队信息"
-            :empty="empty"
-            class="mt-1em"
-        >
+        <RyuEmpty iconSize="6em" tip="当前暂无组队信息" :empty="empty">
             <el-card
                 class="team animate__animated animate__faster"
                 :class="{
@@ -327,7 +322,6 @@ watchEffect(() => {
 <style lang="scss" scoped>
 .team {
     margin: 1em 0;
-    width: 100%;
     border-radius: 0.5rem;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     cursor: pointer;

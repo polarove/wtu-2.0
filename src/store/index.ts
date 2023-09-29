@@ -121,6 +121,8 @@ export const teamStore = defineStore({
         param: {} as TeamListParams,
         TeamPage: {} as TeamPage,
         loading: false,
+        pageLoading: false,
+        isEnd: false,
     }),
     actions: {
         initTeamList() {
@@ -140,6 +142,10 @@ export const teamStore = defineStore({
                     this.loading = false
                 })
         },
+        resetPage() {
+            this.param.page = 1
+            this.isEnd = false
+        },
         removeTeam(id: number) {
             this.TeamPage.records = this.TeamPage.records.filter(
                 (item) => item.team.id !== id
@@ -158,8 +164,11 @@ export const teamStore = defineStore({
         getParam(): TeamListParams {
             return this.param
         },
-        setParam(param: TeamListParams) {
+        setParam(param: TeamListParams, callback?: Function) {
             this.param = param
+            if (callback) {
+                callback()
+            }
         },
         setTeam(TeamList: Array<TeamList>) {
             this.TeamPage.records = TeamList
@@ -172,6 +181,35 @@ export const teamStore = defineStore({
         },
         addTeam(team: TeamList) {
             this.TeamPage.records.unshift(team)
+        },
+        nextPage() {
+            this.pageLoading = true
+            this.param.page++
+            if (this.isEnd) {
+                this.pageLoading = false
+                return
+            }
+            GetTeamList(this.param)
+                .then((res: any) => {
+                    if (res.success) {
+                        if (res.data.records.length === 0) {
+                            this.isEnd = true
+                        } else {
+                            this.TeamPage.records =
+                                this.TeamPage.records.concat(
+                                    res.data.records as Array<TeamList>
+                                )
+                        }
+                    } else {
+                        ElMessage.error(res.message)
+                    }
+                })
+                .catch((err: any) => {
+                    ElMessage.error(err.message)
+                })
+                .finally(() => {
+                    this.pageLoading = false
+                })
         },
     },
 })

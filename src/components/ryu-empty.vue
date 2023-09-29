@@ -4,7 +4,7 @@
             <RyuSvg class="icon" name="empty" :size="iconSize" />
             <div class="tip">{{ tip }}</div>
         </div>
-        <slot v-else></slot>
+        <slot></slot>
     </div>
 </template>
 
@@ -31,8 +31,11 @@ defineProps({
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    .icon {
+        padding-top: 2em;
+        padding-bottom: 0.5em;
+    }
     .tip {
-        margin-top: 1em;
         font-size: 0.88em;
         color: #999;
         user-select: none;
