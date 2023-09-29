@@ -33,7 +33,7 @@
                 <div class="boosters">
                     <WtuBooster
                         size="2.3em"
-                        active-size="2em"
+                        active-size="2.3em"
                         class="booster"
                         v-for="(booster, index) in boosters"
                         :key="index"
