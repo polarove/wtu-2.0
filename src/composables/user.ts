@@ -6,7 +6,11 @@ export interface User {
     uuid: string
     server: number
     level: number
-    boosterList: string[]
+    affinityBooster: number
+    creditBooster: number
+    resourceBooster: number
+    resourceDropRateBooster: number
+    modDropRateBooster: number
 }
 
 export interface UserBO {
@@ -14,5 +18,9 @@ export interface UserBO {
     name: string
     avatar: string
     onlineStatus: number
-    boosterList: string[]
+    affinityBooster: number
+    creditBooster: number
+    resourceBooster: number
+    resourceDropRateBooster: number
+    modDropRateBooster: number
 }

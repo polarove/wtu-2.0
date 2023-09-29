@@ -8,6 +8,7 @@ import { warframe } from '@/composables/warframe'
 import type { TeamList, TeamPage, TeamListParams } from '@composables/team'
 import { GetTeamList } from '@api/team'
 import { websocket } from '@util/WebsocketUtil'
+import { BOOSTER_STATUS } from '@/composables/enums'
 
 export const authStore = defineStore({
     id: 'session',
@@ -20,7 +21,11 @@ export const authStore = defineStore({
             onlineStatus: null as number | null,
             server: 1,
             level: 0,
-            boosterList: [] as string[],
+            affinityBooster: 0,
+            creditBooster: 0,
+            resourceBooster: 0,
+            resourceDropRateBooster: 0,
+            modDropRateBooster: 0,
         },
         difficulty: false,
     }),
@@ -30,6 +35,9 @@ export const authStore = defineStore({
         },
         getUser(): User {
             return this.user
+        },
+        getBooster(booster: string): number {
+            return this.user[booster as keyof User] as number
         },
         getDescription(): string {
             return this.user.description
@@ -59,15 +67,13 @@ export const authStore = defineStore({
             this.user.onlineStatus = onlineStatus
         },
         hasBooster(booster: string): boolean {
-            return this.user.boosterList.includes(booster)
+            return this.user[booster as keyof User] === BOOSTER_STATUS.ACTIVE
         },
         removeBooster(booster: string) {
-            this.user.boosterList = this.user.boosterList.filter(
-                (item) => item !== booster
-            )
+            this.user[booster as keyof User] = BOOSTER_STATUS.INACTIVE as never
         },
-        addBooster(booster: string) {
-            this.user.boosterList.push(booster)
+        setBooster(booster: string) {
+            this.user[booster as keyof User] = BOOSTER_STATUS.ACTIVE as never
         },
         getServer(): number {
             return this.user.server

@@ -5,8 +5,10 @@ export enum OnlineStatusEnum {
 }
 
 export enum ActionEnum {
-    remove = 0,
-    add = 1,
+    INSERT = 1,
+    UPDATE = 2,
+    DELETE = 3,
+    SELECT = 4,
 }
 
 export enum ServerCodeEnum {
@@ -34,4 +36,9 @@ export enum DELETE_OR_NOT {
 export enum TEAM_STATUS {
     PUBLIC = 1,
     PRIVATE = 0,
+}
+
+export enum BOOSTER_STATUS {
+    ACTIVE = 1,
+    INACTIVE = 0,
 }

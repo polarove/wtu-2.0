@@ -1,4 +1,5 @@
 import AccountController from './instance'
+import type { User } from '@/composables/user'
 
 export const Login = (data: any) => {
     return AccountController.post('/login', data)
@@ -40,7 +41,7 @@ export const UpdateOnlineStatus = (data: any) => {
     return AccountController.post('/updateOnlineStatus', data)
 }
 
-export const UpdateUserBooster = (data: any) => {
+export const UpdateUserBooster = (data: User) => {
     return AccountController.post('/updateUserBooster', data)
 }
 

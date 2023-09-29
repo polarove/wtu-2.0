@@ -30,12 +30,21 @@
             </template>
 
             <div class="flex">
-                <div class="boosters" v-if="member.user.boosterList">
+                <div class="boosters">
                     <WtuBooster
-                        v-for="booster in member.user.boosterList"
-                        :src="boosterMap.get(booster)?.valid"
-                        size="2.2em"
+                        size="2.3em"
+                        active-size="2em"
                         class="booster"
+                        v-for="(booster, index) in boosters"
+                        :key="index"
+                        :src="
+                            member.user[booster.en]
+                                ? booster.valid
+                                : booster.invalid
+                        "
+                        :active="
+                            member.user[booster.en] === BOOSTER_STATUS.ACTIVE
+                        "
                     >
                     </WtuBooster>
                 </div>
@@ -69,8 +78,8 @@
 import type { TeamMemberBO } from '@/composables/team'
 import { authStore } from '@/store'
 import { isNotBlank } from '@/util/StrUtil'
-import { OnlineStatusEnum } from '@/composables/enums'
-import { boosterMap } from '@/composables/booster'
+import { BOOSTER_STATUS, OnlineStatusEnum } from '@/composables/enums'
+import { boosters } from '@composables/booster'
 const _authStore = authStore()
 defineProps({
     member: {
@@ -124,8 +133,8 @@ const user_ingame = (status: number) => {
 }
 .equipments {
     flex: 1;
-    margin-left: 0.4em;
-    padding-left: 0.4em;
+    margin-left: 0.6em;
+    padding-left: 0.6em;
     border-left: 1px solid var(--el-border-color);
 }
 </style>

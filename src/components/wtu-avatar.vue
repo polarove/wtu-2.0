@@ -29,14 +29,17 @@
         <template #default>
             <div class="booster-list">
                 <WtuBooster
-                    v-for="booster in boosterList"
+                    v-for="(booster, index) in boosters"
+                    :key="index"
                     :src="
-                        _authStore.hasBooster(booster.en)
+                        _authStore.getBooster(booster.en)
                             ? booster.valid
                             : booster.invalid
                     "
                     @click="toggleBooster(booster.en)"
                     :active="_authStore.hasBooster(booster.en)"
+                    size="2.7em"
+                    activeSize="2.5em"
                 >
                 </WtuBooster>
             </div>
@@ -53,8 +56,8 @@
 import router from '@/router'
 import { authStore } from '@/store'
 import { isBlank } from '@util/StrUtil'
-import { OnlineStatusEnum, ActionEnum } from '@composables/enums'
-import { boosterList } from '@composables/booster'
+import { OnlineStatusEnum } from '@composables/enums'
+import { boosters } from '@composables/booster'
 import { UpdateUserBooster } from '@api/account'
 const _authStore = authStore()
 
@@ -102,28 +105,13 @@ const NaviPrivateHome = () => {
     router.push({ name: 'profile' })
 }
 
-interface UpdateBoosterForm {
-    uuid: string
-    action: number
-    booster: string
-}
-const UpdateBoosterForm = reactive<UpdateBoosterForm>({
-    uuid: _authStore.getUUID(),
-    action: 0,
-    booster: '',
-})
 const toggleBooster = async (booster: string) => {
-    console.log(1)
-
     if (_authStore.hasBooster(booster)) {
         _authStore.removeBooster(booster)
-        UpdateBoosterForm.action = ActionEnum.remove
     } else {
-        _authStore.addBooster(booster)
-        UpdateBoosterForm.action = ActionEnum.add
+        _authStore.setBooster(booster)
     }
-    UpdateBoosterForm.booster = booster
-    await UpdateUserBooster(UpdateBoosterForm)
+    await UpdateUserBooster(_authStore.getUser())
 }
 
 const avatarLoadingErrorHandler = (e: Event) => {

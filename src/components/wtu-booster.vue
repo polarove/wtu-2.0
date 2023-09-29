@@ -5,7 +5,7 @@
         }"
         :src="src"
         alt="booster"
-        :style="{ width: size }"
+        :style="{ width: active ? activeSize : size }"
         class="booster-img"
     />
 </template>
@@ -14,7 +14,8 @@
 defineProps({
     src: { type: String, required: true },
     active: { type: Boolean, default: true },
-    size: { type: String, default: '3em' },
+    size: { type: String, default: '2em' },
+    activeSize: { type: String, default: '3em' },
 })
 </script>
 

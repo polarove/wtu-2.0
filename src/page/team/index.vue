@@ -164,14 +164,23 @@ onBeforeUnmount(() => {
 })
 
 const d = new defaults()
-if (d.isDefualtUserName(_authStore.getName())) {
-    ElNotification.info({
-        title: '提示',
-        message: '双击上方的昵称可进行修改，以便大家加入你的队伍',
-        duration: 0,
-        offset: 67,
-    })
-}
+const notified = ref<boolean>(false)
+watchEffect(() => {
+    if (d.isDefualtUserName(_authStore.getName()) && !notified.value) {
+        notified.value = true
+        ElNotification({
+            title: '提示',
+            message: '双击上方昵称可以进行修改哦~方便大家加入你的队伍',
+            type: 'warning',
+            duration: 0,
+            offset: 70,
+            showClose: false,
+        })
+    }
+    if (d.isNotDefualtUserName(_authStore.getName())) {
+        ElNotification.closeAll()
+    }
+})
 
 const helpDialog = reactive({
     visible: false,
