@@ -1,47 +1,38 @@
 <template>
-    <el-tooltip content="请输入验证码" :visible="tooltipVisible">
-        <div class="ryu_code_wrapper">
-            <div class="w-100% h-100% text-center">
-                <form :modelValue="modelValue">
-                    <input
-                        class="inputUnit"
-                        @keyup="Backspace($event, order)"
-                        :ref="(el: HTMLInputElement) => setInputRef(el, order)"
-                        @input="constraintInput($event, order)"
-                        :style="{ width: cellWidth, height: cellHeight }"
-                        v-for="order in count"
-                    />
-                </form>
-            </div>
-        </div>
-    </el-tooltip>
+    <form :modelValue="modelValue">
+        <input
+            class="inputUnit"
+            @keyup="Backspace($event, order)"
+            :ref="(el: HTMLInputElement):VNodeRef | undefined => setInputRef(order, el)"
+            @input="constraintInput($event as InputEvent, order)"
+            @focus="currentPosition = order"
+            :style="{
+                width: cellWidth,
+                height: cellHeight,
+                textShadow: fontColor,
+            }"
+            v-for="order in count"
+        />
+    </form>
 </template>
 
 <script setup lang="ts">
-// 因为要动态生成ref，所以需要关闭ts检查
-// @ts-nocheck
-const tooltipVisible = ref(true)
-const emit = defineEmits(['update:modelValue', 'submit'])
+import { ref, nextTick, onMounted, VNodeRef, onUnmounted } from 'vue'
+const emit = defineEmits(['update:modelValue', 'submit', 'check'])
 const props = defineProps({
     modelValue: {
         type: String,
         default: '',
     },
-    activeInputBorderColor: {
-        type: String,
-        default: '#449bf2',
-    },
     count: {
         type: Number,
         default: 6,
-    },
-    tooltipDisappearsAt: {
-        type: String,
-        default: '2',
+        min: 1,
     },
     cellUnit: {
         type: Number,
         default: 1,
+        min: 1,
     },
     cellWidth: {
         type: String,
@@ -51,52 +42,104 @@ const props = defineProps({
         type: String,
         default: '2em',
     },
+    fontColor: {
+        type: String,
+        default: '',
+    },
+    focusOn: {
+        type: Number,
+        default: 1,
+    },
 })
 
-const currentPosition = ref(1)
-const refs: Record<string, HTMLInputElement> = {}
-const setInputRef = (el: HTMLInputElement, order: number) => {
-    if (el) {
-        refs[`${order}`] = el
-    }
-}
-const AutoFocus = () => {
+// 最终用于提交的结果
+const result = ref('')
+
+// 当前输入框位置
+const currentPosition = ref<number>(1)
+// 所有输入框的引用
+const refs: Record<number, HTMLInputElement> = {}
+const setInputRef = (
+    order: number,
+    el: HTMLInputElement
+): VNodeRef | undefined => {
+    let elRef = ref()
     nextTick(() => {
-        refs['1']?.focus()
+        elRef.value = el
+        refs[`${order}`] = el
+    })
+    return elRef
+}
+
+// 自动聚焦输入框
+const autoFocus = (index: number) => {
+    nextTick(() => {
+        refs[index]?.focus()
     })
 }
 
-const result = ref('')
-const constraintInput = (event: InputEvent, order: number) => {
-    const target = event.target as HTMLInputElement
-    if (!testNumber(event.data as string)) {
-        // write code to stop input
-        if (target) {
+const checkInput = (target: HTMLInputElement) => {
+    emit('check', target.value, (result: boolean) => {
+        if (!result && target) {
             target.value = ''
+            return
         }
-        return
-    }
+    })
+}
+
+// 判断是否是数字
+// 控制输入
+const constraintInput = (event: InputEvent, order: number) => {
+    let target = event.target as HTMLInputElement
+    checkInput(target)
     if (order) {
-        if (target.value.length >= props.cellUnit) {
-            target.value = target.value.slice(0, props.cellUnit)
-        }
         const nextOrder = order + 1
-        if (nextOrder <= props.count) {
-            currentPosition.value = nextOrder
+        if (target.value.length > props.cellUnit) {
+            target.value = target.value.slice(0, props.cellUnit)
+        } else if (target.value.length === props.cellUnit) {
+            target.value = target.value.slice(0, props.cellUnit)
             refs[`${nextOrder}`]?.focus()
         }
         updateResult()
+    } else {
+        console.error('order is not defined')
     }
 }
+
+// 控制黏贴
+const constraintPaste = () => {
+    window.navigator.clipboard.readText().then((text) => {
+        text.split('').forEach((item, index) => {
+            emit('check', item, (result: boolean) => {
+                if (result) {
+                    let nextOrder = index + 1
+                    var el: HTMLInputElement = refs[`${nextOrder}`]
+                    if (el) {
+                        el?.focus()
+                        el.value = item
+                        updateResult()
+                    }
+                    currentPosition.value = text.length
+                } else {
+                    return
+                }
+            })
+        })
+    })
+}
+
+// 更新最终结果
 const updateResult = () => {
     result.value = Object.values(refs)
         .map((item) => item.value)
         .join('')
     emit('update:modelValue', result.value)
-    if (result.value.length === props.count) {
+    if (result.value.length === props.count * props.cellUnit) {
         emit('submit', result.value)
     }
 }
+
+// 监听删除键
 const Backspace = (event: KeyboardEvent, order: number) => {
     if (event.key === 'Backspace' && order > 1) {
         updateResult()
@@ -107,69 +150,55 @@ const Backspace = (event: KeyboardEvent, order: number) => {
     }
 }
 
-window.addEventListener('paste', function () {
-    this.navigator.clipboard.readText().then((text) => {
-        text.split('').forEach((item, index) => {
-            let nextOrder = index + 1
-            if (!testNumber(item)) {
-                return
-            }
-            if (refs[`${nextOrder}`]) {
-                refs[`${nextOrder}`]?.focus()
-                refs[`${nextOrder}`].value = item
-                updateResult()
-            }
-            currentPosition.value = Object.keys(refs).length
-        })
-    })
-})
+// 监听粘贴事件
+window.addEventListener('paste', constraintPaste)
 
-watchEffect(() => {
-    if (currentPosition.value > Number(props.tooltipDisappearsAt)) {
-        tooltipVisible.value = false
-    } else {
-        tooltipVisible.value = true
-    }
-})
-
-const testNumber = (str: string) => {
-    return /^\d+$/.test(str)
+// 获取指定元素的ref
+const getRef = (index: number) => {
+    return refs[`${index}`]
 }
 
-defineExpose({
-    result,
-})
+// 自动聚焦
+const initComponent = () => {
+    if (props.focusOn > props.count) {
+        autoFocus(currentPosition.value)
+    } else {
+        currentPosition.value = props.focusOn
+        autoFocus(currentPosition.value)
+    }
+}
+
+// 组件加载时自动聚焦
 onMounted(() => {
-    AutoFocus()
+    initComponent()
+})
+
+// 组件卸载时移除黏贴监听
+onUnmounted(() => {
+    window.removeEventListener('paste', constraintPaste)
+})
+
+defineExpose({
+    refs,
+    getRef,
+    currentPosition,
 })
 </script>
 
-<style lang="scss" scoped>
-.ryu_code_wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-
-    .inputUnit {
-        &:focus {
-            box-shadow: 0 0 0 1px #449bf2 inset;
-        }
-    }
-
-    input {
-        margin: 0.2rem;
-        border-radius: 0.5rem;
-        color: transparent;
-        text-shadow: 0 0 0 var(--el-text-color-primary);
-        border: none;
-        outline: 0;
-        text-align: center;
-        font-size: 1.5em;
-        font-weight: bold;
-        background-color: transparent;
-        box-shadow: 0 0 0 1px #e4e7ed inset;
-    }
+<style scoped>
+.inputUnit:focus {
+    box-shadow: 0 0 0 1px #449bf2 inset;
+}
+input {
+    margin: 0.2rem;
+    border-radius: 0.5rem;
+    color: transparent;
+    border: none;
+    outline: 0;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    background-color: transparent;
+    box-shadow: 0 0 0 1px #e4e7ed inset;
 }
 </style>

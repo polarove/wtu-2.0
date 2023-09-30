@@ -31,7 +31,17 @@
             </el-input>
         </el-form-item>
     </el-form>
-    <RyuCode v-if="CodeInputVisible" v-model="code" @submit="submitCode" />
+    <div v-if="CodeInputVisible" class="flex-center">
+        <RyuCode
+            v-model="code"
+            :count="6"
+            :cell-unit="1"
+            :focusOn="1"
+            @check="testNumber"
+            font-color="0 0 0 #000"
+            @submit="submitCode"
+        />
+    </div>
     <el-form
         v-if="VerifySuccess"
         :model="RecoverPasswordForm"
@@ -170,6 +180,10 @@ const VerifySuccess = ref(false)
 const CodeInputVisible = computed(() => {
     return !VerifySuccess.value && !EmailInputHidden.value ? true : false
 })
+
+const testNumber = (str: string, callback: Function) => {
+    callback(/^\d+$/.test(str))
+}
 
 const submitCode = async () => {
     RecoverEmailForm.uuid = uuid as string
