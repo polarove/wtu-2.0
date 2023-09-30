@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import nProgress from 'nprogress'
 import entries from '@/composables/entries'
 
@@ -145,12 +145,12 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHashHistory(),
     routes,
 })
 
-// @ts-ignore
 router.beforeEach((to, from, next) => {
+    console.log(from.name)
     nProgress.start()
     document.title = to.meta.forehead
         ? (to.meta.forehead as any)

@@ -165,12 +165,17 @@ onBeforeUnmount(() => {
 
 // watcher
 const notified = ref<boolean>(false)
+const message = computed(() => {
+    return wideMode
+        ? '双击上方昵称可以进行修改哦~方便大家加入你的队伍'
+        : '点击头像进入个人空间，双击昵称可以进行修改哦，方便大家加入你的队伍'
+})
 watchEffect(() => {
     if (isDefualtUserName(_authStore.getName()) && !notified.value) {
         notified.value = true
         ElNotification({
             title: '提示',
-            message: '双击上方昵称可以进行修改哦~方便大家加入你的队伍',
+            message: message.value,
             type: 'warning',
             duration: 0,
             offset: 70,
