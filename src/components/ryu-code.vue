@@ -1,9 +1,11 @@
 <template>
     <form :modelValue="modelValue">
         <input
+            v-for="(order, index) in count"
             class="inputUnit"
             @keyup="Backspace($event, order)"
-            :ref="(el: HTMLInputElement):VNodeRef | undefined => setInputRef(order, el)"
+            :ref="(el: Element | ComponentPublicInstance | null) => setInputRef(order, el)"
+            :key="index"
             @input="constraintInput($event as InputEvent, order)"
             @focus="currentPosition = order"
             :style="{
@@ -11,13 +13,11 @@
                 height: cellHeight,
                 textShadow: fontColor,
             }"
-            v-for="order in count"
         />
     </form>
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, VNodeRef, onUnmounted } from 'vue'
 const emit = defineEmits(['update:modelValue', 'submit', 'check'])
 const props = defineProps({
     modelValue: {
@@ -57,18 +57,16 @@ const result = ref('')
 
 // 当前输入框位置
 const currentPosition = ref<number>(1)
+
 // 所有输入框的引用
 const refs: Record<number, HTMLInputElement> = {}
 const setInputRef = (
     order: number,
-    el: HTMLInputElement
-): VNodeRef | undefined => {
-    let elRef = ref()
+    el: Element | ComponentPublicInstance | null
+) => {
     nextTick(() => {
-        elRef.value = el
-        refs[`${order}`] = el
+        refs[`${order}`] = el as HTMLInputElement
     })
-    return elRef
 }
 
 // 自动聚焦输入框
@@ -96,6 +94,7 @@ const constraintInput = (event: InputEvent, order: number) => {
         const nextOrder = order + 1
         if (target.value.length > props.cellUnit) {
             target.value = target.value.slice(0, props.cellUnit)
+            refs[`${nextOrder}`]?.focus()
         } else if (target.value.length === props.cellUnit) {
             target.value = target.value.slice(0, props.cellUnit)
             refs[`${nextOrder}`]?.focus()
@@ -141,11 +140,14 @@ const updateResult = () => {
 
 // 监听删除键
 const Backspace = (event: KeyboardEvent, order: number) => {
-    if (event.key === 'Backspace' && order > 1) {
+    if (event.key === 'Backspace' && order >= 1) {
         updateResult()
         let preOrder = order - 1
-        refs[`${preOrder}`]?.focus()
-        currentPosition.value = preOrder
+        var current = refs[`${order}`]?.value
+        if (current.length === 0 && preOrder > 0) {
+            refs[`${preOrder}`]?.focus()
+            currentPosition.value = preOrder
+        }
         return
     }
 }
