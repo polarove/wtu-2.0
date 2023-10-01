@@ -13,7 +13,7 @@ import router from '@/router'
 defineProps({
     size: {
         type: String,
-        default: '1.8rem',
+        default: '1em',
     },
 })
 

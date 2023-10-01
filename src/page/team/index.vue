@@ -1,7 +1,7 @@
 <template>
     <wtu-header />
     <div class="selections">
-        <wtu-difficulty class="icon" />
+        <wtu-difficulty class="icon" size="1em" />
         <span
             class="i-ant-design:question-circle-outlined icon"
             @click="helpDrawer.visible = true"
@@ -199,7 +199,7 @@ const helpDrawer = reactive({
     align-items: center;
     justify-content: center;
     .icon {
-        font-size: 1.8em;
+        font-size: 1.6em;
         margin: 0.25em 0;
         cursor: pointer;
         &:hover {
