@@ -42,6 +42,7 @@ declare module 'vue' {
     RyuName: typeof import('./src/components/ryu-name.vue')['default']
     RyuSponsor: typeof import('./src/components/ryu-sponsor.vue')['default']
     RyuSvg: typeof import('./src/components/ryu-svg.vue')['default']
+    RyuVerificationSlot: typeof import('./src/components/ryu-verification-slot.vue')['default']
     WtuActivity: typeof import('./src/components/wtu-activity.vue')['default']
     WtuAppname: typeof import('./src/components/wtu-appname.vue')['default']
     WtuAvatar: typeof import('./src/components/wtu-avatar.vue')['default']
