@@ -30,7 +30,7 @@
                                 {{ TimePassed(instance.team.updateTime) }}
                             </span>
                             <div
-                                class="invisible-min-900px flex justify-end mt-3px"
+                                class="flex justify-end mt-3px"
                                 v-if="isCreator(instance.team.creatorUuid)"
                             >
                                 <el-button
@@ -48,17 +48,7 @@
                                             ? 'success'
                                             : 'danger'
                                     "
-                                    @click="
-                                        toggleTeamStatus(
-                                            instance.team.uuid,
-                                            isPublic(
-                                                instance.team.creatorUuid,
-                                                instance.team.status
-                                            )
-                                                ? 0
-                                                : 1
-                                        )
-                                    "
+                                    @click="toggleTeamStatus(instance)"
                                 >
                                     <div
                                         :class="
@@ -78,7 +68,11 @@
                                     cancel-button-text="不了"
                                     v-if="isCreator(instance.team.creatorUuid)"
                                     @confirm="
-                                        removeTeam(instance.team.id),
+                                        removeTeam(
+                                            instance.team.id,
+                                            instance.team.server,
+                                            instance.team.channel
+                                        ),
                                             (instance.team.isDeleted = 1)
                                     "
                                     :hide-icon="true"
@@ -91,89 +85,6 @@
                                     </template>
                                 </el-popconfirm>
                             </div>
-                        </div>
-
-                        <div
-                            class="invisible-max-900px"
-                            v-if="isCreator(instance.team.creatorUuid)"
-                        >
-                            <el-dropdown :hide-on-click="false">
-                                <span class="i-ep:arrow-down"> </span>
-                                <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item>
-                                            <el-button
-                                                v-if="
-                                                    instance.team
-                                                        .creatorUuid ===
-                                                    _authStore.getUUID()
-                                                "
-                                                :loading="loading.status"
-                                                size="small"
-                                                :type="
-                                                    isPublic(
-                                                        instance.team
-                                                            .creatorUuid,
-                                                        instance.team.status
-                                                    )
-                                                        ? 'success'
-                                                        : 'danger'
-                                                "
-                                                @click="
-                                                    toggleTeamStatus(
-                                                        instance.team.uuid,
-                                                        isPublic(
-                                                            instance.team
-                                                                .creatorUuid,
-                                                            instance.team.status
-                                                        )
-                                                            ? 0
-                                                            : 1
-                                                    )
-                                                "
-                                            >
-                                                <div
-                                                    :class="
-                                                        isPublic(
-                                                            instance.team
-                                                                .creatorUuid,
-                                                            instance.team.status
-                                                        )
-                                                            ? 'i-ep:view'
-                                                            : 'i-ep:hide'
-                                                    "
-                                                ></div> </el-button
-                                        ></el-dropdown-item>
-                                        <el-dropdown-item>
-                                            <el-popconfirm
-                                                title="删除？"
-                                                width="40"
-                                                confirm-button-text="是"
-                                                cancel-button-text="不了"
-                                                v-if="
-                                                    isCreator(
-                                                        instance.team
-                                                            .creatorUuid
-                                                    )
-                                                "
-                                                @confirm="
-                                                    removeTeam(instance.team.id)
-                                                "
-                                                :hide-icon="true"
-                                                confirm-button-type="default"
-                                            >
-                                                <template #reference>
-                                                    <el-button size="small">
-                                                        <div
-                                                            class="i-ep:close"
-                                                        ></div>
-                                                    </el-button>
-                                                </template>
-                                            </el-popconfirm>
-                                        </el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
                         </div>
                     </div>
                 </template>
@@ -250,13 +161,25 @@
 
 <script setup lang="ts">
 import { response } from '@/composables/types'
-import { ToggleTeamStatus, RemoveTeam } from '@api/team'
+import {
+    ToggleTeamStatus,
+    RemoveTeam,
+    BroadcastDeleteTeam,
+    BroadcastToggleTeamStatus,
+    JoinTeam,
+} from '@api/team'
 import { teamStore, authStore } from '@/store'
 import { isDark } from '@composables/theme'
 import { TimePassed } from '@util/DateUtil'
 import { DELETE_OR_NOT } from '@/composables/enums'
-import type { TeamBO, TeamMemberBO } from '@/composables/team'
-import type { warframe } from '@/composables/warframe'
+import type {
+    TeamBO,
+    TeamMemberBO,
+    JoinTeamParam,
+    TeamVO,
+} from '@/composables/team'
+
+const route = useRoute()
 
 defineProps({
     showChannel: {
@@ -267,14 +190,22 @@ defineProps({
 
 const _teamStore = teamStore()
 const _authStore = authStore()
-const route = useRouter()
+const Router = useRouter()
+
+const empty = computed(() => {
+    if (_teamStore.getTeam() !== undefined) {
+        return _teamStore.getTeam().length === 0
+    } else {
+        return false
+    }
+})
+
 const getChannel = (routeName: string) => {
-    return route.getRoutes().filter((item) => item.name === routeName)[0].meta
+    return Router.getRoutes().filter((item) => item.name === routeName)[0].meta
         .forehead
 }
 
 const activeNames = ref<string>()
-const empty = ref<boolean>(false)
 const loading = reactive({
     delete: false,
     status: false,
@@ -287,29 +218,36 @@ const isCreator = (uuid: string) => {
     return _authStore.getUser().uuid === uuid
 }
 
-const toggleTeamStatus = async (uuid: string, status: number) => {
+const toggleTeamStatus = async (instance: TeamVO) => {
     loading.status = true
-    _teamStore.toggleTeamStatus(uuid, status)
-    let param = {
-        uuid: uuid,
-        status: status,
-    }
-    const result = (await ToggleTeamStatus(param)) as response<string>
+    instance.team.status = instance.team.status ? 0 : 1
+    const result = (await ToggleTeamStatus({
+        teamId: instance.team.id,
+        status: instance.team.status,
+    })) as response<string>
     if (result.success) {
+        BroadcastToggleTeamStatus(instance)
         loading.status = false
         return
     } else {
         loading.status = false
-        _teamStore.toggleTeamStatus(uuid, status ? 0 : 1)
         ElMessage.error(result.message)
     }
 }
-const removeTeam = async (id: number) => {
+
+const removeTeam = async (id: number, server: number, channel: string) => {
     loading.delete = true
     const result = (await RemoveTeam(id)) as response<string>
     if (result.success) {
         loading.delete = false
-        _teamStore.removeTeam(id)
+        if (route.name === 'team') {
+            _teamStore.removeTeam(id)
+        }
+        BroadcastDeleteTeam({
+            teamId: id,
+            server: server,
+            route: channel,
+        })
         return
     } else {
         loading.delete = false
@@ -317,19 +255,10 @@ const removeTeam = async (id: number) => {
     }
 }
 
-interface AquaParam {
-    server: number
-    channel: string
-    creatorUuid: string
-    uuid: string
-    build: {
-        focus: string
-        warframe: warframe
-    }
-}
-const aquaParam: AquaParam = reactive({
+const joinTeamParam: JoinTeamParam = reactive({
     channel: '',
     server: 1,
+    from: '',
     creatorUuid: '',
     uuid: '',
     build: {
@@ -341,22 +270,18 @@ const aquaParam: AquaParam = reactive({
     },
 })
 const aqua = (team: TeamBO, member: TeamMemberBO) => {
-    if (member.leader) {
+    if (member.leader && team.creatorUuid === _authStore.getUUID()) {
         return
     }
-    aquaParam.creatorUuid = team.creatorUuid
-    aquaParam.uuid = team.uuid
-    aquaParam.channel = team.channel
-    aquaParam.build.focus = member.focus
-    aquaParam.build.warframe = member.warframe
-    aquaParam.server = team.server
+    joinTeamParam.creatorUuid = team.creatorUuid
+    joinTeamParam.uuid = team.uuid
+    joinTeamParam.channel = team.channel
+    joinTeamParam.build.focus = member.focus
+    joinTeamParam.build.warframe = member.warframe
+    joinTeamParam.server = team.server
+    joinTeamParam.from = _authStore.getUUID()
+    JoinTeam(joinTeamParam)
 }
-
-watchEffect(() => {
-    if (_teamStore.getTeam() !== undefined) {
-        empty.value = _teamStore.getTeam().length === 0
-    }
-})
 </script>
 
 <style lang="scss" scoped>

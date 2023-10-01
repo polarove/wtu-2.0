@@ -77,7 +77,7 @@
 import type { TeamMemberBO } from '@/composables/team'
 import { authStore } from '@/store'
 import { isNotBlank } from '@/util/StrUtil'
-import { BOOSTER_STATUS, OnlineStatusEnum } from '@/composables/enums'
+import { BOOSTER_STATUS, ONLINE_STATUS } from '@/composables/enums'
 import { boosters } from '@composables/booster'
 const _authStore = authStore()
 defineProps({
@@ -92,15 +92,15 @@ const user_unknown = (status: number) => {
 }
 
 const user_offline = (status: number) => {
-    return status === OnlineStatusEnum.offline
+    return status === ONLINE_STATUS.offline
 }
 
 const user_online = (status: number) => {
-    return status === OnlineStatusEnum.online
+    return status === ONLINE_STATUS.online
 }
 
 const user_ingame = (status: number) => {
-    return status === OnlineStatusEnum.online_in_game
+    return status === ONLINE_STATUS.online_in_game
 }
 </script>
 

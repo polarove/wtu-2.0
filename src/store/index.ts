@@ -5,7 +5,7 @@ import { getUserVOByUUID } from '@api/account'
 import { ElMessage } from 'element-plus'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { warframe } from '@/composables/warframe'
-import type { TeamList, TeamPage, TeamListParams } from '@composables/team'
+import type { TeamVO, TeamPage, TeamListParams } from '@composables/team'
 import { GetTeamList } from '@api/team'
 import { websocket } from '@util/WebsocketUtil'
 import { BOOSTER_STATUS } from '@/composables/enums'
@@ -117,7 +117,6 @@ export const authStore = defineStore({
     },
     persist: true,
 })
-
 export const teamStore = defineStore({
     id: 'team',
     state: () => ({
@@ -133,7 +132,7 @@ export const teamStore = defineStore({
             GetTeamList(this.param)
                 .then((res: any) => {
                     if (res.success) {
-                        this.setTeam(res.data.records as Array<TeamList>)
+                        this.setTeam(res.data.records as Array<TeamVO>)
                     } else {
                         ElMessage.error(res.message)
                     }
@@ -154,9 +153,9 @@ export const teamStore = defineStore({
                 (item) => item.team.id !== id
             )
         },
-        toggleTeamStatus(uuid: string, status: number) {
+        toggleTeamStatus(id: number, status: number) {
             this.TeamPage.records.map((item) => {
-                if (item.team.uuid === uuid) {
+                if (item.team.id === id) {
                     item.team.status = status
                 }
             })
@@ -176,16 +175,16 @@ export const teamStore = defineStore({
                 callback()
             }
         },
-        setTeam(TeamList: Array<TeamList>) {
-            this.TeamPage.records = TeamList
+        setTeam(TeamVO: Array<TeamVO>) {
+            this.TeamPage.records = TeamVO
         },
-        getTeam(): Array<TeamList> {
+        getTeam(): Array<TeamVO> {
             return this.TeamPage.records
         },
         getTeamPage(): TeamPage {
             return this.TeamPage
         },
-        addTeam(team: TeamList) {
+        addTeam(team: TeamVO) {
             this.TeamPage.records.unshift(team)
         },
         nextPage(callback: Function) {
@@ -204,7 +203,7 @@ export const teamStore = defineStore({
                         } else {
                             this.TeamPage.records =
                                 this.TeamPage.records.concat(
-                                    res.data.records as Array<TeamList>
+                                    res.data.records as Array<TeamVO>
                                 )
                         }
                     } else {

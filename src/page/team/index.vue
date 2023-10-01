@@ -6,8 +6,7 @@
             class="i-ant-design:question-circle-outlined icon"
             @click="helpDrawer.visible = true"
         ></span>
-        <ryu-scroll-top class="icon" />
-        <ryu-scroll-down class="icon" />
+        <ryu-arrows />
     </div>
     <div class="wrapper">
         <div :class="{ wideScreen: wideMode, compactScreen: !wideMode }">
@@ -36,11 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import type { TeamList, TeamListParams, TeamPage } from '@/composables/team'
+import type { TeamVO, TeamListParams, TeamPage } from '@/composables/team'
 import { teamStore, authStore } from '@/store'
 import { GetTeamList } from '@api/team'
 import type { response } from '@/composables/types'
-import { websocket } from '@util/WebsocketUtil'
+import { websocket, type WSS_CONNECTION_FEEDBACK } from '@util/WebsocketUtil'
 import type { RouteRecordName } from 'vue-router'
 import { WSS_ACTION } from '@composables/enums'
 import { isDefualtUserName, isNotDefualtUserName } from '@/composables/enums'
@@ -70,10 +69,6 @@ const wss = new websocket(_authStore.getServer())
 
 const clients = ref<number>(0)
 
-interface WssConnectionResponse {
-    total: number
-    clients: number
-}
 const ChannelParam = reactive({
     route: route.name,
     uuid: _authStore.getUUID(),
@@ -91,7 +86,7 @@ const joinChannel = (to?: RouteRecordName | null | undefined) => {
     ChannelParam.action = WSS_ACTION.CONNECT
     to ? (ChannelParam.route = to) : (ChannelParam.route = route.name)
     wss.send(ChannelParam, () => {
-        wss.on_message((data: WssConnectionResponse) => {
+        wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
             clients.value = data.clients
         })
     })
@@ -104,7 +99,8 @@ const disconnect = (
     ChannelParam.action = WSS_ACTION.DISCONNECT
     from ? (ChannelParam.route = from) : (ChannelParam.route = route.name)
     wss.send(ChannelParam, () => {
-        wss.on_message((data: WssConnectionResponse) => {
+        wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
+            console.log(data, 222222)
             clients.value = data.clients
         })
     })
@@ -126,7 +122,7 @@ const autoRefresh = (interval: number) => {
     setInterval(() => {
         GetTeamList(_teamStore.getParam()).then(
             (res: response<TeamPage> | any) => {
-                _teamStore.setTeam(res.data.records as Array<TeamList>)
+                _teamStore.setTeam(res.data.records as Array<TeamVO>)
             }
         )
         console.log('重新获取队伍列表中...')

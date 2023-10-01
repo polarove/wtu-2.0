@@ -24,7 +24,7 @@ export interface teamRequirement {
     content: string
 }
 
-export interface TeamInstance {
+export interface TeamDTO {
     title: string
     server: number
     channel: RouteRecordName | null | undefined
@@ -61,14 +61,14 @@ export interface TeamRequirementBO {
     isDeleted: number
 }
 
-export interface TeamList {
+export interface TeamVO {
     team: TeamBO
     members: Array<TeamMemberBO>
     requirements: Array<TeamRequirementBO>
 }
 
 export interface TeamPage extends Page {
-    records: Array<TeamList>
+    records: Array<TeamVO>
 }
 
 export interface TeamListParams {
@@ -77,4 +77,22 @@ export interface TeamListParams {
     server: number | null
     channel: RouteRecordName | undefined | null
     uuid: string | null
+}
+
+export interface JoinTeamParam {
+    server: number
+    channel: string
+    from: string
+    creatorUuid: string
+    uuid: string
+    build: {
+        focus: string
+        warframe: warframe
+    }
+}
+
+export interface BroadcastDeleteTeamDTO {
+    teamId: number
+    server: number
+    route: RouteRecordName | null | undefined
 }

@@ -2,7 +2,7 @@
     <div class="states">
         <el-tooltip content="离线" :disabled="tooltipDisabled">
             <ryu-svg
-                @click="updateOnlineStatus(OnlineStatusEnum.offline)"
+                @click="updateOnlineStatus(ONLINE_STATUS.offline)"
                 name="offline"
                 :size="size"
                 class="state offline"
@@ -12,7 +12,7 @@
         </el-tooltip>
         <el-tooltip content="在线" :disabled="tooltipDisabled">
             <ryu-svg
-                @click="updateOnlineStatus(OnlineStatusEnum.online)"
+                @click="updateOnlineStatus(ONLINE_STATUS.online)"
                 name="online"
                 :size="size"
                 class="state online"
@@ -22,7 +22,7 @@
         </el-tooltip>
         <el-tooltip content="游戏中" :disabled="tooltipDisabled">
             <ryu-svg
-                @click="updateOnlineStatus(OnlineStatusEnum.online_in_game)"
+                @click="updateOnlineStatus(ONLINE_STATUS.online_in_game)"
                 name="wifi-solid"
                 :size="size"
                 class="state ingame"
@@ -49,7 +49,7 @@
 import { UpdateOnlineStatus, Logout } from '@api/account'
 import type { response } from '@/composables/types'
 import { ElMessage } from 'element-plus'
-import { OnlineStatusEnum } from '@composables/enums'
+import { ONLINE_STATUS } from '@composables/enums'
 import { authStore } from '@/store'
 import router from '@/router'
 import { isNotBlank } from '@util/StrUtil'
@@ -67,15 +67,15 @@ defineProps({
 })
 
 const user_offline = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.offline
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.offline
 })
 
 const user_online = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.online
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.online
 })
 
 const user_ingame = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.online_in_game
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.online_in_game
 })
 
 const logout = async () => {

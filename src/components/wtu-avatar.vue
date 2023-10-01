@@ -55,7 +55,7 @@
 import router from '@/router'
 import { authStore } from '@/store'
 import { isBlank } from '@util/StrUtil'
-import { OnlineStatusEnum } from '@composables/enums'
+import { ONLINE_STATUS } from '@composables/enums'
 import { boosters } from '@composables/booster'
 import { UpdateUserBooster } from '@api/account'
 const _authStore = authStore()
@@ -65,15 +65,15 @@ const user_unknown = computed(() => {
 })
 
 const user_offline = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.offline
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.offline
 })
 
 const user_online = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.online
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.online
 })
 
 const user_ingame = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.online_in_game
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.online_in_game
 })
 
 defineProps({

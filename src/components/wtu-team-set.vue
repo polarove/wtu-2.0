@@ -142,17 +142,16 @@
 </template>
 
 <script setup lang="ts">
-import { authStore, teamStore } from '@/store'
+import { authStore } from '@/store'
 import { type FormInstance, type FormRules } from 'element-plus'
-import { type TeamInstance, type TeamList } from '@/composables/team'
+import { type TeamDTO, type TeamVO } from '@/composables/team'
 import { type warframe } from '@/composables/warframe'
 import { requirements } from '@composables/requirement'
-import { CreateTeam, GetTeamById } from '@api/team'
+import { CreateTeam, GetTeamById, BroadcastTeam } from '@api/team'
 import type { response } from '@/composables/types'
 
 const routes = useRoute()
 const _authStore = authStore()
-const _teamStore = teamStore()
 
 const createTeamFormRef = ref<FormInstance>()
 const createTeamFormRules = reactive<FormRules>({
@@ -164,7 +163,7 @@ const createTeamFormRules = reactive<FormRules>({
         },
     ],
 })
-const createTeamForm = reactive<TeamInstance>({
+const createTeamForm = reactive<TeamDTO>({
     title: '未修改的标题',
     server: _authStore.getServer(),
     channel: null,
@@ -319,10 +318,9 @@ const publishTeam = (formEl: FormInstance | undefined) => {
                 if (res.success) {
                     const result = (await GetTeamById(
                         res.data
-                    )) as response<TeamList>
+                    )) as response<TeamVO>
                     if (result.success) {
-                        console.log(result.data)
-                        _teamStore.addTeam(result.data)
+                        BroadcastTeam(result.data)
                     } else {
                         ElMessage.error(result.message)
                     }

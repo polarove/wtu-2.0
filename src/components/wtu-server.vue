@@ -8,14 +8,14 @@
 <script setup lang="ts">
 import { authStore, teamStore } from '@/store'
 import { toUpperCase } from '@/util/StrUtil'
-import { ServerTypeEnum } from '@composables/enums'
+import { SERVER_TYPE } from '@composables/enums'
 import { ToggleServer } from '@api/account'
 import { response } from '@/composables/types'
 import type { User } from '@/composables/user'
 const _authStore = authStore()
 const _teamStore = teamStore()
 const server = computed(() => {
-    return _authStore.getServer() ? ServerTypeEnum.en : ServerTypeEnum.cn
+    return _authStore.getServer() ? SERVER_TYPE.en : SERVER_TYPE.cn
 })
 
 defineProps({
@@ -31,9 +31,11 @@ const toggleServer = async () => {
         return
     }
     loading.value = true
-    const result = (await ToggleServer(
-        _authStore.getServer() ? 0 : 1
-    )) as response<User>
+    let state = _authStore.getServer()
+    const result = (await ToggleServer({
+        previous: state,
+        current: state ? 0 : 1,
+    })) as response<User>
     if (result.success) {
         _authStore.setUser(result.data)
         _teamStore.setParam({

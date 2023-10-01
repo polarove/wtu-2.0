@@ -1,6 +1,11 @@
 import AccountController from './instance'
 import type { User } from '@/composables/user'
 
+interface ToggleServerParam {
+    previous: number
+    current: number
+}
+
 export const Login = (data: any) => {
     return AccountController.post('/login', data)
 }
@@ -45,6 +50,6 @@ export const UpdateUserBooster = (data: User) => {
     return AccountController.post('/updateUserBooster', data)
 }
 
-export const ToggleServer = (serverType: number) => {
-    return AccountController.get('/toggleServer', { serverType: serverType })
+export const ToggleServer = (serverType: ToggleServerParam) => {
+    return AccountController.post('/toggleServer', serverType)
 }

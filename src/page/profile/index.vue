@@ -1,5 +1,8 @@
 <template>
     <wtu-header></wtu-header>
+    <div class="selections">
+        <ryu-arrows />
+    </div>
     <div class="banner-wrapper">
         <img src="@img/banner/ivara.jpg" />
         <wtu-profile-route direction="vertical" class="absolute-routes" />
@@ -21,7 +24,7 @@
     <div class="routerview__container">
         <RouterView />
     </div>
-    <wtuf-footer />
+    <wtu-footer />
 </template>
 
 <script setup lang="ts">
@@ -108,5 +111,14 @@ const _authStore = authStore()
     .wrapper {
         transform: translateY(33.3%) translateX(5%) !important;
     }
+}
+.selections {
+    position: fixed;
+    right: 0.75rem;
+    top: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 </style>
