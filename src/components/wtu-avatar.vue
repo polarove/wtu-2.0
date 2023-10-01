@@ -28,7 +28,7 @@
         </template>
         <template #default>
             <div class="booster-list">
-                <WtuBooster
+                <wtu-booster
                     v-for="(booster, index) in boosters"
                     :key="index"
                     :src="
@@ -40,12 +40,11 @@
                     :active="_authStore.hasBooster(booster.en)"
                     size="2.7em"
                     activeSize="2.5em"
-                >
-                </WtuBooster>
+                />
             </div>
             <div class="flex">
                 <div class="invisible-max-900px inline-block">
-                    <WtuOnlineState :tooltipDisabled="true" size="1.8rem" />
+                    <wtu-online-state :tooltipDisabled="true" size="1.8rem" />
                 </div>
             </div>
         </template>

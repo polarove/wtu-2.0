@@ -32,7 +32,7 @@
         </el-form-item>
     </el-form>
     <div v-if="CodeInputVisible" class="flex-center">
-        <RyuVerificationSlot
+        <ryu-verification-slot
             v-model="code"
             :count="6"
             :cell-unit="1"

@@ -105,6 +105,9 @@ export const authStore = defineStore({
         setDifficulty(difficulty: boolean) {
             this.difficulty = difficulty
         },
+        toggleDifficulty() {
+            this.difficulty = !this.difficulty
+        },
         getLevel(): number {
             return this.user.level
         },
@@ -161,6 +164,9 @@ export const teamStore = defineStore({
         getLoading(): boolean {
             return this.loading
         },
+        getPageLoading(): boolean {
+            return this.pageLoading
+        },
         getParam(): TeamListParams {
             return this.param
         },
@@ -182,11 +188,12 @@ export const teamStore = defineStore({
         addTeam(team: TeamList) {
             this.TeamPage.records.unshift(team)
         },
-        nextPage() {
+        nextPage(callback: Function) {
             this.pageLoading = true
             this.param.page++
             if (this.isEnd) {
                 this.pageLoading = false
+                callback()
                 return
             }
             GetTeamList(this.param)
@@ -209,6 +216,7 @@ export const teamStore = defineStore({
                 })
                 .finally(() => {
                     this.pageLoading = false
+                    callback()
                 })
         },
     },

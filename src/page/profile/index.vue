@@ -1,19 +1,19 @@
 <template>
-    <WtuHeader></WtuHeader>
+    <wtu-header></wtu-header>
     <div class="banner-wrapper">
         <img src="@img/banner/ivara.jpg" />
-        <WtuProfileRoute direction="vertical" class="absolute-routes" />
+        <wtu-profile-route direction="vertical" class="absolute-routes" />
         <div class="wrapper">
             <div class="avatar">
-                <WtuAvatar :PopDisabled="true" shape="circle" :size="150" />
+                <wtu-avatar :PopDisabled="true" shape="circle" :size="150" />
             </div>
             <div class="inline-block">
-                <WtuProfileRoute class="hidden-router" />
-                <RyuName class="text-size-[2rem] font-bold name" />
+                <wtu-profile-route class="hidden-router" />
+                <ryu-user-name class="text-size-[2rem] font-bold name" />
                 <div class="text-gray">
-                    <RyuSvg name="quote"></RyuSvg>
+                    <ryu-svg name="quote" />
                     <span>{{ _authStore.getDescription() }}</span>
-                    <RyuSvg name="quote-rotate-180"></RyuSvg>
+                    <ryu-svg name="quote-rotate-180" />
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@
     <div class="routerview__container">
         <RouterView />
     </div>
-    <WtuFooter />
+    <wtuf-footer />
 </template>
 
 <script setup lang="ts">

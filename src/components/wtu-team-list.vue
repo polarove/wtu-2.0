@@ -179,7 +179,7 @@
                 </template>
                 <el-row>
                     <el-col :span="6" v-for="build in instance.members">
-                        <WtuTeamMember :member="build"> </WtuTeamMember>
+                        <wtu-team-member :member="build" />
                     </el-col>
                 </el-row>
                 <el-collapse

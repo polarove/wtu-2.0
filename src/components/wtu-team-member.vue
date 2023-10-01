@@ -4,7 +4,7 @@
             <template #reference>
                 <div>
                     <div class="flex-col">
-                        <WtuWarframe
+                        <wtu-warframe
                             :class="{
                                 unknown: user_unknown(member.user.onlineStatus),
                                 offline: user_offline(member.user.onlineStatus),
@@ -31,7 +31,7 @@
 
             <div class="flex">
                 <div class="boosters">
-                    <WtuBooster
+                    <wtu-booster
                         size="2.3em"
                         active-size="2.3em"
                         class="booster"
@@ -45,8 +45,7 @@
                         :active="
                             member.user[booster.en] === BOOSTER_STATUS.ACTIVE
                         "
-                    >
-                    </WtuBooster>
+                    />
                 </div>
                 <div class="equipments">
                     <div class="invisible-max-900px">
@@ -66,7 +65,7 @@
                                     : member.warframe.cn
                             }}
                         </div>
-                        <WtuFocus :name="member.focus" size="2em" simplified />
+                        <wtu-focus :name="member.focus" size="2em" simplified />
                     </div>
                 </div>
             </div>

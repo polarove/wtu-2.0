@@ -1,6 +1,6 @@
 <template>
     <div class="w-55vw">
-        <WtuTeamList />
+        <wtu-team-list />
     </div>
 </template>
 

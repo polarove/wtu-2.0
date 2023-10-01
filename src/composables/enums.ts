@@ -54,3 +54,8 @@ export const isDefualtUserName = (name: string): boolean => {
 export const isNotDefualtUserName = (name: string): boolean => {
     return name !== DEFAULT.name
 }
+
+export const DIFFICULTY = {
+    STEEL_PATH: true,
+    ORIGIN: false,
+}

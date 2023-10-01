@@ -4,14 +4,14 @@
         :style="{ boxShadow: isDark ? '' : '0 2px 12px 0 rgba(0, 0, 0, 0.1)' }"
     >
         <el-col :span="5" class="flex-center">
-            <WtuLogo />
+            <wtu-logo />
         </el-col>
         <el-col :span="12" class="flex-center">
-            <WtuAppname class="invisible-max-900px" />
+            <wtu-app-name class="invisible-max-900px" />
         </el-col>
         <!-- <div class="flex-1"></div> -->
         <el-col :span="7" class="flex-center">
-            <WtuAvatar class="avatar" />
+            <wtu-avatar class="avatar" />
             <div class="invisible-min-900px ml-1em tp">
                 <div
                     v-if="isBlank(_authStore.getUUID())"
@@ -21,7 +21,7 @@
                     点击登录&nbsp;/&nbsp;注册
                 </div>
                 <div v-else>
-                    <RyuName inputSize="small" /> <WtuOnlineState />
+                    <ryu-user-name inputSize="small" /> <wtu-online-state />
                 </div>
             </div>
         </el-col>

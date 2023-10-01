@@ -1,41 +1,41 @@
 <template>
     <div class="states">
         <el-tooltip content="离线" :disabled="tooltipDisabled">
-            <RyuSvg
+            <ryu-svg
                 @click="updateOnlineStatus(OnlineStatusEnum.offline)"
                 name="offline"
                 :size="size"
                 class="state offline"
                 :class="{ active: user_offline }"
             >
-            </RyuSvg>
+            </ryu-svg>
         </el-tooltip>
         <el-tooltip content="在线" :disabled="tooltipDisabled">
-            <RyuSvg
+            <ryu-svg
                 @click="updateOnlineStatus(OnlineStatusEnum.online)"
                 name="online"
                 :size="size"
                 class="state online"
                 :class="{ active: user_online }"
             >
-            </RyuSvg>
+            </ryu-svg>
         </el-tooltip>
         <el-tooltip content="游戏中" :disabled="tooltipDisabled">
-            <RyuSvg
+            <ryu-svg
                 @click="updateOnlineStatus(OnlineStatusEnum.online_in_game)"
                 name="wifi-solid"
                 :size="size"
                 class="state ingame"
                 :class="{ active: user_ingame }"
             >
-            </RyuSvg>
+            </ryu-svg>
         </el-tooltip>
         <el-tooltip
             content="退出登录"
             :disabled="tooltipDisabled"
             v-if="isNotBlank(_authStore.getUUID())"
         >
-            <RyuSvg
+            <ryu-svg
                 name="poweroff"
                 :size="size"
                 @click="logout()"

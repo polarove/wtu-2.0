@@ -3,8 +3,10 @@
         <span @click="backToHome" class="name font-smiley"
             >Warframe Team Up</span
         >
-        <span v-if="showServer">&nbsp;-&nbsp;</span>
-        <WtuServer class="server" v-if="showServer" />
+
+        <span v-if="showServer"
+            >&nbsp;-&nbsp; <wtu-server class="server"
+        /></span>
     </div>
 </template>
 

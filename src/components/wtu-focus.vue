@@ -1,6 +1,6 @@
 <template>
     <div class="focus">
-        <RyuSvg :name="name" :size="size" />
+        <ryu-svg :name="name" :size="size" />
         <div v-if="showName" class="text-center">
             <span>
                 {{ simplified ? findSimplifiedChar(name) : name }}

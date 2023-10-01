@@ -7,7 +7,7 @@
             :style="{ opacity: modelValue !== len.en ? 0.25 : 1 }"
             @click="$emit('update:modelValue', len.en)"
         >
-            <RyuSvg :name="len.en" :size="size" />
+            <ryu-svg :name="len.en" :size="size" />
             <div v-if="showName" class="text-center">
                 <span v-if="_authStore.getServer()">
                     {{ simplified ? len.en_simplified : len.en }}

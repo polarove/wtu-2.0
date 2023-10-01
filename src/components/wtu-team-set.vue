@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="teamset" v-if="_authStore.isLogin()">
-            <WtuLoadout
+            <wtu-loadout
                 v-for="(teammate, index) in createTeamForm.members"
                 :teammate="teammate"
                 :index="index"
@@ -14,7 +14,7 @@
                         {{ teammate.warframe[_authStore.getServerChar()] }}
                     </div>
                 </template>
-            </WtuLoadout>
+            </wtu-loadout>
         </div>
         <el-drawer
             v-model="teamDrawer.visible"
@@ -84,11 +84,11 @@
                 >
                     <div class="flex-between w-100%">
                         <div class="flex-start w-100%">
-                            <WtuWarframe
+                            <wtu-warframe
                                 v-model="member.warframe"
                                 @click="toggleWarframeDrawer(index)"
                             />
-                            <WtuFocusList
+                            <wtu-focus-list
                                 v-model="member.focus"
                                 size="3em"
                                 :rows="rows"
@@ -121,7 +121,7 @@
                 @close="toggleTooltipDisabled()"
                 :append-to-body="true"
             >
-                <WtuWarframeList
+                <wtu-warframe-list
                     @emitToggleWarframeDrawer="toggleWarframeDrawer($event)"
                     @updateModelValue="selectWarframe($event)"
                 />

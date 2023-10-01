@@ -7,7 +7,7 @@
             v-for="(activity, index) in childRoutes"
         >
             <el-badge :value="clients" :hidden="activity.name !== routes.name">
-                <RyuSvg :index="index" :name="activity.name" size="1.4em" />
+                <ryu-svg :index="index" :name="activity.name" size="1.4em" />
             </el-badge>
         </span>
     </div>
@@ -21,7 +21,7 @@
             )"
         >
             <el-badge :value="clients" :hidden="activity.name !== routes.name">
-                <RyuSvg :index="index" :name="activity.name" size="1.4em" />
+                <ryu-svg :index="index" :name="activity.name" size="1.4em" />
             </el-badge>
         </span>
     </div>

@@ -30,14 +30,14 @@
                 class="infinite-list-item inline-block mt-15px"
             >
                 <div v-if="route.name === entries.durivi">
-                    <WtuWarframe
+                    <wtu-warframe
                         :modelValue="warframe"
                         width="130px"
                         @click="select(warframe)"
                     />
                 </div>
                 <div v-else>
-                    <WtuWarframe
+                    <wtu-warframe
                         :style="{
                             display: isStalker(warframe.en) ? 'none' : 'block',
                         }"
@@ -49,7 +49,7 @@
             </div>
         </ul>
         <div class="flex-center h-70vh" v-else>
-            <WtuWarframe
+            <wtu-warframe
                 :modelValue="targetWarframe"
                 width="140px"
                 style="transform: scale(2.4)"

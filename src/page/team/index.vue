@@ -1,32 +1,29 @@
 <template>
-    <div ref="el">
-        <WtuHeader />
-        <div class="selections">
-            <WtuDifficulty />
-            <span
-                class="i-ant-design:question-circle-outlined text-size-[1.8em] hover-color-blue cursor-pointer mt-1em"
-                @click="helpDrawer.visible = true"
-            ></span>
-        </div>
-        <div class="wrapper">
-            <div :class="{ wideScreen: wideMode, compactScreen: !wideMode }">
-                <div>
-                    <WtuActivity
-                        :clients="clients"
-                        class="mb-0.75em mt-0.5em"
-                    />
-                    <WtuTeamSet class="center-min-900px" />
-                </div>
-                <WtuEntries
-                    :class="{ compactOnly: !wideMode }"
-                    :scale="wideMode ? 1 : 0.8"
-                    :clients="clients"
-                />
-            </div>
-            <div class="w-70vw h-100% ma-auto"><RouterView /></div>
-        </div>
-        <WtuFooter />
+    <wtu-header />
+    <div class="selections">
+        <wtu-difficulty class="icon" />
+        <span
+            class="i-ant-design:question-circle-outlined icon"
+            @click="helpDrawer.visible = true"
+        ></span>
+        <ryu-scroll-top class="icon" />
+        <ryu-scroll-down class="icon" />
     </div>
+    <div class="wrapper">
+        <div :class="{ wideScreen: wideMode, compactScreen: !wideMode }">
+            <div>
+                <wtu-activity :clients="clients" class="mb-0.75em mt-0.5em" />
+                <wtu-team-set class="center-min-900px" />
+            </div>
+            <wtu-entries
+                :class="{ compactOnly: !wideMode }"
+                :scale="wideMode ? 1 : 0.8"
+                :clients="clients"
+            />
+        </div>
+        <div class="w-70vw h-100% ma-auto"><RouterView /></div>
+    </div>
+    <wtu-footer />
     <el-drawer v-model="helpDrawer.visible" :size="wideMode ? '50%' : '100%'">
         <template #header> <div>常见问题 Q&A</div></template>
         <el-card v-for="z in qa" class="mb-2em">
@@ -174,10 +171,10 @@ watchEffect(() => {
     if (isDefualtUserName(_authStore.getName()) && !notified.value) {
         notified.value = true
         ElNotification({
-            title: '提示',
-            message: message.value,
+            title: message.value,
             type: 'warning',
             duration: 0,
+            position: 'bottom-right',
             offset: 70,
             showClose: false,
         })
@@ -201,6 +198,14 @@ const helpDrawer = reactive({
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    .icon {
+        font-size: 1.8em;
+        margin: 0.25em 0;
+        cursor: pointer;
+        &:hover {
+            color: var(--el-color-primary);
+        }
+    }
 }
 .wrapper {
     padding: 1em 2em;

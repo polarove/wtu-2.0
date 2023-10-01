@@ -149,8 +149,8 @@ const router = createRouter({
     routes,
 })
 
+// @ts-ignore
 router.beforeEach((to, from, next) => {
-    console.log(from.name)
     nProgress.start()
     document.title = to.meta.forehead
         ? (to.meta.forehead as any)

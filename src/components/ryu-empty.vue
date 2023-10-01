@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="empty" class="empty">
-            <RyuSvg class="icon" name="empty" :size="iconSize" />
+            <ryu-svg class="icon" name="empty" :size="iconSize" />
             <div class="tip">{{ tip }}</div>
         </div>
         <slot></slot>
