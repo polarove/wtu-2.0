@@ -61,6 +61,7 @@ export default defineConfig({
             '@composables': resolve(__dirname, 'src/composables'),
             '@util': resolve(__dirname, 'src/util'),
             '@api': resolve(__dirname, 'src/api'),
+            '@components': resolve(__dirname, 'src/components'),
         },
     },
 })
