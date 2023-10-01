@@ -26,9 +26,9 @@
                             </span>
                         </div>
                         <div class="text-end">
-                            <span class="date">{{
-                                DateBefore(instance.team.updateTime)
-                            }}</span>
+                            <span class="date">
+                                {{ TimePassed(instance.team.updateTime) }}
+                            </span>
                             <div
                                 class="invisible-min-900px flex justify-end mt-3px"
                                 v-if="isCreator(instance.team.creatorUuid)"
@@ -93,11 +93,11 @@
                             </div>
                         </div>
 
-                        <div class="invisible-max-900px">
-                            <el-dropdown
-                                :hide-on-click="false"
-                                v-if="isCreator(instance.team.creatorUuid)"
-                            >
+                        <div
+                            class="invisible-max-900px"
+                            v-if="isCreator(instance.team.creatorUuid)"
+                        >
+                            <el-dropdown :hide-on-click="false">
                                 <span class="i-ep:arrow-down"> </span>
                                 <template #dropdown>
                                     <el-dropdown-menu>
@@ -179,7 +179,10 @@
                 </template>
                 <el-row>
                     <el-col :span="6" v-for="build in instance.members">
-                        <wtu-team-member :member="build" />
+                        <wtu-team-member
+                            :member="build"
+                            @click="aqua(instance.team, build)"
+                        />
                     </el-col>
                 </el-row>
                 <el-collapse
@@ -206,7 +209,7 @@
                                 {{ requirement.content }}
                             </span>
                         </div>
-                        <RyuClipboard
+                        <ryu-clipboard
                             :content="
                                 instance.members.find((member) => member.leader)
                                     ?.user.name
@@ -220,10 +223,10 @@
                                     class="i-ep:chat-dot-square hover-color-blue ml-5px text-size-[1.4em]"
                                 ></div>
                             </template>
-                        </RyuClipboard>
+                        </ryu-clipboard>
                     </el-collapse-item>
                 </el-collapse>
-                <RyuClipboard
+                <ryu-clipboard
                     v-else
                     :content="
                         instance.members.find((member) => member.leader)?.user
@@ -239,7 +242,7 @@
                             class="i-ep:chat-dot-square hover-color-blue ml-5px text-size-[1.4em]"
                         ></div>
                     </template>
-                </RyuClipboard>
+                </ryu-clipboard>
             </el-card>
         </RyuEmpty>
     </RyuLoading>
@@ -250,8 +253,10 @@ import { response } from '@/composables/types'
 import { ToggleTeamStatus, RemoveTeam } from '@api/team'
 import { teamStore, authStore } from '@/store'
 import { isDark } from '@composables/theme'
-import { DateBefore } from '@util/DateUtil'
+import { TimePassed } from '@util/DateUtil'
 import { DELETE_OR_NOT } from '@/composables/enums'
+import type { TeamBO, TeamMemberBO } from '@/composables/team'
+import type { warframe } from '@/composables/warframe'
 
 defineProps({
     showChannel: {
@@ -310,6 +315,41 @@ const removeTeam = async (id: number) => {
         loading.delete = false
         ElMessage.error(result.message)
     }
+}
+
+interface AquaParam {
+    server: number
+    channel: string
+    creatorUuid: string
+    uuid: string
+    build: {
+        focus: string
+        warframe: warframe
+    }
+}
+const aquaParam: AquaParam = reactive({
+    channel: '',
+    server: 1,
+    creatorUuid: '',
+    uuid: '',
+    build: {
+        focus: '',
+        warframe: {
+            en: '',
+            cn: '',
+        },
+    },
+})
+const aqua = (team: TeamBO, member: TeamMemberBO) => {
+    if (member.leader) {
+        return
+    }
+    aquaParam.creatorUuid = team.creatorUuid
+    aquaParam.uuid = team.uuid
+    aquaParam.channel = team.channel
+    aquaParam.build.focus = member.focus
+    aquaParam.build.warframe = member.warframe
+    aquaParam.server = team.server
 }
 
 watchEffect(() => {

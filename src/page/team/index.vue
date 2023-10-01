@@ -52,7 +52,7 @@ const route = useRoute()
 const wideMode = ref(true)
 const TeamParams = reactive<TeamListParams>({
     page: 1,
-    size: 5,
+    size: 10,
     server: _authStore.getServer(),
     channel: null,
     uuid: null,
@@ -142,7 +142,7 @@ onMounted(() => {
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
     createConnection()
-    autoRefresh(1000 * 60 * 10)
+    autoRefresh(1000 * 60 * 3)
 })
 
 //component life cycle
