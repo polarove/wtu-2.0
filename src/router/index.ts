@@ -1,90 +1,90 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import nProgress from 'nprogress'
 import entries from '@/composables/entries'
 
 const routes = [
     {
-        path: '/',
+        path: '/wtu',
         name: 'index',
         meta: { forehead: 'Warframe Team Up' },
         component: () => import('@page/team/index.vue'),
-        redirect: `/team/${entries.origin}`,
+        redirect: `/wtu/team/${entries.origin}`,
         children: [
             {
-                path: `/team/${entries.origin}`,
+                path: `/wtu/team/${entries.origin}`,
                 name: entries.origin,
                 meta: { forehead: '始源星系' },
                 component: () => import('@page/team/origin/index.vue'),
             },
             {
-                path: `/team/${entries.durivi}`,
+                path: `/wtu/team/${entries.durivi}`,
                 name: entries.durivi,
                 meta: { forehead: '双衍王境' },
                 component: () => import('@page/team/durivi/index.vue'),
             },
             {
-                path: `/team/${entries.empyrean}`,
+                path: `/wtu/team/${entries.empyrean}`,
                 name: entries.empyrean,
                 meta: { forehead: '九重天' },
                 component: () => import('@page/team/empyrean/index.vue'),
             },
             {
-                path: '/team/activity',
+                path: '/wtu/team/activity',
                 name: 'activity',
                 meta: { forehead: '活动' },
-                redirect: '/activity/event',
+                redirect: '/wtu/activity/event',
                 children: [
                     {
-                        path: '/team/activity/event',
+                        path: '/wtu/team/activity/event',
                         name: 'event',
                         meta: { forehead: '事件' },
                         component: () =>
                             import('@page/team/activity/event/index.vue'),
                     },
                     {
-                        path: '/team/activity/alarm',
+                        path: '/wtu/team/activity/alarm',
                         name: 'alarm',
                         meta: { forehead: '警报' },
                         component: () =>
                             import('@page/team/activity/alarm/index.vue'),
                     },
                     {
-                        path: '/team/activity/steelpath',
+                        path: '/wtu/team/activity/steelpath',
                         name: 'steelpath',
                         meta: { forehead: '钢铁之路侵袭' },
                         component: () =>
                             import('@page/team/activity/steelpath/index.vue'),
                     },
                     {
-                        path: '/team/activity/invasion',
+                        path: '/wtu/team/activity/invasion',
                         name: 'invasion',
                         meta: { forehead: '侵袭' },
                         component: () =>
                             import('@page/team/activity/invasion/index.vue'),
                     },
                     {
-                        path: '/team/activity/syndicate',
+                        path: '/wtu/team/activity/syndicate',
                         name: 'syndicate',
                         meta: { forehead: '集团' },
                         component: () =>
                             import('@page/team/activity/syndicate/index.vue'),
                     },
                     {
-                        path: '/team/activity/fissure',
+                        path: '/wtu/team/activity/fissure',
                         name: 'fissure',
                         meta: { forehead: '虚空裂缝' },
                         component: () =>
                             import('@page/team/activity/fissure/index.vue'),
                     },
                     {
-                        path: '/team/activity/sortie',
+                        path: '/wtu/team/activity/sortie',
                         name: 'sortie',
                         meta: { forehead: '突击' },
                         component: () =>
                             import('@page/team/activity/sortie/index.vue'),
                     },
                     {
-                        path: '/team/activity/hunt',
+                        path: '/wtu/team/activity/hunt',
                         name: 'hunt',
                         meta: { forehead: '执行官猎杀' },
                         component: () =>
@@ -95,26 +95,26 @@ const routes = [
         ],
     },
     {
-        path: '/account',
+        path: '/wtu/account',
         name: 'account',
         meta: { forehead: '账号中心' },
         component: () => import('@page/account/index.vue'),
-        redirect: '/account/login',
+        redirect: '/wtu/account/login',
         children: [
             {
-                path: '/account/login',
+                path: '/wtu/account/login',
                 name: 'login',
                 meta: { forehead: 'Tenno登录' },
                 component: () => import('@page/account/login/index.vue'),
             },
             {
-                path: '/account/recover',
+                path: '/wtu/account/recover',
                 name: 'recover',
                 meta: { forehead: '找回账号' },
                 component: () => import('@page/account/recover/index.vue'),
             },
             {
-                path: '/account/verify',
+                path: '/wtu/account/verify',
                 name: 'verify',
                 meta: { forehead: '成分查询' },
                 component: () => import('@page/account/verify/index.vue'),
@@ -122,20 +122,20 @@ const routes = [
         ],
     },
     {
-        path: '/profile',
+        path: '/wtu/profile',
         name: 'profile',
         meta: { forehead: '个人空间' },
         component: () => import('@page/profile/index.vue'),
-        redirect: '/profile/team',
+        redirect: '/wtu/profile/team',
         children: [
             {
-                path: '/profile/team',
+                path: '/wtu/profile/team',
                 name: 'team',
                 meta: { forehead: '组队' },
                 component: () => import('@page/profile/team/index.vue'),
             },
             {
-                path: '/profile/manage',
+                path: '/wtu/profile/manage',
                 name: 'manage',
                 meta: { forehead: '账户' },
                 component: () => import('@page/profile/account/index.vue'),
@@ -145,7 +145,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes,
 })
 
