@@ -13,7 +13,7 @@ import fs from 'fs'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: '/wtu',
+    // base: '/wtu',
     plugins: [
         vue(),
         UnoCSS(),

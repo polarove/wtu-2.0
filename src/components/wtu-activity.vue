@@ -48,7 +48,7 @@ const childRoutes = routes.matched
     .filter((item) => {
         if (item.name === 'activity') {
             let origin = routes.matched
-                .find((item) => item.redirect == '/wtu/team/origin')
+                .find((item) => item.redirect == '/team/origin')
                 ?.children.find(
                     (item) => item.name === entries.origin
                 ) as RouteRecord

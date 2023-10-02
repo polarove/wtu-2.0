@@ -90,7 +90,6 @@ const disconnect = (
     from?: RouteRecordName | null | undefined,
     callback?: Function
 ) => {
-    console.log('disconnect')
     ChannelParam.action = WSS_ACTION.DISCONNECT
     from ? (ChannelParam.route = from) : (ChannelParam.route = route.name)
     wss.send(ChannelParam, () => {
@@ -142,7 +141,6 @@ onBeforeRouteUpdate((to, from) => {
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
     switchChannel(from.name, to.name)
-    console.log('switch channel')
 })
 
 // onBeforeUnmount(() => {
