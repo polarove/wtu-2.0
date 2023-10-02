@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { response } from '@composables/types'
-import type { User } from '@composables/user'
+import type { UserVO } from '@composables/user'
 import { getUserVOByUUID } from '@api/account'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { warframe } from '@/composables/warframe'
@@ -25,7 +25,7 @@ export const authStore = defineStore({
             description: '',
             name: '',
             uuid: '',
-            onlineStatus: null as number | null,
+            onlineStatus: 0,
             server: 1,
             level: 0,
             affinityBooster: 0,
@@ -33,19 +33,20 @@ export const authStore = defineStore({
             resourceBooster: 0,
             resourceDropRateBooster: 0,
             modDropRateBooster: 0,
+            accelerator: '',
         },
         difficulty: false,
         redirect: '',
     }),
     actions: {
-        setUser(user: User) {
+        setUser(user: UserVO) {
             this.user = user
         },
-        getUser(): User {
+        getUser(): UserVO {
             return this.user
         },
         getBooster(booster: string): number {
-            return this.user[booster as keyof User] as number
+            return this.user[booster as keyof UserVO] as number
         },
         getDescription(): string {
             return this.user.description
@@ -81,13 +82,14 @@ export const authStore = defineStore({
             this.user.onlineStatus = onlineStatus
         },
         hasBooster(booster: string): boolean {
-            return this.user[booster as keyof User] === BOOSTER_STATUS.ACTIVE
+            return this.user[booster as keyof UserVO] === BOOSTER_STATUS.ACTIVE
         },
         removeBooster(booster: string) {
-            this.user[booster as keyof User] = BOOSTER_STATUS.INACTIVE as never
+            this.user[booster as keyof UserVO] =
+                BOOSTER_STATUS.INACTIVE as never
         },
         setBooster(booster: string) {
-            this.user[booster as keyof User] = BOOSTER_STATUS.ACTIVE as never
+            this.user[booster as keyof UserVO] = BOOSTER_STATUS.ACTIVE as never
         },
         getServer(): number {
             return this.user.server
@@ -108,7 +110,7 @@ export const authStore = defineStore({
             }
             getUserVOByUUID()
                 .then((res: any) => {
-                    var caonima = res as response<User>
+                    var caonima = res as response<UserVO>
                     if (caonima.success) {
                         this.setUser(caonima.data)
                     } else {

@@ -82,9 +82,9 @@ export interface TeamListParams {
 export interface JoinTeamParam {
     server: number
     channel: string
-    from: string
     creatorUuid: string
     uuid: string
+    from: UserBO
     build: {
         focus: string
         warframe: warframe

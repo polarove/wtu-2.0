@@ -77,7 +77,7 @@ import {
 } from 'element-plus'
 import { GetRecoverCode, SubmitCode, ChangePassword } from '@api/account'
 import type { response } from '@/composables/types'
-import type { User } from '@composables/user'
+import type { UserVO } from '@composables/user'
 import router from '@/router'
 import { isNotBlank } from '@/util/StrUtil'
 import { authStore } from '@/store'
@@ -213,7 +213,7 @@ const submitPassword = (formEl: FormInstance | undefined) => {
             RecoverPasswordForm.email = recoverEmail as string
             const result = (await ChangePassword(
                 RecoverPasswordForm
-            )) as response<User>
+            )) as response<UserVO>
             if (result.success) {
                 ElMessage.success(result.message)
                 router.push({

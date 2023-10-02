@@ -1,16 +1,8 @@
-export interface User {
-    avatar: string
+export interface UserVO extends UserBO {
     description: string
-    name: string
-    onlineStatus: number | null
-    uuid: string
     server: number
     level: number
-    affinityBooster: number
-    creditBooster: number
-    resourceBooster: number
-    resourceDropRateBooster: number
-    modDropRateBooster: number
+    accelerator: string
 }
 
 export interface UserBO {

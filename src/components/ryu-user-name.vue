@@ -19,7 +19,7 @@
 import { SaveMyProfile } from '@/api/account'
 import { authStore } from '@/store'
 import type { response } from '@/composables/types'
-import type { User } from '@/composables/user'
+import type { UserVO } from '@/composables/user'
 defineProps({
     inputSize: {
         type: String,
@@ -34,7 +34,7 @@ const reviseNameForm = reactive({
 })
 const submit = async () => {
     reviseNameForm.uuid = _authStore.getUUID()
-    const result = (await SaveMyProfile(reviseNameForm)) as response<User>
+    const result = (await SaveMyProfile(reviseNameForm)) as response<UserVO>
     if (result.success) {
         _authStore.setUser(result.data)
         reviseNameForm.name = ''

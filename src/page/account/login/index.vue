@@ -37,7 +37,7 @@ import router from '@/router'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Login, LoginByUUID } from '@api/account'
 import type { response } from '@composables/types'
-import type { User } from '@composables/user'
+import type { UserVO } from '@composables/user'
 import { authStore } from '@/store'
 import { isNotBlank } from '@/util/StrUtil'
 const _authStore = authStore()
@@ -74,10 +74,10 @@ const login = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate(async (valid) => {
         if (valid) {
-            const result = (await Login(LoginForm)) as response<User>
+            const result = (await Login(LoginForm)) as response<UserVO>
             if (result.success) {
                 router.push({ name: 'origin' })
-                _authStore.setUser(result.data as User)
+                _authStore.setUser(result.data as UserVO)
             } else {
                 ElNotification.error({
                     position: 'bottom-right',
@@ -106,10 +106,10 @@ const delay = (uuid: string) => {
 }
 
 const loginByUuid = async (uuid: string) => {
-    const result = (await LoginByUUID(uuid)) as response<User>
+    const result = (await LoginByUUID(uuid)) as response<UserVO>
     if (result.success) {
         router.push({ name: 'origin' })
-        _authStore.setUser(result.data as User)
+        _authStore.setUser(result.data as UserVO)
         loading.value = false
     } else {
         ElNotification.error({

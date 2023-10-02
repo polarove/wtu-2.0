@@ -62,7 +62,7 @@
 import router from '@/router'
 import { Verify, SaveMyProfile } from '@api/account'
 import type { response, ResponseEnum } from '@composables/types'
-import type { User } from '@composables/user'
+import type { UserVO } from '@composables/user'
 import type { FormInstance, FormRules } from 'element-plus'
 import { authStore } from '@/store'
 import { ElMessage } from 'element-plus'
@@ -138,7 +138,7 @@ const saveMyProfile = async (formEl: FormInstance | undefined) => {
     formEl.validate(async (valid) => {
         if (valid) {
             VerifyForm.uuid = uuid
-            const result = (await SaveMyProfile(VerifyForm)) as response<User>
+            const result = (await SaveMyProfile(VerifyForm)) as response<UserVO>
             if (result.success) {
                 router.push({ name: 'origin' })
                 _authStore.setUser(result.data)

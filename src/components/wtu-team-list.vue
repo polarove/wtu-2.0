@@ -258,9 +258,19 @@ const removeTeam = async (id: number, server: number, channel: string) => {
 const joinTeamParam: JoinTeamParam = reactive({
     channel: '',
     server: 1,
-    from: '',
     creatorUuid: '',
     uuid: '',
+    from: {
+        uuid: '',
+        name: '',
+        avatar: '',
+        onlineStatus: 0,
+        affinityBooster: 0,
+        creditBooster: 0,
+        resourceBooster: 0,
+        resourceDropRateBooster: 0,
+        modDropRateBooster: 0,
+    },
     build: {
         focus: '',
         warframe: {
@@ -279,7 +289,7 @@ const aqua = (team: TeamBO, member: TeamMemberBO) => {
     joinTeamParam.build.focus = member.focus
     joinTeamParam.build.warframe = member.warframe
     joinTeamParam.server = team.server
-    joinTeamParam.from = _authStore.getUUID()
+    joinTeamParam.from = member.user
     JoinTeam(joinTeamParam)
 }
 </script>

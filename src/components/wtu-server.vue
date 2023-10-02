@@ -11,7 +11,7 @@ import { toUpperCase } from '@/util/StrUtil'
 import { SERVER_TYPE } from '@composables/enums'
 import { ToggleServer } from '@api/account'
 import { response } from '@/composables/types'
-import type { User } from '@/composables/user'
+import type { UserVO } from '@/composables/user'
 const _authStore = authStore()
 const _teamStore = teamStore()
 const server = computed(() => {
@@ -35,7 +35,7 @@ const toggleServer = async () => {
     const result = (await ToggleServer({
         previous: state,
         current: state ? 0 : 1,
-    })) as response<User>
+    })) as response<UserVO>
     if (result.success) {
         _authStore.setUser(result.data)
         _teamStore.setParam({
