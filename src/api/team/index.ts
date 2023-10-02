@@ -1,6 +1,6 @@
 import TeamController from './instance'
 import type {
-    JoinTeamParam,
+    JoinTeamDTO,
     TeamVO,
     BroadcastDeleteTeamDTO,
 } from '@/composables/team'
@@ -37,6 +37,6 @@ export const GetTeamById = (teamId: number) => {
     return TeamController.get('/getTeamById', { teamId: teamId })
 }
 
-export const JoinTeam = (data: JoinTeamParam) => {
+export const JoinTeam = (data: JoinTeamDTO) => {
     return TeamController.post('/joinTeam', data)
 }
