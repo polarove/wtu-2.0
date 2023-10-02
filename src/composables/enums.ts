@@ -40,6 +40,14 @@ export enum DEFAULT {
     name = '一般路过Tenno',
 }
 
+export enum RESPONSE_CODE {
+    server_restart = 1,
+    user_not_found = 207,
+    user_not_login = 208,
+    redirect_login = 209,
+    unknown_game_server = 2013,
+}
+
 export const isDefualtUserName = (name: string): boolean => {
     return name === DEFAULT.name
 }

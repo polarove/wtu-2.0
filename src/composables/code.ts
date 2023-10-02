@@ -37,13 +37,3 @@ class Enum {
         return undefined
     }
 }
-
-export class ReponseCodeEnum {
-    public static readonly unauthorized = new Enum(
-        401,
-        '尚未认证，请重新登录',
-        'failed'
-    )
-
-    public static readonly error = new Enum(500, '失败', 'error')
-}

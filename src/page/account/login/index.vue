@@ -34,16 +34,19 @@
 
 <script setup lang="ts">
 import router from '@/router'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import { Login } from '@api/account'
-import { response } from '@composables/types'
+import type { FormInstance, FormRules } from 'element-plus'
+import { Login, LoginByUUID } from '@api/account'
+import type { response } from '@composables/types'
 import type { User } from '@composables/user'
 import { authStore } from '@/store'
+import { isNotBlank } from '@/util/StrUtil'
 const _authStore = authStore()
-
+const route = useRoute()
 const loading = ref(false)
 
 const LoginFormRef = ref<FormInstance>()
+
+const redirect = route.query.redirect as string | undefined
 
 const LoginFormRules = reactive<FormRules>({
     email: [
@@ -76,7 +79,10 @@ const login = (formEl: FormInstance | undefined) => {
                 router.push({ name: 'origin' })
                 _authStore.setUser(result.data as User)
             } else {
-                ElMessage.error(result.message)
+                ElNotification.error({
+                    position: 'bottom-right',
+                    message: result.message,
+                })
             }
             loading.value = false
         } else {
@@ -91,6 +97,35 @@ const recover = () => {
         name: 'recover',
     })
 }
+
+const delay = (uuid: string) => {
+    loading.value = true
+    setTimeout(() => {
+        loginByUuid(uuid)
+    }, 2000)
+}
+
+const loginByUuid = async (uuid: string) => {
+    const result = (await LoginByUUID(uuid)) as response<User>
+    if (result.success) {
+        router.push({ name: 'origin' })
+        _authStore.setUser(result.data as User)
+        loading.value = false
+    } else {
+        ElNotification.error({
+            position: 'bottom-right',
+            message: result.message,
+        })
+        loading.value = false
+    }
+}
+onBeforeMount(() => {
+    let uuid = _authStore.getUUID()
+
+    if (isNotBlank(uuid) && redirect !== undefined) {
+        delay(uuid)
+    }
+})
 </script>
 
 <style lang="scss" scoped>

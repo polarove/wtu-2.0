@@ -10,6 +10,10 @@ export const Login = (data: any) => {
     return AccountController.post('/login', data)
 }
 
+export const LoginByUUID = (uuid: string) => {
+    return AccountController.get('/loginByUUID', { uuid: uuid })
+}
+
 export const Verify = (data: any) => {
     return AccountController.post('/verify', data)
 }

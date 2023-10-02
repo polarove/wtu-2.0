@@ -1,6 +1,12 @@
-import { SERVER_CODE, WSS_MESSAGE_TYPE } from '@/composables/enums'
+import {
+    SERVER_CODE,
+    WSS_MESSAGE_TYPE,
+    RESPONSE_CODE,
+} from '@/composables/enums'
 import { TeamVO } from '@/composables/team'
 import { teamStore, authStore } from '@/store'
+import { isNotBlank } from './StrUtil'
+
 const _teamStore = teamStore()
 const _authStore = authStore()
 interface RESPONSE {
@@ -34,14 +40,23 @@ export class websocket {
     }
 
     on_open(callback: Function) {
-        this.wss.onopen = () => {
-            callback()
+        if (isNotBlank(_authStore.getUUID())) {
+            this.wss.onopen = () => {
+                callback()
+            }
         }
     }
 
     on_message(callback: Function) {
         this.wss.onmessage = (event) => {
             let result: RESPONSE = JSON.parse(event.data)
+            if (
+                result.code === RESPONSE_CODE.user_not_login ||
+                result.code === RESPONSE_CODE.redirect_login ||
+                result.code === RESPONSE_CODE.unknown_game_server
+            ) {
+                return
+            }
             switch (result.action) {
                 case WSS_MESSAGE_TYPE.CONNECTION:
                     let connectionFeedback: WSS_CONNECTION_FEEDBACK =

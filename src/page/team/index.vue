@@ -166,12 +166,10 @@ const message = computed(() => {
 watchEffect(() => {
     if (isDefualtUserName(_authStore.getName()) && !notified.value) {
         notified.value = true
-        ElNotification({
+        ElNotification.warning({
             title: message.value,
-            type: 'warning',
             duration: 0,
             position: 'bottom-right',
-            offset: 70,
             showClose: false,
         })
     }

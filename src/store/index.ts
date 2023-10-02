@@ -2,13 +2,20 @@ import { defineStore } from 'pinia'
 import type { response } from '@composables/types'
 import type { User } from '@composables/user'
 import { getUserVOByUUID } from '@api/account'
-import { ElMessage } from 'element-plus'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { warframe } from '@/composables/warframe'
 import type { TeamVO, TeamPage, TeamListParams } from '@composables/team'
 import { GetTeamList } from '@api/team'
 import { websocket } from '@util/WebsocketUtil'
-import { BOOSTER_STATUS } from '@/composables/enums'
+import { BOOSTER_STATUS, SERVER_TYPE } from '@/composables/enums'
+
+interface xhr_response {
+    config: any
+    data: response<any>
+    headers: any
+    request: any
+    status: number
+}
 
 export const authStore = defineStore({
     id: 'session',
@@ -28,6 +35,7 @@ export const authStore = defineStore({
             modDropRateBooster: 0,
         },
         difficulty: false,
+        redirect: '',
     }),
     actions: {
         setUser(user: User) {
@@ -44,6 +52,12 @@ export const authStore = defineStore({
         },
         getUUID(): string {
             return this.user.uuid
+        },
+        getRedirect(): string {
+            return this.redirect
+        },
+        setRedirect(redirect: string) {
+            this.redirect = redirect
         },
         isLogin(): boolean {
             return isNotBlank(this.getUUID())
@@ -83,21 +97,31 @@ export const authStore = defineStore({
         },
         getServerChar(): keyof warframe {
             if (this.getServer()) {
-                return 'en'
+                return SERVER_TYPE.en
             } else {
-                return 'cn'
+                return SERVER_TYPE.cn
             }
         },
-        async updateUser() {
+        updateUser() {
             if (isBlank(this.getUUID())) {
                 return
             }
-            const result = (await getUserVOByUUID()) as response<User>
-            if (result.success) {
-                this.setUser(result.data)
-            } else {
-                ElMessage.error(result.message)
-            }
+            getUserVOByUUID()
+                .then((res: any) => {
+                    var caonima = res as response<User>
+                    if (caonima.success) {
+                        this.setUser(caonima.data)
+                    } else {
+                        ElNotification.error({
+                            position: 'bottom-right',
+                            message: caonima.message,
+                        })
+                    }
+                })
+                .catch((err: xhr_response) => {
+                    console.log(err.data.message)
+                })
+                .finally(() => {})
         },
         getDifficulty(): boolean {
             return this.difficulty
@@ -117,6 +141,7 @@ export const authStore = defineStore({
     },
     persist: true,
 })
+
 export const teamStore = defineStore({
     id: 'team',
     state: () => ({
@@ -134,11 +159,14 @@ export const teamStore = defineStore({
                     if (res.success) {
                         this.setTeam(res.data.records as Array<TeamVO>)
                     } else {
-                        ElMessage.error(res.message)
+                        ElNotification.error({
+                            position: 'bottom-right',
+                            message: res.message,
+                        })
                     }
                 })
-                .catch((err: any) => {
-                    ElMessage.error(err.message)
+                .catch((err: xhr_response) => {
+                    console.log(err.data.message)
                 })
                 .finally(() => {
                     this.loading = false
@@ -207,11 +235,14 @@ export const teamStore = defineStore({
                                 )
                         }
                     } else {
-                        ElMessage.error(res.message)
+                        ElNotification.error({
+                            position: 'bottom-right',
+                            message: res.message,
+                        })
                     }
                 })
-                .catch((err: any) => {
-                    ElMessage.error(err.message)
+                .catch((err: xhr_response) => {
+                    console.log(err.data.message)
                 })
                 .finally(() => {
                     this.pageLoading = false

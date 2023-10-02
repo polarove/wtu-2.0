@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { ReponseCodeEnum } from '@composables/code'
+import { RESPONSE_CODE } from '@composables/enums'
 import router from '@/router'
+
 export default class request {
     private instance: AxiosInstance | undefined
 
@@ -17,14 +18,24 @@ export default class request {
 
         this.instance.interceptors.response.use(
             (response) => {
-                if (
-                    response.data.code ===
-                    ReponseCodeEnum.unauthorized.getCode()
-                ) {
-                    router.push({ name: response.data.data })
-                    return Promise.reject(response)
+                switch (response.data.code) {
+                    case RESPONSE_CODE.redirect_login:
+                        router.push({ name: response.data.data })
+                        return Promise.reject(response)
+                    case RESPONSE_CODE.server_restart:
+                        ElNotification.info({
+                            position: 'bottom-right',
+                            message: response.data.message,
+                            duration: 5000,
+                        })
+                        router.push({
+                            name: 'login',
+                            query: { redirect: 1 },
+                        })
+                        return Promise.reject(response)
+                    default:
+                        return Promise.resolve(response.data)
                 }
-                return response.data
             },
             (error) => {
                 return Promise.reject(error)
