@@ -88,28 +88,21 @@ const logout = async () => {
     }
 }
 
-interface UpdateOnlineStatusFormType {
-    onlineStatus: number | null
-    uuid: string
-}
-const UpdateOnlineStatusForm = reactive<UpdateOnlineStatusFormType>({
-    onlineStatus: null,
-    uuid: _authStore.getUUID(),
-})
-
-const updateOnlineStatus = async (onlineStatus: number) => {
-    if (onlineStatus === _authStore.getOnlineStatus()) {
+const updateOnlineStatus = async (status: number) => {
+    if (status === _authStore.getOnlineStatus()) {
         return
     }
-    const previosOnlineStatus = _authStore.getOnlineStatus()
-    _authStore.setOnlineStatus(onlineStatus)
-    UpdateOnlineStatusForm.onlineStatus = onlineStatus
-    const result = (await UpdateOnlineStatus(
-        UpdateOnlineStatusForm
-    )) as response<string>
-    if (!result.success) {
-        _authStore.setOnlineStatus(previosOnlineStatus as number)
-        ElMessage.error(result.message)
+    let previosOnlineStatus = _authStore.getOnlineStatus()
+
+    const result = (await UpdateOnlineStatus(status)) as response<string>
+    if (result.success) {
+        _authStore.setOnlineStatus(status)
+    } else {
+        _authStore.setOnlineStatus(previosOnlineStatus)
+        ElNotification.error({
+            position: 'bottom-right',
+            message: result.message,
+        })
     }
 }
 </script>

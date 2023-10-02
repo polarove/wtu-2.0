@@ -66,4 +66,16 @@ export const WSS_MESSAGE_TYPE = {
     ADD_TEAM: 2,
     REMOVE_TEAM: 3,
     TOGGLE_STATUS: 4,
+    JOIN: 5,
+}
+
+export const LAYOUT_ENUM = {
+    default: 1,
+    wide: 1,
+    compact: 2,
+}
+
+export const DOCUMENT_VISIBILITY = {
+    hidden: 'hidden',
+    visible: 'visible',
 }

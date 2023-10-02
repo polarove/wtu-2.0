@@ -3,7 +3,7 @@ import {
     WSS_MESSAGE_TYPE,
     RESPONSE_CODE,
 } from '@/composables/enums'
-import { TeamVO } from '@/composables/team'
+import { JoinTeamDTO, TeamVO } from '@/composables/team'
 import { teamStore, authStore } from '@/store'
 import { isNotBlank } from './StrUtil'
 
@@ -81,6 +81,12 @@ export class websocket {
                         _teamStore.removeTeam(TeamVO_.team.id)
                     }
                     break
+                case WSS_MESSAGE_TYPE.JOIN:
+                    let application: JoinTeamDTO = JSON.parse(result.data)
+                    console.log(application)
+
+                    _teamStore.addApplication(application)
+                    break
                 default:
                     break
             }
@@ -111,6 +117,8 @@ export class websocket {
     }
 
     close() {
+        console.log(1)
+
         this.wss.close()
     }
 }

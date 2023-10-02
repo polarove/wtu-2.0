@@ -1,5 +1,5 @@
 <template>
-    <RyuLoading :loading="_teamStore.getLoading()" class="mt-1em">
+    <RyuLoading :loading="_teamStore.getTeamListLoading()" class="mt-1em">
         <RyuEmpty iconSize="6em" tip="当前暂无组队信息" :empty="empty">
             <el-card
                 class="team animate__animated animate__faster"
@@ -92,7 +92,11 @@
                     <el-col :span="6" v-for="build in instance.members">
                         <wtu-team-member
                             :member="build"
-                            @click="aqua(instance.team, build)"
+                            @click="
+                                isCreator(instance.team.creatorUuid)
+                                    ? check(build)
+                                    : aqua(instance.team, build)
+                            "
                         />
                     </el-col>
                 </el-row>
@@ -175,7 +179,7 @@ import { DELETE_OR_NOT } from '@/composables/enums'
 import type {
     TeamBO,
     TeamMemberBO,
-    JoinTeamParam,
+    JoinTeamDTO,
     TeamVO,
 } from '@/composables/team'
 
@@ -255,11 +259,8 @@ const removeTeam = async (id: number, server: number, channel: string) => {
     }
 }
 
-const joinTeamParam: JoinTeamParam = reactive({
-    channel: '',
-    server: 1,
-    creatorUuid: '',
-    uuid: '',
+const joinTeamParam: JoinTeamDTO = reactive({
+    receiver: '',
     from: {
         uuid: '',
         name: '',
@@ -270,6 +271,14 @@ const joinTeamParam: JoinTeamParam = reactive({
         resourceBooster: 0,
         resourceDropRateBooster: 0,
         modDropRateBooster: 0,
+        accelerator: '',
+    },
+    team: {
+        uuid: '',
+        server: 1,
+        channel: '',
+        creatorUuid: '',
+        title: '',
     },
     build: {
         focus: '',
@@ -279,18 +288,39 @@ const joinTeamParam: JoinTeamParam = reactive({
         },
     },
 })
+
+const check = (build: TeamMemberBO) => {
+    console.log('checking' + build)
+}
+
+const prepareJoinTeamParma = (team: TeamBO, member: TeamMemberBO): boolean => {
+    joinTeamParam.receiver = team.creatorUuid
+    joinTeamParam.from = _authStore.getUser()
+    joinTeamParam.team = {
+        ...team,
+    }
+    joinTeamParam.build = {
+        focus: member.focus,
+        warframe: {
+            en: member.warframe.en,
+            cn: member.warframe.cn,
+        },
+    }
+    return true
+}
 const aqua = (team: TeamBO, member: TeamMemberBO) => {
-    if (member.leader && team.creatorUuid === _authStore.getUUID()) {
+    if (
+        member.leader ||
+        team.creatorUuid === _authStore.getUUID() ||
+        member.occupied
+    ) {
         return
     }
-    joinTeamParam.creatorUuid = team.creatorUuid
-    joinTeamParam.uuid = team.uuid
-    joinTeamParam.channel = team.channel
-    joinTeamParam.build.focus = member.focus
-    joinTeamParam.build.warframe = member.warframe
-    joinTeamParam.server = team.server
-    joinTeamParam.from = member.user
+    prepareJoinTeamParma(team, member)
     JoinTeam(joinTeamParam)
+    console.log(joinTeamParam)
+    // JoinTeam(joinTeamParam)
+    // console.log(_teamStore.getTeam())
 }
 </script>
 

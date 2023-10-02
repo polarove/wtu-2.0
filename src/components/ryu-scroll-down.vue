@@ -13,7 +13,7 @@
 import { teamStore } from '@/store'
 const _teamStore = teamStore()
 const loading = computed(() => {
-    return _teamStore.getLoading() || _teamStore.getPageLoading()
+    return _teamStore.getTeamListLoading() || _teamStore.getPageLoading()
 })
 
 const scrollDown = () => {

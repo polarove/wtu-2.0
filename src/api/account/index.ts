@@ -1,5 +1,5 @@
 import AccountController from './instance'
-import type { User } from '@/composables/user'
+import type { UserVO } from '@/composables/user'
 
 interface ToggleServerParam {
     previous: number
@@ -46,11 +46,15 @@ export const SaveMyProfile = (data: any) => {
     return AccountController.post('/saveMyProfile', data)
 }
 
-export const UpdateOnlineStatus = (data: any) => {
-    return AccountController.post('/updateOnlineStatus', data)
+export const UpdateOnlineStatus = (status: number) => {
+    return AccountController.get('/updateOnlineStatus', { status: status })
 }
 
-export const UpdateUserBooster = (data: User) => {
+export const UpdateUserAccelerator = (name: string) => {
+    return AccountController.get('/updateUserAccelerator', { name: name })
+}
+
+export const UpdateUserBooster = (data: UserVO) => {
     return AccountController.post('/updateUserBooster', data)
 }
 

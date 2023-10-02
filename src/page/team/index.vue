@@ -1,57 +1,51 @@
 <template>
     <wtu-header />
     <div class="selections">
-        <wtu-difficulty class="icon" size="1em" />
-        <span
-            class="i-ant-design:question-circle-outlined icon"
-            @click="helpDrawer.visible = true"
-        ></span>
-        <ryu-arrows />
+        <wtu-selections />
     </div>
     <div class="wrapper">
-        <div :class="{ wideScreen: wideMode, compactScreen: !wideMode }">
+        <div
+            :class="{
+                wideScreen: _layoutStore.isWide(),
+                compactScreen: _layoutStore.isCompact(),
+            }"
+        >
             <div>
                 <wtu-activity :clients="clients" class="mb-0.75em mt-0.5em" />
                 <wtu-team-set class="center-min-900px" />
             </div>
             <wtu-entries
-                :class="{ compactOnly: !wideMode }"
-                :scale="wideMode ? 1 : 0.8"
+                :class="{ compactOnly: _layoutStore.isCompact() }"
+                :scale="_layoutStore.isWide() ? 1 : 0.8"
                 :clients="clients"
             />
         </div>
         <div class="w-70vw h-100% ma-auto"><RouterView /></div>
     </div>
     <wtu-footer />
-    <el-drawer v-model="helpDrawer.visible" :size="wideMode ? '50%' : '100%'">
-        <template #header> <div>常见问题 Q&A</div></template>
-        <el-card v-for="z in qa" class="mb-2em">
-            <template #header>
-                <span class="text-size-[1.5em]">Q: {{ z.q }} </span>
-            </template>
-            <span class="text-size-[1.2em]"> A: {{ z.a }}</span>
-        </el-card>
-    </el-drawer>
 </template>
 
 <script setup lang="ts">
 import type { TeamVO, TeamListParams, TeamPage } from '@/composables/team'
-import { teamStore, authStore } from '@/store'
+import { teamStore, authStore, layoutStore } from '@/store'
 import { GetTeamList } from '@api/team'
 import type { response } from '@/composables/types'
 import { websocket, type WSS_CONNECTION_FEEDBACK } from '@util/WebsocketUtil'
 import type { RouteRecordName } from 'vue-router'
 import { WSS_ACTION } from '@composables/enums'
-import { isDefualtUserName, isNotDefualtUserName } from '@/composables/enums'
-import { qa } from '@composables/qa'
+import {
+    isDefualtUserName,
+    isNotDefualtUserName,
+    LAYOUT_ENUM,
+} from '@/composables/enums'
 
 const _teamStore = teamStore()
 const _authStore = authStore()
+const _layoutStore = layoutStore()
 const route = useRoute()
-const wideMode = ref(true)
 const TeamParams = reactive<TeamListParams>({
     page: 1,
-    size: 10,
+    size: 6,
     server: _authStore.getServer(),
     channel: null,
     uuid: null,
@@ -59,9 +53,9 @@ const TeamParams = reactive<TeamListParams>({
 
 const initLayouts = () => {
     if (document.body.clientWidth < 900) {
-        wideMode.value = false
+        _layoutStore.setMode(LAYOUT_ENUM.compact)
     } else {
-        wideMode.value = true
+        _layoutStore.setMode(LAYOUT_ENUM.wide)
     }
 }
 
@@ -96,11 +90,11 @@ const disconnect = (
     from?: RouteRecordName | null | undefined,
     callback?: Function
 ) => {
+    console.log('disconnect')
     ChannelParam.action = WSS_ACTION.DISCONNECT
     from ? (ChannelParam.route = from) : (ChannelParam.route = route.name)
     wss.send(ChannelParam, () => {
         wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
-            console.log(data, 222222)
             clients.value = data.clients
         })
     })
@@ -148,18 +142,31 @@ onBeforeRouteUpdate((to, from) => {
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
     switchChannel(from.name, to.name)
+    console.log('switch channel')
 })
 
-onBeforeUnmount(() => {
+// onBeforeUnmount(() => {
+//     window.removeEventListener('resize', initLayouts)
+//     disconnect(route.name)
+//     wss.close()
+// })
+
+// window.addEventListener('beforeunload', () => {
+//     disconnect(route.name)
+//     wss.close()
+// })
+
+// window事件
+onbeforeunload = () => {
     window.removeEventListener('resize', initLayouts)
     disconnect(route.name)
     wss.close()
-})
+}
 
 // watcher
 const notified = ref<boolean>(false)
 const message = computed(() => {
-    return wideMode
+    return _layoutStore.getMode() === LAYOUT_ENUM.default
         ? '双击上方昵称可以进行修改哦~方便大家加入你的队伍'
         : '点击头像进入个人空间，双击昵称可以进行修改哦，方便大家加入你的队伍'
 })
@@ -177,10 +184,6 @@ watchEffect(() => {
         ElNotification.closeAll()
     }
 })
-
-const helpDrawer = reactive({
-    visible: false,
-})
 </script>
 
 <style lang="scss" scoped>
@@ -192,14 +195,6 @@ const helpDrawer = reactive({
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    .icon {
-        font-size: 1.6em;
-        margin: 0.25em 0;
-        cursor: pointer;
-        &:hover {
-            color: var(--el-color-primary);
-        }
-    }
 }
 .wrapper {
     padding: 1em 2em;

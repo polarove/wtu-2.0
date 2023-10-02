@@ -1,7 +1,7 @@
 import { RouteRecordName } from 'vue-router'
-import { warframe } from './warframe'
-import { Page } from './types'
-import { UserBO } from './user'
+import { warframe } from '@composables/warframe'
+import { Page } from '@composables/types'
+import { TeamUserBO } from '@composables/user'
 
 export interface userInTeam {
     uuid: string
@@ -50,7 +50,7 @@ export interface TeamMemberBO {
     leader: number
     warframe: warframe
     occupied: number
-    user: UserBO
+    user: TeamUserBO
     isDeleted: number
 }
 
@@ -79,12 +79,16 @@ export interface TeamListParams {
     uuid: string | null
 }
 
-export interface JoinTeamParam {
-    server: number
-    channel: string
-    creatorUuid: string
-    uuid: string
-    from: UserBO
+export interface JoinTeamDTO {
+    receiver: string
+    from: TeamUserBO
+    team: {
+        uuid: string
+        server: number
+        channel: string
+        creatorUuid: string
+        title: string
+    }
     build: {
         focus: string
         warframe: warframe

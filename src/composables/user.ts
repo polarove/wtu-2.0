@@ -1,11 +1,10 @@
-export interface UserVO extends UserBO {
+export interface UserVO extends TeamUserBO {
     description: string
     server: number
     level: number
-    accelerator: string
 }
 
-export interface UserBO {
+export interface TeamUserBO {
     uuid: string
     name: string
     avatar: string
@@ -15,4 +14,5 @@ export interface UserBO {
     resourceBooster: number
     resourceDropRateBooster: number
     modDropRateBooster: number
+    accelerator: string
 }

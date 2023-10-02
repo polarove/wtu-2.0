@@ -72,7 +72,6 @@ import { isBlank } from '@/util/StrUtil'
 const _authStore = authStore()
 const route = useRoute()
 const emit = defineEmits(['updateModelValue', 'emitToggleWarframeDrawer'])
-
 const targetWarframe = ref<warframe>({
     en: '',
     cn: '',

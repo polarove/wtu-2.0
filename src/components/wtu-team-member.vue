@@ -4,6 +4,15 @@
             <template #reference>
                 <div>
                     <div class="flex-col">
+                        <div class="invisible-min-900px">
+                            <div
+                                class="font-bold"
+                                v-if="isNotBlank(member.user.name)"
+                            >
+                                {{ member.user.name }}
+                            </div>
+                            <div v-else class="color-gray">.....</div>
+                        </div>
                         <wtu-warframe
                             :class="{
                                 unknown: user_unknown(member.user.onlineStatus),
@@ -13,17 +22,13 @@
                             }"
                             :modelValue="member.warframe"
                             width="60px"
-                            class="flex-center b-rounded"
+                            class="flex-center b-rounded ma-1"
                             :showName="false"
                         />
-                        <div class="invisible-min-900px">
-                            <div
-                                class="font-bold"
-                                v-if="isNotBlank(member.user.name)"
-                            >
-                                {{ member.user.name }}
-                            </div>
-                            <div v-else class="color-gray">.....</div>
+                        <div
+                            class="font-size-[0.78em] color-gray mt-0.25em mb-0.25em"
+                        >
+                            {{ member.user.accelerator }}
                         </div>
                     </div>
                 </div>

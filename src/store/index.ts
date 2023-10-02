@@ -4,10 +4,14 @@ import type { UserVO } from '@composables/user'
 import { getUserVOByUUID } from '@api/account'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { warframe } from '@/composables/warframe'
-import type { TeamVO, TeamPage, TeamListParams } from '@composables/team'
+import type {
+    TeamVO,
+    TeamPage,
+    TeamListParams,
+    JoinTeamDTO,
+} from '@composables/team'
 import { GetTeamList } from '@api/team'
-import { websocket } from '@util/WebsocketUtil'
-import { BOOSTER_STATUS, SERVER_TYPE } from '@/composables/enums'
+import { BOOSTER_STATUS, LAYOUT_ENUM, SERVER_TYPE } from '@/composables/enums'
 
 interface xhr_response {
     config: any
@@ -51,6 +55,12 @@ export const authStore = defineStore({
         getDescription(): string {
             return this.user.description
         },
+        getAccelerator(): string {
+            return this.user.accelerator
+        },
+        setAccelerator(accelerator: string) {
+            this.user.accelerator = accelerator
+        },
         getUUID(): string {
             return this.user.uuid
         },
@@ -75,7 +85,7 @@ export const authStore = defineStore({
         setName(name: string) {
             this.user.name = name
         },
-        getOnlineStatus(): number | null {
+        getOnlineStatus(): number {
             return this.user.onlineStatus
         },
         setOnlineStatus(onlineStatus: number) {
@@ -148,14 +158,16 @@ export const teamStore = defineStore({
     id: 'team',
     state: () => ({
         param: {} as TeamListParams,
-        TeamPage: {} as TeamPage,
-        loading: false,
+        teamPage: {} as TeamPage,
+        teamListLoading: false,
         pageLoading: false,
         isEnd: false,
+        applicationList: [] as Array<JoinTeamDTO>,
+        applicationListLoading: false,
     }),
     actions: {
         initTeamList() {
-            this.loading = true
+            this.teamListLoading = true
             GetTeamList(this.param)
                 .then((res: any) => {
                     if (res.success) {
@@ -171,7 +183,7 @@ export const teamStore = defineStore({
                     console.log(err.data.message)
                 })
                 .finally(() => {
-                    this.loading = false
+                    this.teamListLoading = false
                 })
         },
         resetPage() {
@@ -179,22 +191,25 @@ export const teamStore = defineStore({
             this.isEnd = false
         },
         removeTeam(id: number) {
-            this.TeamPage.records = this.TeamPage.records.filter(
+            this.teamPage.records = this.teamPage.records.filter(
                 (item) => item.team.id !== id
             )
         },
         toggleTeamStatus(id: number, status: number) {
-            this.TeamPage.records.map((item) => {
+            this.teamPage.records.map((item) => {
                 if (item.team.id === id) {
                     item.team.status = status
                 }
             })
         },
-        getLoading(): boolean {
-            return this.loading
+        getTeamListLoading(): boolean {
+            return this.teamListLoading
         },
         getPageLoading(): boolean {
             return this.pageLoading
+        },
+        getApplicationListLoading(): boolean {
+            return this.applicationListLoading
         },
         getParam(): TeamListParams {
             return this.param
@@ -206,16 +221,16 @@ export const teamStore = defineStore({
             }
         },
         setTeam(TeamVO: Array<TeamVO>) {
-            this.TeamPage.records = TeamVO
+            this.teamPage.records = TeamVO
         },
         getTeam(): Array<TeamVO> {
-            return this.TeamPage.records
+            return this.teamPage.records
         },
         getTeamPage(): TeamPage {
-            return this.TeamPage
+            return this.teamPage
         },
         addTeam(team: TeamVO) {
-            this.TeamPage.records.unshift(team)
+            this.teamPage.records.unshift(team)
         },
         nextPage(callback: Function) {
             this.pageLoading = true
@@ -231,8 +246,8 @@ export const teamStore = defineStore({
                         if (res.data.records.length === 0) {
                             this.isEnd = true
                         } else {
-                            this.TeamPage.records =
-                                this.TeamPage.records.concat(
+                            this.teamPage.records =
+                                this.teamPage.records.concat(
                                     res.data.records as Array<TeamVO>
                                 )
                         }
@@ -251,20 +266,35 @@ export const teamStore = defineStore({
                     callback()
                 })
         },
+        addApplication(application: JoinTeamDTO) {
+            this.applicationList.unshift(application)
+        },
+        getApplicationList(): Array<JoinTeamDTO> {
+            return this.applicationList
+        },
     },
 })
 
-export const wssStore = defineStore({
-    id: 'wss',
+export const layoutStore = defineStore({
+    id: 'layout',
     state: () => ({
-        wss: {} as websocket,
+        mode: 1,
     }),
     actions: {
-        setWss(wss: websocket) {
-            this.wss = wss
+        getMode(): number {
+            return this.mode
         },
-        getWss(): websocket {
-            return this.wss
+        setMode(mode: number) {
+            this.mode = mode
+        },
+        isDefault(): boolean {
+            return this.mode === LAYOUT_ENUM.default
+        },
+        isWide(): boolean {
+            return this.mode === LAYOUT_ENUM.wide
+        },
+        isCompact(): boolean {
+            return this.mode === LAYOUT_ENUM.compact
         },
     },
 })
