@@ -1,17 +1,14 @@
 <template>
     <div class="flex-center">
-        <el-popover width="200">
-            <template #reference>
-                <div class="flex-col">
-                    <div class="lt-lg:display-none">
-                        <div
-                            class="font-bold"
-                            v-if="isNotBlank(member.user.name)"
-                        >
-                            {{ member.user.name }}
-                        </div>
-                        <div v-else class="color-gray">.....</div>
-                    </div>
+        <div class="flex-col">
+            <div class="lt-lg:display-none">
+                <div class="font-bold" v-if="isNotBlank(member.user.name)">
+                    {{ member.user.name }}
+                </div>
+                <div v-else class="color-gray">.....</div>
+            </div>
+            <el-popover width="200px">
+                <template #reference>
                     <wtu-warframe
                         :class="{
                             unknown: user_unknown(member.user.onlineStatus),
@@ -25,45 +22,47 @@
                         :showName="false"
                         @click="$emit('join')"
                     />
-                    <div
-                        class="font-size-[0.78em] color-gray mt-0.25em mb-0.25em"
-                    >
-                        {{ member.user.accelerator }}
+                </template>
+                <div class="flex">
+                    <wtu-booster-list
+                        v-if="member.user.booster !== null"
+                        :booster="member.user.booster"
+                        size="2.4em"
+                        activeSize="2.4em"
+                        :direction="DIRECTION_ENUM.vertical"
+                    />
+                    <div class="equipments">
+                        <div class="lg:display-none">
+                            <div
+                                class="font-bold"
+                                v-if="isNotBlank(member.user.name)"
+                            >
+                                {{ member.user.name }}
+                            </div>
+                            <div v-else class="color-gray">.....</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="text-size-[1.2em]">
+                                {{
+                                    _authStore.getServer()
+                                        ? member.warframe.en
+                                        : member.warframe.cn
+                                }}
+                            </div>
+                            <wtu-focus
+                                :name="member.focus"
+                                size="2em"
+                                simplified
+                            />
+                        </div>
                     </div>
                 </div>
-            </template>
+            </el-popover>
 
-            <div class="flex">
-                <wtu-booster-list
-                    v-if="member.user.booster !== null"
-                    :booster="member.user.booster"
-                    size="2.4em"
-                    activeSize="2.4em"
-                    :direction="DIRECTION_ENUM.vertical"
-                />
-                <div class="equipments">
-                    <div class="lg:display-none">
-                        <div
-                            class="font-bold"
-                            v-if="isNotBlank(member.user.name)"
-                        >
-                            {{ member.user.name }}
-                        </div>
-                        <div v-else class="color-gray">.....</div>
-                    </div>
-                    <div class="flex justify-between">
-                        <div class="text-size-[1.2em]">
-                            {{
-                                _authStore.getServer()
-                                    ? member.warframe.en
-                                    : member.warframe.cn
-                            }}
-                        </div>
-                        <wtu-focus :name="member.focus" size="2em" simplified />
-                    </div>
-                </div>
+            <div class="font-size-[0.78em] color-gray mt-0.25em mb-0.25em">
+                {{ member.user.accelerator }}
             </div>
-        </el-popover>
+        </div>
     </div>
 </template>
 

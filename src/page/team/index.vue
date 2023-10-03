@@ -6,8 +6,8 @@
     <div class="wrapper">
         <div
             :class="{
-                wideScreen: _layoutStore.isWide(),
-                compactScreen: _layoutStore.isCompact(),
+                wide: _layoutStore.isWide(),
+                compact: _layoutStore.isCompact(),
             }"
         >
             <div>
@@ -15,9 +15,9 @@
                 <wtu-team-set class="lt-lg-flex-center" />
             </div>
             <wtu-entries
-                :class="{ compactOnly: _layoutStore.isCompact() }"
                 :scale="_layoutStore.isWide() ? 1 : 0.8"
                 :clients="clients"
+                class="entry"
             />
         </div>
         <div class="w-70vw h-100% ma-auto">
@@ -181,20 +181,19 @@ watchEffect(() => {
 }
 .wrapper {
     padding: 1em 2em;
-    .wideScreen {
+    .wide {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-    .compactScreen {
+    .compact {
         display: flex;
         flex-direction: column-reverse;
         justify-content: center;
         align-items: center;
-    }
-
-    .compactOnly {
-        margin: 1em 0;
+        .entry {
+            margin: 1em 0;
+        }
     }
 }
 </style>
