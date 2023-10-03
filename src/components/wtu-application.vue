@@ -1,8 +1,8 @@
 <template>
     <div>
         <el-badge
-            :value="_teamStore.getApplicationList().length"
-            :hidden="_teamStore.getApplicationList().length === 0"
+            :value="_teamStore.getApplicationGroup().length"
+            :hidden="_teamStore.getApplicationGroup().length === 0"
         >
             <span
                 class="i-ant-design:user-switch-outlined"
@@ -15,21 +15,54 @@
             v-model="visible"
             :size="_layoutStore.isWide() ? '40%' : '100%'"
         >
-            <template #header> <div>入队申请列表</div> </template>
+            <template #header>
+                <div class="vertical-middle">
+                    <span class="i-ep:info-filled icon"></span>
+                    <span class="color-gray">入队申请只保存10分钟</span>
+                </div>
+            </template>
             <ryu-loading :loading="loading">
                 <ryu-empty :empty="empty">
-                    <div v-for="application in _teamStore.getApplicationList()">
-                        {{ application }}
+                    <div v-for="group in _teamStore.getApplicationGroup()">
+                        <el-card shadow="hover">
+                            <template #header>
+                                <div class="flex-between">
+                                    <div>{{ group.title }}</div>
+                                    <div>
+                                        <wtu-booster
+                                            size="2.3em"
+                                            active-size="2.3em"
+                                            class="booster"
+                                            v-for="(booster, index) in boosters"
+                                            :key="index"
+                                            :src="
+                                                group.booster[booster.en]
+                                                    ? booster.valid
+                                                    : booster.invalid
+                                            "
+                                            :active="
+                                                group.booster[booster.en] ===
+                                                BOOSTER_STATUS.ACTIVE
+                                            "
+                                        />
+                                    </div>
+                                </div>
+                            </template>
+                            <div v-for="application in group.applications">
+                                <wtu-warframe
+                                    :modelValue="application.build.warframe"
+                                />
+                            </div>
+                        </el-card>
                     </div>
                 </ryu-empty>
             </ryu-loading>
             <template #footer>
                 <div class="flex-between">
                     <ryu-sponsor />
-                    <div class="vertical-middle">
-                        <span class="i-ep:info-filled icon"></span>
-                        <span class="color-gray">入队申请只保存10分钟</span>
-                    </div>
+                    <el-button @click="_teamStore.clearApplicationGroup()">
+                        清空
+                    </el-button>
                 </div>
             </template>
         </el-drawer>
@@ -37,15 +70,24 @@
 </template>
 
 <script setup lang="ts">
-import { JoinTeamDTO } from '@/composables/team'
+//@ts-nocheck
+import type { JoinTeamDTO, ApplicationGroup } from '@/composables/team'
 import { layoutStore, teamStore } from '@/store'
+import { boosters } from '@/composables/booster'
+import { BOOSTER_STATUS } from '@/composables/enums'
 const _layoutStore = layoutStore()
 const _teamStore = teamStore()
 const visible = ref<boolean>(false)
-const loading = _teamStore.getApplicationListLoading()
-const list: Array<JoinTeamDTO> = _teamStore.getApplicationList()
-const length = computed(() => list.length)
+const loading = _teamStore.getApplicationGroupLoading()
+const group: Array<ApplicationGroup> = _teamStore.getApplicationGroup()
+const length = computed(() => group.length)
 const empty = computed(() => length.value === 0)
+const acceptApplication = (application: JoinTeamDTO) => {
+    console.log(application)
+}
+const rejectApplication = (application: JoinTeamDTO) => {
+    console.log(application)
+}
 </script>
 
 <style lang="scss" scoped></style>

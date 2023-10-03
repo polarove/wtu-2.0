@@ -2,56 +2,45 @@
     <div class="flex-center">
         <el-popover width="200">
             <template #reference>
-                <div>
-                    <div class="flex-col">
-                        <div class="invisible-min-900px">
-                            <div
-                                class="font-bold"
-                                v-if="isNotBlank(member.user.name)"
-                            >
-                                {{ member.user.name }}
-                            </div>
-                            <div v-else class="color-gray">.....</div>
-                        </div>
-                        <wtu-warframe
-                            :class="{
-                                unknown: user_unknown(member.user.onlineStatus),
-                                offline: user_offline(member.user.onlineStatus),
-                                online: user_online(member.user.onlineStatus),
-                                ingame: user_ingame(member.user.onlineStatus),
-                            }"
-                            :modelValue="member.warframe"
-                            width="60px"
-                            class="flex-center b-rounded ma-1"
-                            :showName="false"
-                        />
+                <div class="flex-col">
+                    <div class="invisible-min-900px">
                         <div
-                            class="font-size-[0.78em] color-gray mt-0.25em mb-0.25em"
+                            class="font-bold"
+                            v-if="isNotBlank(member.user.name)"
                         >
-                            {{ member.user.accelerator }}
+                            {{ member.user.name }}
                         </div>
+                        <div v-else class="color-gray">.....</div>
+                    </div>
+                    <wtu-warframe
+                        :class="{
+                            unknown: user_unknown(member.user.onlineStatus),
+                            offline: user_offline(member.user.onlineStatus),
+                            online: user_online(member.user.onlineStatus),
+                            ingame: user_ingame(member.user.onlineStatus),
+                        }"
+                        :modelValue="member.warframe"
+                        width="60px"
+                        class="flex-center b-rounded ma-1"
+                        :showName="false"
+                        @click="$emit('join')"
+                    />
+                    <div
+                        class="font-size-[0.78em] color-gray mt-0.25em mb-0.25em"
+                    >
+                        {{ member.user.accelerator }}
                     </div>
                 </div>
             </template>
 
             <div class="flex">
-                <div class="boosters">
-                    <wtu-booster
-                        size="2.3em"
-                        active-size="2.3em"
-                        class="booster"
-                        v-for="(booster, index) in boosters"
-                        :key="index"
-                        :src="
-                            member.user[booster.en]
-                                ? booster.valid
-                                : booster.invalid
-                        "
-                        :active="
-                            member.user[booster.en] === BOOSTER_STATUS.ACTIVE
-                        "
-                    />
-                </div>
+                <wtu-booster-list
+                    v-if="member.user.booster !== null"
+                    :booster="member.user.booster"
+                    size="2.4em"
+                    activeSize="2.4em"
+                    :direction="DIRECTION_ENUM.vertical"
+                />
                 <div class="equipments">
                     <div class="invisible-max-900px">
                         <div
@@ -82,8 +71,7 @@
 import type { TeamMemberBO } from '@/composables/team'
 import { authStore } from '@/store'
 import { isNotBlank } from '@/util/StrUtil'
-import { BOOSTER_STATUS, ONLINE_STATUS } from '@/composables/enums'
-import { boosters } from '@composables/booster'
+import { ONLINE_STATUS, DIRECTION_ENUM } from '@/composables/enums'
 const _authStore = authStore()
 defineProps({
     member: {

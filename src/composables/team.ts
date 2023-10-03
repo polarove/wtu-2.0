@@ -1,7 +1,7 @@
 import { RouteRecordName } from 'vue-router'
 import { warframe } from '@composables/warframe'
 import { Page } from '@composables/types'
-import { TeamUserBO } from '@composables/user'
+import { TeamUserBO, UserBooster } from '@composables/user'
 
 export interface userInTeam {
     uuid: string
@@ -90,9 +90,17 @@ export interface JoinTeamDTO {
         title: string
     }
     build: {
+        id: number
         focus: string
         warframe: warframe
     }
+}
+
+export interface ApplicationGroup {
+    uuid: string
+    title: string
+    booster: UserBooster
+    applications: Array<JoinTeamDTO>
 }
 
 export interface BroadcastDeleteTeamDTO {

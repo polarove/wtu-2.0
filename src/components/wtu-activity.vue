@@ -6,7 +6,11 @@
             :class="{ active: activity.name === routes.name }"
             v-for="(activity, index) in childRoutes"
         >
-            <el-badge :value="clients" :hidden="activity.name !== routes.name">
+            <el-badge
+                type="primary"
+                :value="clients"
+                :hidden="activity.name !== routes.name"
+            >
                 <ryu-svg :index="index" :name="activity.name" size="1.4em" />
             </el-badge>
         </span>
@@ -20,7 +24,11 @@
                 (item) => item.name !== 'steelpath'
             )"
         >
-            <el-badge :value="clients" :hidden="activity.name !== routes.name">
+            <el-badge
+                type="primary"
+                :value="clients"
+                :hidden="activity.name !== routes.name"
+            >
                 <ryu-svg :index="index" :name="activity.name" size="1.4em" />
             </el-badge>
         </span>

@@ -133,6 +133,11 @@ onBeforeRouteUpdate((to, from) => {
     switchChannel(from.name, to.name)
 })
 
+onBeforeRouteLeave((_, from) => {
+    disconnect(from.name)
+    wss.close()
+})
+
 // window事件
 onbeforeunload = () => {
     disconnect(route.name)

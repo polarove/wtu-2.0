@@ -1,5 +1,5 @@
 import AccountController from './instance'
-import type { UserVO } from '@/composables/user'
+import type { UserBooster } from '@/composables/user'
 
 interface ToggleServerParam {
     previous: number
@@ -54,7 +54,7 @@ export const UpdateUserAccelerator = (name: string) => {
     return AccountController.get('/updateUserAccelerator', { name: name })
 }
 
-export const UpdateUserBooster = (data: UserVO) => {
+export const UpdateUserBooster = (data: UserBooster) => {
     return AccountController.post('/updateUserBooster', data)
 }
 

@@ -48,6 +48,7 @@ declare module 'vue' {
     WtuAppName: typeof import('./src/components/wtu-app-name.vue')['default']
     WtuAvatar: typeof import('./src/components/wtu-avatar.vue')['default']
     WtuBooster: typeof import('./src/components/wtu-booster.vue')['default']
+    WtuBoosterList: typeof import('./src/components/wtu-booster-list.vue')['default']
     WtuBreadcrumb: typeof import('./src/components/wtu-breadcrumb.vue')['default']
     WtuDifficulty: typeof import('./src/components/wtu-difficulty.vue')['default']
     WtuEntries: typeof import('./src/components/wtu-entries.vue')['default']

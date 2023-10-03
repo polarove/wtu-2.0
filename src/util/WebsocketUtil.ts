@@ -84,7 +84,6 @@ export class websocket {
                 case WSS_MESSAGE_TYPE.JOIN:
                     let application: JoinTeamDTO = JSON.parse(result.data)
                     console.log(application)
-
                     _teamStore.addApplication(application)
                     break
                 default:
@@ -117,8 +116,6 @@ export class websocket {
     }
 
     close() {
-        console.log(1)
-
         this.wss.close()
     }
 }

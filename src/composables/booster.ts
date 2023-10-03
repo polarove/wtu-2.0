@@ -1,4 +1,4 @@
-interface Booster {
+export interface Booster {
     cn: string
     en:
         | 'affinityBooster'

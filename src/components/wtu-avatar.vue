@@ -27,25 +27,20 @@
             </el-avatar>
         </template>
         <template #default>
-            <div class="booster-list">
-                <wtu-booster
-                    v-for="(booster, index) in boosters"
-                    :key="index"
-                    :src="
-                        _authStore.getBooster(booster.en)
-                            ? booster.valid
-                            : booster.invalid
-                    "
-                    @click="toggleBooster(booster.en)"
-                    :active="_authStore.hasBooster(booster.en)"
-                    size="2.7em"
-                    activeSize="2.5em"
+            <wtu-booster-list
+                :booster="_authStore.getUserBooster()"
+                @toggle="toggleBooster($event)"
+                :direction="DIRECTION_ENUM.horizental"
+                size="2.7em"
+                activeSize="2.7em"
+            />
+
+            <div class="invisible-max-900px">
+                <wtu-online-state
+                    :tooltipDisabled="true"
+                    size="1.8rem"
+                    class="status"
                 />
-            </div>
-            <div class="flex">
-                <div class="invisible-max-900px inline-block">
-                    <wtu-online-state :tooltipDisabled="true" size="1.8rem" />
-                </div>
             </div>
         </template>
     </el-popover>
@@ -55,8 +50,7 @@
 import router from '@/router'
 import { authStore } from '@/store'
 import { isBlank } from '@util/StrUtil'
-import { ONLINE_STATUS } from '@composables/enums'
-import { boosters } from '@composables/booster'
+import { ONLINE_STATUS, DIRECTION_ENUM } from '@composables/enums'
 import { UpdateUserBooster } from '@api/account'
 const _authStore = authStore()
 
@@ -103,14 +97,13 @@ const NaviPrivateHome = () => {
     }
     router.push({ name: 'profile' })
 }
-
 const toggleBooster = async (booster: string) => {
     if (_authStore.hasBooster(booster)) {
         _authStore.removeBooster(booster)
     } else {
         _authStore.setBooster(booster)
     }
-    await UpdateUserBooster(_authStore.getUser())
+    await UpdateUserBooster(_authStore.getUserBooster())
 }
 
 const avatarLoadingErrorHandler = (e: Event) => {
@@ -138,12 +131,12 @@ const avatarLoadingErrorHandler = (e: Event) => {
     box-shadow: 0 0 0 2px rgba($color: #3dc468, $alpha: 0.7) inset;
 }
 
-.booster-list {
+.status {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-bottom: 1px solid #ebeef5;
-    margin-bottom: 7px;
-    padding-bottom: 7px;
+    padding-top: 0.5em;
+    margin-top: 0.5em;
+    border-top: 1px solid var(--el-border-color);
 }
 </style>

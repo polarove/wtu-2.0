@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { response } from '@composables/types'
-import type { UserVO } from '@composables/user'
+import type { UserBooster, UserVO } from '@composables/user'
 import { getUserVOByUUID } from '@api/account'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { warframe } from '@/composables/warframe'
@@ -9,6 +9,7 @@ import type {
     TeamPage,
     TeamListParams,
     JoinTeamDTO,
+    ApplicationGroup,
 } from '@composables/team'
 import { GetTeamList } from '@api/team'
 import { BOOSTER_STATUS, LAYOUT_ENUM, SERVER_TYPE } from '@/composables/enums'
@@ -32,11 +33,13 @@ export const authStore = defineStore({
             onlineStatus: 0,
             server: 1,
             level: 0,
-            affinityBooster: 0,
-            creditBooster: 0,
-            resourceBooster: 0,
-            resourceDropRateBooster: 0,
-            modDropRateBooster: 0,
+            booster: {
+                affinityBooster: 0,
+                creditBooster: 0,
+                resourceBooster: 0,
+                resourceDropRateBooster: 0,
+                modDropRateBooster: 0,
+            },
             accelerator: '',
         },
         difficulty: false,
@@ -48,9 +51,6 @@ export const authStore = defineStore({
         },
         getUser(): UserVO {
             return this.user
-        },
-        getBooster(booster: string): number {
-            return this.user[booster as keyof UserVO] as number
         },
         getDescription(): string {
             return this.user.description
@@ -91,15 +91,25 @@ export const authStore = defineStore({
         setOnlineStatus(onlineStatus: number) {
             this.user.onlineStatus = onlineStatus
         },
+        getBooster(booster: string): number {
+            return this.user.booster[booster as keyof UserBooster] as number
+        },
+        getUserBooster(): UserBooster {
+            return this.user.booster
+        },
         hasBooster(booster: string): boolean {
-            return this.user[booster as keyof UserVO] === BOOSTER_STATUS.ACTIVE
+            return (
+                this.user.booster[booster as keyof UserBooster] ===
+                BOOSTER_STATUS.ACTIVE
+            )
         },
         removeBooster(booster: string) {
-            this.user[booster as keyof UserVO] =
+            this.user.booster[booster as keyof UserBooster] =
                 BOOSTER_STATUS.INACTIVE as never
         },
         setBooster(booster: string) {
-            this.user[booster as keyof UserVO] = BOOSTER_STATUS.ACTIVE as never
+            this.user.booster[booster as keyof UserBooster] =
+                BOOSTER_STATUS.ACTIVE as never
         },
         getServer(): number {
             return this.user.server
@@ -162,8 +172,8 @@ export const teamStore = defineStore({
         teamListLoading: false,
         pageLoading: false,
         isEnd: false,
-        applicationList: [] as Array<JoinTeamDTO>,
-        applicationListLoading: false,
+        applicationGroup: [] as Array<ApplicationGroup>,
+        applicationGroupLoading: false,
     }),
     actions: {
         initTeamList() {
@@ -207,9 +217,6 @@ export const teamStore = defineStore({
         },
         getPageLoading(): boolean {
             return this.pageLoading
-        },
-        getApplicationListLoading(): boolean {
-            return this.applicationListLoading
         },
         getParam(): TeamListParams {
             return this.param
@@ -266,11 +273,22 @@ export const teamStore = defineStore({
                     callback()
                 })
         },
-        addApplication(application: JoinTeamDTO) {
-            this.applicationList.unshift(application)
+        getApplicationGroupLoading(): boolean {
+            return this.applicationGroupLoading
         },
-        getApplicationList(): Array<JoinTeamDTO> {
-            return this.applicationList
+        addApplication(application: JoinTeamDTO) {
+            let result = this.applicationGroup.find((item) => {
+                return item.uuid === application.team.uuid
+            })
+            if (result) {
+                result.applications.unshift(application)
+            }
+        },
+        getApplicationGroup(): Array<ApplicationGroup> {
+            return this.applicationGroup
+        },
+        clearApplicationGroup() {
+            this.applicationGroup = []
         },
     },
 })

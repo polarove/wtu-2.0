@@ -79,3 +79,8 @@ export const DOCUMENT_VISIBILITY = {
     hidden: 'hidden',
     visible: 'visible',
 }
+
+export const DIRECTION_ENUM = {
+    horizental: 1,
+    vertical: 2,
+}

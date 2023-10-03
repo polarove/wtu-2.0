@@ -92,7 +92,7 @@
                     <el-col :span="6" v-for="build in instance.members">
                         <wtu-team-member
                             :member="build"
-                            @click="
+                            @join="
                                 isCreator(instance.team.creatorUuid)
                                     ? check(build)
                                     : aqua(instance.team, build)
@@ -266,11 +266,13 @@ const joinTeamParam: JoinTeamDTO = reactive({
         name: '',
         avatar: '',
         onlineStatus: 0,
-        affinityBooster: 0,
-        creditBooster: 0,
-        resourceBooster: 0,
-        resourceDropRateBooster: 0,
-        modDropRateBooster: 0,
+        booster: {
+            affinityBooster: 0,
+            creditBooster: 0,
+            resourceBooster: 0,
+            resourceDropRateBooster: 0,
+            modDropRateBooster: 0,
+        },
         accelerator: '',
     },
     team: {
@@ -281,6 +283,7 @@ const joinTeamParam: JoinTeamDTO = reactive({
         title: '',
     },
     build: {
+        id: 0,
         focus: '',
         warframe: {
             en: '',
@@ -300,6 +303,7 @@ const prepareJoinTeamParma = (team: TeamBO, member: TeamMemberBO): boolean => {
         ...team,
     }
     joinTeamParam.build = {
+        id: member.id,
         focus: member.focus,
         warframe: {
             en: member.warframe.en,
