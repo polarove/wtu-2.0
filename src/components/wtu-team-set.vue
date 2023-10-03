@@ -128,7 +128,7 @@
             </el-drawer>
             <template #footer>
                 <div class="flex-between">
-                    <RyuSponsor />
+                    <ryu-sponsor />
                     <el-button
                         :loading="loading"
                         @click="publishTeam(createTeamFormRef)"

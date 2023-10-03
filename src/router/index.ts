@@ -142,6 +142,12 @@ const routes = [
             },
         ],
     },
+    {
+        path: '/sponsor',
+        name: 'sponsor',
+        meta: { forehead: '赞助者' },
+        component: () => import('@page/sponsor/index.vue'),
+    },
 ]
 
 const router = createRouter({

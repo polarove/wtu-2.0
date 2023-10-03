@@ -51,14 +51,6 @@ const TeamParams = reactive<TeamListParams>({
     uuid: null,
 })
 
-const initLayouts = () => {
-    if (document.body.clientWidth < 900) {
-        _layoutStore.setMode(LAYOUT_ENUM.compact)
-    } else {
-        _layoutStore.setMode(LAYOUT_ENUM.wide)
-    }
-}
-
 const wss = new websocket(_authStore.getServer())
 
 const clients = ref<number>(0)
@@ -124,9 +116,7 @@ const autoRefresh = (interval: number) => {
 
 // component life cycle
 onMounted(() => {
-    initLayouts()
     // event listener
-    window.addEventListener('resize', initLayouts)
     TeamParams.channel = route.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
@@ -143,15 +133,8 @@ onBeforeRouteUpdate((to, from) => {
     switchChannel(from.name, to.name)
 })
 
-// onBeforeUnmount(() => {
-//     window.removeEventListener('resize', initLayouts)
-//     disconnect(route.name)
-//     wss.close()
-// })
-
 // window事件
 onbeforeunload = () => {
-    window.removeEventListener('resize', initLayouts)
     disconnect(route.name)
     wss.close()
 }
