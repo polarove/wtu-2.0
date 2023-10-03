@@ -6,6 +6,7 @@ export interface I_sponsor {
 export interface sponsor {
     name: string
     avatar: string
+    amount?: number
 }
 
 export enum sponsor_level {
@@ -24,6 +25,7 @@ export const sponsors: I_sponsor[] = [
             {
                 name: '魔影陌名',
                 avatar: 'https://www.neorae.cn/data/img/sponsor/2023-10-03/mo_ying_mo_ming.jpg',
+                amount: 500,
             },
         ],
     },
