@@ -3,7 +3,7 @@
         <el-popover width="200">
             <template #reference>
                 <div class="flex-col">
-                    <div class="invisible-min-900px">
+                    <div class="lt-lg:display-none">
                         <div
                             class="font-bold"
                             v-if="isNotBlank(member.user.name)"
@@ -42,7 +42,7 @@
                     :direction="DIRECTION_ENUM.vertical"
                 />
                 <div class="equipments">
-                    <div class="invisible-max-900px">
+                    <div class="lg:display-none">
                         <div
                             class="font-bold"
                             v-if="isNotBlank(member.user.name)"

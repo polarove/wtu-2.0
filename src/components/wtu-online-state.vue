@@ -1,5 +1,5 @@
 <template>
-    <div class="states">
+    <div>
         <el-tooltip content="离线" :disabled="tooltipDisabled">
             <ryu-svg
                 @click="updateOnlineStatus(ONLINE_STATUS.offline)"
@@ -108,60 +108,56 @@ const updateOnlineStatus = async (status: number) => {
 </script>
 
 <style lang="scss" scoped>
-.states {
-    display: flex;
-
-    .state {
-        &:hover {
-            cursor: pointer;
-        }
+.state {
+    &:hover {
+        cursor: pointer;
     }
-    .state:nth-child(n + 2) {
-        margin-left: 8px !important;
-    }
+}
+.state:nth-child(n + 2) {
+    margin-left: 8px !important;
+}
 
-    .offline {
-        color: #ccc;
+.offline {
+    color: #ccc;
 
-        &:hover {
-            color: #d74747;
-        }
-    }
-
-    .offline.active {
+    &:hover {
         color: #d74747;
     }
+}
 
-    .online {
-        color: #ccc;
+.offline.active {
+    color: #d74747;
+}
 
-        &:hover {
-            color: var(--el-color-primary);
-        }
-    }
+.online {
+    color: #ccc;
 
-    .online.active {
+    &:hover {
         color: var(--el-color-primary);
     }
+}
 
-    .ingame {
-        color: #ccc;
+.online.active {
+    color: var(--el-color-primary);
+}
 
-        &:hover {
-            color: #47d747;
-        }
-    }
+.ingame {
+    color: #ccc;
 
-    .ingame.active {
+    &:hover {
         color: #47d747;
     }
+}
 
-    .poweroff {
-        color: #ccc;
-        transform: color 0.3s ease-in-out;
-        &:hover {
-            color: var(--el-color-danger);
-        }
+.ingame.active {
+    color: #47d747;
+}
+
+.poweroff {
+    color: #ccc;
+    transform: color 0.3s ease-in-out;
+    &:hover {
+        color: var(--el-color-danger);
     }
 }
 </style>

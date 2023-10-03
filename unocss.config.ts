@@ -8,6 +8,15 @@ import presetIcons from '@unocss/preset-icons'
 
 export default defineConfig({
     // ...UnoCSS选项
+    theme: {
+        breakpoints: {
+            sm: '640px',
+            md: '768px',
+            lg: '900px',
+            xl: '1280px',
+            xxl: '1536px',
+        },
+    },
     rules: [
         [
             'absolute-center',
@@ -145,15 +154,6 @@ export default defineConfig({
         //     },
         // ],
     ],
-    // theme: {
-    //     breakpoints: {
-    //         sm: '640px',
-    //         md: '768px',
-    //         lg: '900px',
-    //         xl: '1280px',
-    //         xxl: '1536px',
-    //     },
-    // },
     presets: [
         presetUno(),
         presetAttributify(),

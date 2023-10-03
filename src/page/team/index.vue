@@ -12,7 +12,7 @@
         >
             <div>
                 <wtu-activity :clients="clients" class="mb-0.75em mt-0.5em" />
-                <wtu-team-set class="center-min-900px" />
+                <wtu-team-set class="lt-lg-flex-center" />
             </div>
             <wtu-entries
                 :class="{ compactOnly: _layoutStore.isCompact() }"
@@ -20,7 +20,7 @@
                 :clients="clients"
             />
         </div>
-        <div class="w-70vw h-100% ma-auto text-size-[1.3rem] min-oe">
+        <div class="w-70vw h-100% ma-auto">
             <RouterView />
         </div>
     </div>
@@ -195,14 +195,6 @@ watchEffect(() => {
 
     .compactOnly {
         margin: 1em 0;
-    }
-}
-
-@media screen and (max-width: 900px) {
-    .center-min-900px {
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 }
 </style>

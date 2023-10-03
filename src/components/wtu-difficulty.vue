@@ -28,19 +28,4 @@ const updateDifficulty = () => {
 }
 </script>
 
-<style lang="scss" scoped>
-.tools {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    .tool {
-        cursor: pointer;
-        &:hover {
-            color: var(--el-color-primary);
-        }
-    }
-    .tool.invisible {
-        display: none;
-    }
-}
-</style>
+<style lang="scss" scoped></style>
