@@ -1,4 +1,9 @@
-import { defineConfig, presetAttributify, presetUno } from 'unocss'
+import {
+    defineConfig,
+    presetAttributify,
+    presetUno,
+    toEscapedSelector as e,
+} from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 
 export default defineConfig({
@@ -119,7 +124,36 @@ export default defineConfig({
                 cursor: 'pointer',
             },
         ],
+        // [
+        //     /^min-\[\w+\]-(\w+)$/,
+        //     ([, w, s], { rawSelector, theme }) => {
+        //         const selector = e(rawSelector)
+        //         // return a string instead of an object
+        //         return `@media (min-width: ${theme.breakpoints.lg.width}) {
+        //                     ${selector} {
+        //                         display: ${theme.breakpoints.lg.visible};
+        //                     }
+        //                 }`
+        //     },
+        // ],
+        // [
+        //     /^text-(\w+)$/,
+        //     ([, c]) => {
+        //         return {
+        //             color: c,
+        //         }
+        //     },
+        // ],
     ],
+    // theme: {
+    //     breakpoints: {
+    //         sm: '640px',
+    //         md: '768px',
+    //         lg: '900px',
+    //         xl: '1280px',
+    //         xxl: '1536px',
+    //     },
+    // },
     presets: [
         presetUno(),
         presetAttributify(),

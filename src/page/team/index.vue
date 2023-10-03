@@ -20,7 +20,9 @@
                 :clients="clients"
             />
         </div>
-        <div class="w-70vw h-100% ma-auto"><RouterView /></div>
+        <div class="w-70vw h-100% ma-auto text-size-[1.3rem] min-oe">
+            <RouterView />
+        </div>
     </div>
     <wtu-footer />
 </template>

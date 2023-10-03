@@ -27,7 +27,9 @@
                         <el-card shadow="hover">
                             <template #header>
                                 <div class="flex-between">
-                                    <div>{{ group.title }}</div>
+                                    <div>
+                                        {{ group.title }}
+                                    </div>
                                     <div>
                                         <wtu-booster
                                             size="2.3em"
@@ -48,11 +50,26 @@
                                     </div>
                                 </div>
                             </template>
-                            <div v-for="application in group.applications">
-                                <wtu-warframe
-                                    :modelValue="application.build.warframe"
-                                />
-                            </div>
+                            <el-row>
+                                <el-col
+                                    :span="6"
+                                    v-for="application in group.applications"
+                                >
+                                    <div class="flex-col">
+                                        <wtu-warframe
+                                            :modelValue="
+                                                application.build.warframe
+                                            "
+                                            :showName="false"
+                                        />
+                                        <div
+                                            className="display_none_block-900-1920"
+                                        >
+                                            {{ application.from.name }}
+                                        </div>
+                                    </div>
+                                </el-col>
+                            </el-row>
                         </el-card>
                     </div>
                 </ryu-empty>

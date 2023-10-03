@@ -276,19 +276,22 @@ export const teamStore = defineStore({
         getApplicationGroupLoading(): boolean {
             return this.applicationGroupLoading
         },
-        addApplication(application: JoinTeamDTO) {
-            let result = this.applicationGroup.find((item) => {
-                return item.uuid === application.team.uuid
-            })
-            if (result) {
-                result.applications.unshift(application)
-            }
+        containsApplicationGroup(uuid: string): boolean {
+            return this.applicationGroup.some((item) => item.uuid === uuid)
+        },
+        addApplicationGroup(application: ApplicationGroup) {
+            this.applicationGroup.unshift(application)
         },
         getApplicationGroup(): Array<ApplicationGroup> {
             return this.applicationGroup
         },
         clearApplicationGroup() {
             this.applicationGroup = []
+        },
+        addApplication(uuid: string, applicationGroup: JoinTeamDTO) {
+            this.applicationGroup
+                .find((item) => item.uuid === uuid)
+                ?.applications.unshift(applicationGroup)
         },
     },
 })

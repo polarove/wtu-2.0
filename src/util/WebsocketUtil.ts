@@ -3,12 +3,13 @@ import {
     WSS_MESSAGE_TYPE,
     RESPONSE_CODE,
 } from '@/composables/enums'
-import { JoinTeamDTO, TeamVO } from '@/composables/team'
+import { JoinTeamDTO, TeamVO, ApplicationGroup } from '@/composables/team'
 import { teamStore, authStore } from '@/store'
 import { isNotBlank } from './StrUtil'
 
 const _teamStore = teamStore()
 const _authStore = authStore()
+
 interface RESPONSE {
     action: number
     code: number
@@ -83,8 +84,21 @@ export class websocket {
                     break
                 case WSS_MESSAGE_TYPE.JOIN:
                     let application: JoinTeamDTO = JSON.parse(result.data)
-                    console.log(application)
-                    _teamStore.addApplication(application)
+                    let uuid = application.team.uuid
+                    let title = application.team.title
+                    if (_teamStore.containsApplicationGroup(uuid)) {
+                        _teamStore.addApplication(uuid, application)
+                    } else {
+                        let group: ApplicationGroup = {
+                            uuid: uuid,
+                            title: title,
+                            booster: {
+                                ..._authStore.getUserBooster(),
+                            },
+                            applications: [...[application]],
+                        }
+                        _teamStore.addApplicationGroup(group)
+                    }
                     break
                 default:
                     break
