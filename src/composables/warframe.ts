@@ -10,175 +10,175 @@ export const warframes: Array<warframe> = [
     },
     {
         en: 'Ash',
-        cn: '未知中文名1',
+        cn: '灰烬之刃',
     },
     {
         en: 'Atlas',
-        cn: '未知中文名2',
+        cn: '撼天刑者',
     },
     {
         en: 'Banshee',
-        cn: '未知中文名3',
+        cn: '恸哭女妖',
     },
     {
         en: 'Baruuk',
-        cn: '未知中文名4',
+        cn: '圣拳武僧',
     },
     {
         en: 'Caliban',
-        cn: '未知中文名5',
+        cn: '卡利班',
     },
     {
         en: 'Chroma',
-        cn: '未知中文名6',
+        cn: '怒炎龙骑',
     },
     {
         en: 'Citrine',
-        cn: '未知中文名7',
+        cn: '辉光晶灵',
     },
     {
         en: 'Ember',
-        cn: '未知中文名8',
+        cn: '永恒烈焰',
     },
     {
         en: 'Equinox',
-        cn: '未知中文名9',
+        cn: '阴阳双子',
     },
     {
         en: 'Excalibur',
-        cn: '未知中文名10',
+        cn: '圣剑',
     },
     {
         en: 'ExcaliburUmbra',
-        cn: '未知中文名11',
+        cn: '暗影圣剑',
     },
     {
         en: 'Frost',
-        cn: '未知中文名12',
+        cn: '冰雪寒霜',
     },
     {
         en: 'Gara',
-        cn: '未知中文名13',
+        cn: '琉璃仕女',
     },
     {
         en: 'Garuda',
-        cn: '未知中文名14',
+        cn: '迦楼罗',
     },
     {
         en: 'Gauss',
-        cn: '未知中文名15',
+        cn: '迅电驰影',
     },
     {
         en: 'Grendel',
-        cn: '未知中文名16',
+        cn: '暴食者',
     },
     {
         en: 'Gyre',
-        cn: '未知中文名17',
+        cn: '电光舞者',
     },
     {
         en: 'Harrow',
-        cn: '未知中文名18',
+        cn: '驱魔使者',
     },
     {
         en: 'Hildryn',
-        cn: '未知中文名19',
+        cn: '重装武神',
     },
     {
         en: 'Hydroid',
-        cn: '未知中文名20',
+        cn: '惊涛骇浪',
     },
     {
         en: 'Inaros',
-        cn: '未知中文名21',
+        cn: '沙海怒涛',
     },
     {
         en: 'Ivara',
-        cn: '未知中文名22',
+        cn: '神弓游侠',
     },
     {
         en: 'Khora',
-        cn: '未知中文名23',
+        cn: '荒野猎手',
     },
     {
         en: 'Kullervo',
-        cn: '未知中文名24',
+        cn: '刀锋囚徒',
     },
     {
         en: 'Lavos',
-        cn: '未知中文名25',
+        cn: '无限术士',
     },
     {
         en: 'Limbo',
-        cn: '未知中文名26',
+        cn: '灵薄狱',
     },
     {
         en: 'Loki',
-        cn: '未知中文名27',
+        cn: '邪神洛基',
     },
     {
         en: 'Mag',
-        cn: '未知中文名28',
+        cn: '磁力',
     },
     {
         en: 'Mesa',
-        cn: '未知中文名29',
+        cn: '圣枪弥撒',
     },
     {
         en: 'Mirage',
-        cn: '未知中文名30',
+        cn: '魅影精灵',
     },
     {
         en: 'Nekros',
-        cn: '未知中文名31',
+        cn: '御魂主宰',
     },
     {
         en: 'Nezha',
-        cn: '未知中文名32',
+        cn: '哪咤三太子',
     },
     {
         en: 'Nidus',
-        cn: '未知中文名33',
+        cn: '异变之巢',
     },
     {
         en: 'Nova',
-        cn: '未知中文名34',
+        cn: '超能新星',
     },
     {
         en: 'Nyx',
-        cn: '未知中文名35',
+        cn: '冥河夜神',
     },
     {
         en: 'Oberon',
-        cn: '未知中文名36',
+        cn: '龙王奥伯',
     },
     {
         en: 'Octavia',
-        cn: '未知中文名37',
+        cn: '吟游歌者',
     },
     {
         en: 'Protea',
-        cn: '未知中文名38',
+        cn: '泊时灵械',
     },
     {
         en: 'Revenant',
-        cn: '未知中文名39',
+        cn: '徘徊夜灵',
     },
     {
         en: 'Rhino',
-        cn: '未知中文名40',
+        cn: '狂野犀牛',
     },
     {
         en: 'Saryn',
-        cn: '未知中文名41',
+        cn: '剧毒之触',
     },
     {
         en: 'Sevagoth',
-        cn: '未知中文名42',
+        cn: '虚冥鬼影',
     },
     {
         en: 'Styanax',
-        cn: '未知中文名43',
+        cn: '无畏斗士',
     },
     {
         en: 'Stalker',
@@ -186,7 +186,7 @@ export const warframes: Array<warframe> = [
     },
     {
         en: 'Titania',
-        cn: '未知中文名44',
+        cn: '幻蝶仙灵',
     },
     {
         en: 'Trinity',
@@ -194,38 +194,38 @@ export const warframes: Array<warframe> = [
     },
     {
         en: 'Valkyr',
-        cn: '未知中文名45',
+        cn: '瓦尔基里',
     },
     {
         en: 'Vauban',
-        cn: '未知中文名46',
+        cn: '工程统帅',
     },
     {
         en: 'Volt',
-        cn: '未知中文名47',
+        cn: '伏特',
     },
     {
         en: 'Voruna',
-        cn: '未知中文名48',
+        cn: '赤影狼母',
     },
     {
         en: 'Wisp',
-        cn: '未知中文名49',
+        cn: '离火幻灵',
     },
     {
         en: 'Wukong',
-        cn: '未知中文名50',
+        cn: '齐天大圣',
     },
     {
         en: 'Xaku',
-        cn: '未知中文名51',
+        cn: '虚空残响',
     },
     {
         en: 'Yareli',
-        cn: '未知中文名52',
+        cn: '咏浪之灵',
     },
     {
         en: 'Zephyr',
-        cn: '未知中文名53',
+        cn: '狂啸西风',
     },
 ]

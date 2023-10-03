@@ -7,7 +7,7 @@
                 :index="index"
                 :ref="(el: Component) => setLoadoutRef(el, index)"
                 class="teammate"
-                @emitCreateTeam="createTeam(index)"
+                @emitCreateTeam="toggleCreateTeamDrawer(index)"
             >
                 <template #loadout>
                     <div>
@@ -284,7 +284,7 @@ const title = computed(() => {
     return '选择第' + teamDrawer.edit + '个队友的战甲'
 })
 
-const createTeam = (index: number) => {
+const toggleCreateTeamDrawer = (index: number) => {
     teamDrawer.visible = true
     teamDrawer.title = '在 ' + routes.meta.forehead + ' 招募队友'
     teamDrawer.from = index
@@ -313,31 +313,40 @@ const publishTeam = (formEl: FormInstance | undefined) => {
             return
         }
         createTeamForm.channel = routes.name
-        CreateTeam(createTeamForm)
-            .then(async (res: any) => {
-                if (res.success) {
-                    const result = (await GetTeamById(
-                        res.data
-                    )) as response<TeamVO>
-                    if (result.success) {
-                        BroadcastTeam(result.data)
-                    } else {
-                        ElMessage.error(result.message)
-                    }
-                }
-            })
-            .catch((err: any) => {
-                ElNotification.error({
-                    position: 'bottom-right',
-                    message: err.message,
-                })
-            })
-            .finally(() => {
-                loading.value = false
-                teamDrawer.visible = false
-            })
+        checkDTO()
+        createTeam()
     })
 }
+
+const checkDTO = () => {
+    if (_authStore.getUUID()) {
+    }
+}
+
+const createTeam = () => {
+    CreateTeam(createTeamForm)
+        .then(async (res: any) => {
+            if (res.success) {
+                const result = (await GetTeamById(res.data)) as response<TeamVO>
+                if (result.success) {
+                    BroadcastTeam(result.data)
+                } else {
+                    ElMessage.error(result.message)
+                }
+            }
+        })
+        .catch((err: any) => {
+            ElNotification.error({
+                position: 'bottom-right',
+                message: err.message,
+            })
+        })
+        .finally(() => {
+            loading.value = false
+            teamDrawer.visible = false
+        })
+}
+
 const rows = ref<number>(1)
 const initDrawerWidth = () => {
     if (document.body.clientWidth < 900) {

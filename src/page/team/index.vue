@@ -149,11 +149,6 @@ onBeforeRouteUpdate((to, from) => {
 //     wss.close()
 // })
 
-// window.addEventListener('beforeunload', () => {
-//     disconnect(route.name)
-//     wss.close()
-// })
-
 // window事件
 onbeforeunload = () => {
     window.removeEventListener('resize', initLayouts)
