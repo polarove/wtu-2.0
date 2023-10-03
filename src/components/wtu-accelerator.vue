@@ -43,6 +43,10 @@
                     >
                         <div
                             class="cursor-pointer hover-color-blue"
+                            :class="{
+                                active:
+                                    _authStore.getAccelerator() === item.name,
+                            }"
                             @click="confirm(item.name)"
                         >
                             {{ item.name }}
@@ -84,4 +88,8 @@ const confirm = (name: string) => {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.active {
+    color: var(--el-color-primary);
+}
+</style>
