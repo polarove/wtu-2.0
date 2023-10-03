@@ -327,7 +327,10 @@ const publishTeam = (formEl: FormInstance | undefined) => {
                 }
             })
             .catch((err: any) => {
-                ElMessage.error(err.message)
+                ElNotification.error({
+                    position: 'bottom-right',
+                    message: err.message,
+                })
             })
             .finally(() => {
                 loading.value = false
