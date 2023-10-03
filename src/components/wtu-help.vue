@@ -16,6 +16,9 @@
                 </template>
                 <span class="text-size-[1.2em]"> A: {{ z.a }}</span>
             </el-card>
+            <template #footer>
+                <div class="flex-between"><ryu-sponsor /></div>
+            </template>
         </el-drawer>
     </div>
 </template>

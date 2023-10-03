@@ -4,7 +4,7 @@
         <el-drawer
             append-to-body
             v-model="visible"
-            :size="_layoutStore.isWide() ? '50%' : '100%'"
+            :size="_layoutStore.isWide() ? '40%' : '100%'"
             destroy-on-close
         >
             <template #header>
@@ -57,6 +57,9 @@
                     </el-col>
                 </el-row>
             </ul>
+            <template #footer>
+                <div class="flex-between"><ryu-sponsor /></div>
+            </template>
         </el-drawer>
     </div>
 </template>

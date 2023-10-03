@@ -24,9 +24,12 @@
                 </ryu-empty>
             </ryu-loading>
             <template #footer>
-                <div class="vertical-middle">
-                    <span class="i-ep:info-filled icon"></span>
-                    <span class="color-gray">入队申请只保存10分钟</span>
+                <div class="flex-between">
+                    <ryu-sponsor />
+                    <div class="vertical-middle">
+                        <span class="i-ep:info-filled icon"></span>
+                        <span class="color-gray">入队申请只保存10分钟</span>
+                    </div>
                 </div>
             </template>
         </el-drawer>
