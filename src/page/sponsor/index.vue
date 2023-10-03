@@ -74,6 +74,10 @@
                 ></span
                 >liuqi6602@163.com
             </div>
+            <div>
+                或者👉
+                <a href="https://afdian.net/a/warframe-team-up">爱发电</a>
+            </div>
         </div>
     </el-drawer>
 </template>

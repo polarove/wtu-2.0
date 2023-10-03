@@ -7,7 +7,7 @@ body {
 }
 
 a {
-    color: var(--wtu-text-color);
+    color: var(--el-text-color);
     text-decoration: none;
 }
 
@@ -28,16 +28,6 @@ a {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
-
-:root {
-    color-scheme: light;
-    --wtu-text-color: #fff;
-}
-
-:root {
-    color-scheme: dark;
-    --wtu-text-color: #fff;
 }
 
 .vertical-middle > * {
