@@ -53,16 +53,20 @@ const TeamParams = reactive<TeamListParams>({
     uuid: null,
 })
 
-let wss = new websocket(_authStore.getServer())
-
-const clients = ref<number>(0)
-
 const ChannelParam = reactive({
     route: null as RouteRecordName | null | undefined,
     uuid: _authStore.getUUID(),
     server: null as number | null,
     action: null as WSS_ACTION | null,
 })
+
+let wss = new websocket(_authStore.getServer())
+const fuckyoujavascript = () => {
+    wss.on_open(() => {
+        joinChannel(_authStore.getServer(), route.name)
+    })
+}
+const clients = ref<number>(0)
 
 const joinChannel = (
     server: number | null,
@@ -97,20 +101,20 @@ const disconnect = (
     }
 }
 
+const switchChannel = (previous: number, current: number) => {
+    disconnect(previous, route.name, () => {
+        joinChannel(current, route.name)
+    })
+}
+
 watch(
     () => _authStore.getServer(),
     (var1) => {
         let previous = var1 ? 0 : 1
-        disconnect(previous, route.name)
-        wss.close()
-        wss = new websocket(var1)
-        wss.on_open(() => {
-            joinChannel(var1, route.name)
-        })
+        switchChannel(previous, var1)
     },
     { deep: true }
 )
-
 const autoRefresh = (interval: number) => {
     setInterval(() => {
         GetTeamList(_teamStore.getParam()).then(
@@ -128,6 +132,7 @@ onMounted(() => {
     TeamParams.channel = route.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
+    fuckyoujavascript()
     autoRefresh(1000 * 60 * 3)
 })
 

@@ -37,6 +37,13 @@ interface RESPONSE {
     time: string
 }
 
+enum READY_STATE {
+    CONNECTING = 0,
+    OPEN = 1,
+    CLOSING = 2,
+    CLOSED = 3,
+}
+
 export interface WSS_CONNECTION_FEEDBACK {
     total: number
     clients: number
@@ -152,7 +159,9 @@ export class websocket {
     }
 
     send(data: any, callback: Function) {
-        this.wss.send(JSON.stringify(data))
+        if (this.wss.readyState === READY_STATE.OPEN) {
+            this.wss.send(JSON.stringify(data))
+        }
         if (callback) {
             callback()
         }
