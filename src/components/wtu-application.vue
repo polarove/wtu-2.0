@@ -1,13 +1,11 @@
 <template>
-    <div>
+    <div @click="visible = true">
         <el-badge
             :value="_teamStore.getApplicationGroup().length"
             :hidden="_teamStore.getApplicationGroup().length === 0"
+            type="warning"
         >
-            <span
-                class="i-ant-design:user-switch-outlined"
-                @click="visible = true"
-            ></span>
+            <span class="i-ant-design:user-switch-outlined"></span>
         </el-badge>
 
         <el-drawer
@@ -54,19 +52,56 @@
                                 <el-col
                                     :span="6"
                                     v-for="application in group.applications"
+                                    class="animate__animated animate__faster"
+                                    :class="{ animate__bounceInRight: !empty }"
                                 >
-                                    <div class="flex-col">
-                                        <wtu-warframe
-                                            :modelValue="
-                                                application.build.warframe
-                                            "
-                                            :showName="false"
-                                        />
-                                        <div
-                                            className="display_none_block-900-1920"
+                                    <div class="flex-col items-center">
+                                        <el-popover
+                                            placement="bottom"
+                                            trigger="hover"
+                                            width="auto"
                                         >
-                                            {{ application.from.name }}
-                                        </div>
+                                            <template #reference>
+                                                <wtu-warframe
+                                                    :modelValue="
+                                                        application.build
+                                                            .warframe
+                                                    "
+                                                    :showName="false"
+                                                />
+                                            </template>
+                                            <div class="flex-col">
+                                                <div
+                                                    class="flex-between items-center"
+                                                >
+                                                    <div
+                                                        class="select-none text-size-[1.1em] font-bold cursor-pointer hover-color-blue"
+                                                        @click="
+                                                            invite(application)
+                                                        "
+                                                    >
+                                                        {{
+                                                            application.from
+                                                                .name
+                                                        }}
+                                                    </div>
+                                                    <wtu-focus
+                                                        :name="
+                                                            application.build
+                                                                .focus
+                                                        "
+                                                        size="2em"
+                                                    />
+                                                </div>
+                                                <wtu-booster-list
+                                                    :booster="
+                                                        application.from.booster
+                                                    "
+                                                    size="2em"
+                                                    active-size="2em"
+                                                />
+                                            </div>
+                                        </el-popover>
                                     </div>
                                 </el-col>
                             </el-row>
@@ -89,17 +124,18 @@
 <script setup lang="ts">
 //@ts-nocheck
 import type { JoinTeamDTO, ApplicationGroup } from '@/composables/team'
-import { layoutStore, teamStore } from '@/store'
+import { layoutStore, teamStore, authStore } from '@/store'
 import { boosters } from '@/composables/booster'
 import { BOOSTER_STATUS } from '@/composables/enums'
 const _layoutStore = layoutStore()
 const _teamStore = teamStore()
+const _authStore = authStore()
 const visible = ref<boolean>(false)
 const loading = _teamStore.getApplicationGroupLoading()
 const group: Array<ApplicationGroup> = _teamStore.getApplicationGroup()
 const length = computed(() => group.length)
 const empty = computed(() => length.value === 0)
-const acceptApplication = (application: JoinTeamDTO) => {
+const invite = (application: JoinTeamDTO) => {
     console.log(application)
 }
 const rejectApplication = (application: JoinTeamDTO) => {

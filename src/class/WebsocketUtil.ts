@@ -5,10 +5,28 @@ import {
 } from '@/composables/enums'
 import { JoinTeamDTO, TeamVO, ApplicationGroup } from '@/composables/team'
 import { teamStore, authStore } from '@/store'
-import { isNotBlank } from './StrUtil'
+import { isNotBlank } from '@util/StrUtil'
+import { MatrixUtil } from '@class/MatrixUtil'
+import { boosters } from '@/composables/booster'
 
 const _teamStore = teamStore()
 const _authStore = authStore()
+
+// const matrix = new MatrixUtil(
+//     [1, 0, 0, 0, 1],
+//     [1, 0, 0, 0, 1],
+//     [1, 1, 1, 0, 1],
+//     [1, 0, 0, 0, 1]
+// )
+
+let names = boosters.map((value) => {
+    return value.en
+})
+
+// matrix.columns().forEach((value: Array<any>, index: number) => {
+//     bolist[names[index]] = value.includes(1) ? 1 : 0
+// })
+// console.log(bolist)
 
 interface RESPONSE {
     action: number
@@ -87,17 +105,60 @@ export class websocket {
                     let uuid = application.team.uuid
                     let title = application.team.title
                     if (_teamStore.containsApplicationGroup(uuid)) {
-                        _teamStore.addApplication(uuid, application)
+                        // 待检查
+                        const group = _teamStore.addApplication(
+                            uuid,
+                            application
+                        )
+                        if (group) {
+                            group.matrix.push(
+                                names.map((value) => {
+                                    return application.from.booster[value]
+                                })
+                            )
+                            names.map((value, index) => {
+                                group.booster[value] = group.matrix
+                                    .map((value) => {
+                                        return value[index]
+                                    })
+                                    .includes(1)
+                                    ? 1
+                                    : 0
+                            })
+                        }
                     } else {
-                        let group: ApplicationGroup = {
+                        const matrix = new MatrixUtil(
+                            names.map((value) => {
+                                return _authStore.getUserBooster()[value]
+                            }),
+                            names.map((value) => {
+                                return application.from.booster[value]
+                            })
+                        )
+                        let newGroup: ApplicationGroup = {
                             uuid: uuid,
                             title: title,
+                            matrix: matrix.rows,
                             booster: {
-                                ..._authStore.getUserBooster(),
+                                affinityBooster: 0,
+                                creditBooster: 0,
+                                modDropRateBooster: 0,
+                                resourceBooster: 0,
+                                resourceDropRateBooster: 0,
                             },
                             applications: [...[application]],
                         }
-                        _teamStore.addApplicationGroup(group)
+                        matrix
+                            .columns()
+                            .map((value: number[], index: number) => {
+                                newGroup.booster[names[index]] = value.includes(
+                                    1
+                                )
+                                    ? 1
+                                    : 0
+                            })
+                        _teamStore.addApplicationGroup(newGroup)
+                        console.log(newGroup.booster)
                     }
                     break
                 default:

@@ -16,7 +16,7 @@ export interface TeamUserBO {
 export interface UserBooster {
     affinityBooster: number
     creditBooster: number
+    modDropRateBooster: number
     resourceBooster: number
     resourceDropRateBooster: number
-    modDropRateBooster: number
 }

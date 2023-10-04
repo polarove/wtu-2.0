@@ -41,7 +41,6 @@ export default defineConfig({
             {
                 display: 'flex',
                 'justify-content': 'flex-end',
-                'align-items': 'center',
             },
         ],
         [
@@ -49,7 +48,6 @@ export default defineConfig({
             {
                 display: 'flex',
                 'justify-content': 'space-between',
-                'align-items': 'center',
             },
         ],
         [
@@ -57,7 +55,6 @@ export default defineConfig({
             {
                 display: 'flex',
                 'justify-content': 'space-around',
-                'align-items': 'center',
             },
         ],
         [
@@ -65,7 +62,6 @@ export default defineConfig({
             {
                 display: 'flex',
                 'justify-content': 'space-evenly',
-                'align-items': 'center',
             },
         ],
         [
@@ -73,7 +69,6 @@ export default defineConfig({
             {
                 display: 'flex',
                 'justify-content': 'flex-start',
-                'align-items': 'center',
             },
         ],
         [
@@ -81,8 +76,6 @@ export default defineConfig({
             {
                 display: 'flex',
                 'flex-direction': 'column',
-                'justify-content': 'center',
-                'align-items': 'center',
             },
         ],
         [
@@ -91,7 +84,6 @@ export default defineConfig({
                 display: 'flex',
                 'flex-direction': 'column',
                 'justify-content': 'flex-start',
-                'align-items': 'center',
             },
         ],
         [
@@ -99,8 +91,6 @@ export default defineConfig({
             {
                 display: 'flex',
                 'flex-direction': 'column-reverse',
-                'justify-content': 'center',
-                'align-items': 'center',
             },
         ],
         [

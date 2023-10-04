@@ -100,6 +100,7 @@ export interface ApplicationGroup {
     uuid: string
     title: string
     booster: UserBooster
+    matrix: Array<Array<number>>
     applications: Array<JoinTeamDTO>
 }
 

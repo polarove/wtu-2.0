@@ -149,6 +149,7 @@ import { type warframe } from '@/composables/warframe'
 import { requirements } from '@composables/requirement'
 import { CreateTeam, GetTeamById, BroadcastTeam } from '@api/team'
 import type { response } from '@/composables/types'
+import { SERVER_CODE } from '@/composables/enums'
 
 const routes = useRoute()
 const _authStore = authStore()
@@ -313,13 +314,25 @@ const publishTeam = (formEl: FormInstance | undefined) => {
             return
         }
         createTeamForm.channel = routes.name
-        checkDTO()
-        createTeam()
+        if (checkDTO()) {
+            createTeam()
+        } else {
+            ElNotification.error({
+                position: 'bottom-right',
+                message: '当前用户名不符合国际服规范，请更改',
+            })
+            loading.value = false
+        }
     })
 }
 
-const checkDTO = () => {
-    if (_authStore.getUUID()) {
+const checkDTO = (): boolean => {
+    if (_authStore.getServer() === SERVER_CODE.en) {
+        let reg = new RegExp(/^\w+$/)
+        let name = _authStore.getName()
+        return reg.test(name)
+    } else {
+        return true
     }
 }
 

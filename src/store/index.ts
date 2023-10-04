@@ -36,9 +36,9 @@ export const authStore = defineStore({
             booster: {
                 affinityBooster: 0,
                 creditBooster: 0,
+                modDropRateBooster: 0,
                 resourceBooster: 0,
                 resourceDropRateBooster: 0,
-                modDropRateBooster: 0,
             },
             accelerator: '',
         },
@@ -285,13 +285,24 @@ export const teamStore = defineStore({
         getApplicationGroup(): Array<ApplicationGroup> {
             return this.applicationGroup
         },
+        // updateBoosterMatrix(uuid: string, booster: UserBooster) {},
         clearApplicationGroup() {
             this.applicationGroup = []
         },
-        addApplication(uuid: string, applicationGroup: JoinTeamDTO) {
-            this.applicationGroup
-                .find((item) => item.uuid === uuid)
-                ?.applications.unshift(applicationGroup)
+        addApplication(
+            uuid: string,
+            applicationGroup: JoinTeamDTO
+        ): ApplicationGroup | null {
+            let group = this.applicationGroup.find(
+                (item) => item.uuid === uuid
+            ) as ApplicationGroup
+            if (group.applications.length >= 4) {
+                return null
+            }
+            if (group) {
+                group.applications.unshift(applicationGroup)
+            }
+            return group
         },
     },
 })

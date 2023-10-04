@@ -32,7 +32,7 @@ import type { TeamVO, TeamListParams, TeamPage } from '@/composables/team'
 import { teamStore, authStore, layoutStore } from '@/store'
 import { GetTeamList } from '@api/team'
 import type { response } from '@/composables/types'
-import { websocket, type WSS_CONNECTION_FEEDBACK } from '@util/WebsocketUtil'
+import { websocket, type WSS_CONNECTION_FEEDBACK } from '@/class/WebsocketUtil'
 import type { RouteRecordName } from 'vue-router'
 import { WSS_ACTION } from '@composables/enums'
 import {

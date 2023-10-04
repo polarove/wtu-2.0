@@ -1,13 +1,13 @@
 <template>
     <div class="flex-center">
-        <div class="flex-col">
+        <div class="flex-col items-center">
             <div class="lt-lg:display-none">
                 <div class="font-bold" v-if="isNotBlank(member.user.name)">
                     {{ member.user.name }}
                 </div>
                 <div v-else class="color-gray">.....</div>
             </div>
-            <el-popover width="200px">
+            <el-popover width="auto">
                 <template #reference>
                     <wtu-warframe
                         :class="{
@@ -24,13 +24,6 @@
                     />
                 </template>
                 <div class="flex">
-                    <wtu-booster-list
-                        v-if="member.user.booster !== null"
-                        :booster="member.user.booster"
-                        size="2.4em"
-                        activeSize="2.4em"
-                        :direction="DIRECTION_ENUM.vertical"
-                    />
                     <div class="equipments">
                         <div class="lg:display-none">
                             <div
@@ -55,6 +48,16 @@
                                 simplified
                             />
                         </div>
+                        <wtu-booster-list
+                            v-if="
+                                member.user.booster !== null &&
+                                member.user.booster !== undefined
+                            "
+                            :booster="member.user.booster"
+                            size="2.4em"
+                            activeSize="2.4em"
+                            :direction="DIRECTION_ENUM.horizental"
+                        />
                     </div>
                 </div>
             </el-popover>
@@ -111,21 +114,7 @@ const user_ingame = (status: number) => {
 .ingame {
     box-shadow: 0 0 0 2px rgba($color: #3dc468, $alpha: 0.7) inset;
 }
-
-.boosters {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-
-    .booster:nth-child(n + 2) {
-        margin-top: 0.5em;
-    }
-}
 .equipments {
     flex: 1;
-    margin-left: 0.6em;
-    padding-left: 0.6em;
-    border-left: 1px solid var(--el-border-color);
 }
 </style>

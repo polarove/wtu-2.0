@@ -44,6 +44,12 @@ const props = defineProps({
 const hasBooster = (bo: string) => {
     return props.booster[bo as keyof UserBooster] === BOOSTER_STATUS.ACTIVE
 }
+
+onBeforeMount(() => {
+    if (props.booster === undefined) {
+        return
+    }
+})
 </script>
 
 <style lang="scss" scoped>

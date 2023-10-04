@@ -27,7 +27,8 @@
             "@page/*": ["./src/page/*"],
             "@composables/*": ["./src/composables/*"],
             "@util/*": ["./src/util/*"],
-            "@api/*": ["./src/api/*"]
+            "@api/*": ["./src/api/*"],
+            "@class/*": ["./src/class/*"]
         }
     },
     "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
