@@ -1,12 +1,9 @@
 <template>
     <div class="app">
-        <span @click="backToHome" class="name font-smiley"
-            >Warframe Team Up</span
-        >
-
-        <span v-if="showServer"
-            >&nbsp;-&nbsp; <wtu-server class="server"
-        /></span>
+        <wtu-server class="server" v-if="showServer" />
+        <span @click="backToHome" class="name font-smiley">
+            Warframe Team Up
+        </span>
     </div>
 </template>
 
@@ -37,11 +34,8 @@ const backToHome = () => {
         }
     }
     .server {
-        cursor: pointer;
+        display: block;
         font-size: 1.17em;
-        &:hover {
-            color: var(--el-color-primary);
-        }
     }
 }
 </style>

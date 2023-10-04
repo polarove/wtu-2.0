@@ -126,6 +126,13 @@ onMounted(() => {
     autoRefresh(1000 * 60 * 3)
 })
 
+watch(
+    () => _authStore.getServer(),
+    (oldValue, newValue) => {
+        console.log(oldValue, newValue)
+    }
+)
+
 //component life cycle
 onBeforeRouteUpdate((to, from) => {
     TeamParams.channel = to.name

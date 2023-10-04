@@ -1,5 +1,6 @@
 <template>
     <RouterView :key="_authStore.getServer()"></RouterView>
+    <!-- <RouterView /> -->
 </template>
 
 <script setup lang="ts">

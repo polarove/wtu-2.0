@@ -1,8 +1,23 @@
 <template>
-    <span v-if="loading" class="i-ep:loading animation-rotate"></span>
+    <div v-if="loading" class="text-center">
+        <span class="i-ep:loading animation-rotate"></span>
+    </div>
+
     <span v-else class="font-smiley" @click="toggleServer()">
         <!-- {{ isUpperCase ? toUpperCase(server.toLocaleString()) : server }} -->
-        {{ server }}
+        <span
+            class="server-name"
+            :class="{ active: server, inactive: !server }"
+        >
+            {{ SERVER_CHAR.en }}
+        </span>
+        <span>&nbsp;/&nbsp;</span>
+        <span
+            class="server-name"
+            :class="{ active: !server, inactive: server }"
+        >
+            {{ SERVER_CHAR.cn }}
+        </span>
     </span>
 </template>
 
@@ -15,10 +30,7 @@ import { response } from '@/composables/types'
 import type { UserVO } from '@/composables/user'
 const _authStore = authStore()
 const _teamStore = teamStore()
-const server = computed(() => {
-    return _authStore.getServer() ? SERVER_CHAR.en : SERVER_CHAR.cn
-})
-
+const server = _authStore.getServer()
 defineProps({
     isUpperCase: {
         type: Boolean,
@@ -46,10 +58,22 @@ const toggleServer = async () => {
         _teamStore.initTeamList()
         loading.value = false
     } else {
-        console.log(result.message)
         loading.value = false
     }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.server-name {
+    cursor: pointer;
+    &:hover {
+        color: var(--el-color-primary);
+    }
+}
+.active {
+    color: var(--el-color-primary);
+}
+.inactive {
+    color: var(--el-text-color-secondary);
+}
+</style>
