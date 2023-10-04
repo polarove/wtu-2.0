@@ -1,4 +1,4 @@
-import { JoinTeamDTO } from '@/composables/team'
+import { ApplicationDTO } from '@/composables/team'
 
 export const requestPermission = () => {
     window.Notification.requestPermission().then((permission) => {
@@ -11,7 +11,7 @@ export const requestPermission = () => {
     })
 }
 
-export const team = (application: JoinTeamDTO) => {
+export const team = (application: ApplicationDTO) => {
     window.Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
             new Notification(application.from.name + '申请加入你的队伍', {
