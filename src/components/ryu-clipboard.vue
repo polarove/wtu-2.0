@@ -6,15 +6,15 @@
         <div>
             <div
                 :class="checked"
-                class="color-green-500 text-size-[1.4em]"
+                class="color-green-500 text-size-[1.4em] cursor-pointer"
                 v-if="copied"
-                @click="copy()"
+                @click="copy(), $emit('copied')"
             ></div>
             <div
                 :class="icon"
                 v-else
-                class="text-size-[1.4em]"
-                @click="copy()"
+                class="text-size-[1.4em] cursor-pointer"
+                @click="copy(), $emit('copied')"
             ></div>
         </div>
     </div>
@@ -61,6 +61,10 @@ const copy = () => {
         .catch(() => {})
         .finally(() => {})
 }
+
+defineExpose({
+    copy,
+})
 </script>
 
 <style lang="scss" scoped>

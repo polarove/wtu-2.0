@@ -68,18 +68,24 @@
                                                         <wtu-warframe
                                                             :class="{
                                                                 active: isSeleted(
-                                                                    group.uuid
+                                                                    application
+                                                                        .from
+                                                                        .uuid
                                                                 ),
                                                             }"
                                                             @mouseenter="
                                                                 toggleSelect(
-                                                                    group.uuid,
+                                                                    application
+                                                                        .from
+                                                                        .uuid,
                                                                     application
                                                                 )
                                                             "
                                                             @mouseleave="
                                                                 toggleSelect(
-                                                                    group.uuid,
+                                                                    application
+                                                                        .from
+                                                                        .uuid,
                                                                     application
                                                                 )
                                                             "
@@ -177,6 +183,8 @@
                                 v-for="item in selected"
                                 :content="item.name"
                                 prefix="/join"
+                                :ref="(el:any)=> el && el.copy()"
+                                @copied="broadcastInvite(group, item.uuid)"
                             >
                             </ryu-clipboard>
                         </el-card>
@@ -218,13 +226,14 @@ const selected = ref<dsdsd[]>([])
 const isSeleted = (uuid: string): boolean => {
     return selected.value.some((item) => item.uuid === uuid)
 }
-const toggleSelect = (uuid: string, application: ApplicationDTO) => {
-    isSeleted(uuid) ? removeBooster(application) : addBooster(application)
+const toggleSelect = (from: string, application: ApplicationDTO) => {
+    isSeleted(from) ? removeBooster(application) : addBooster(application)
 }
 
 const addBooster = (application: ApplicationDTO) => {
     let uuid = application.team.uuid
-    if (isSeleted(uuid)) {
+    let from = application.from.uuid
+    if (isSeleted(from)) {
         return
     }
     let name: string = application.from.name
@@ -233,7 +242,7 @@ const addBooster = (application: ApplicationDTO) => {
         if (result) {
             _teamStore.updateGroupBooster(uuid)
             selected.value.push({
-                uuid: uuid,
+                uuid: from,
                 name: name,
             })
         }
@@ -243,7 +252,8 @@ const addBooster = (application: ApplicationDTO) => {
 const removeBooster = (application: ApplicationDTO) => {
     let uuid = application.team.uuid
     let name = application.from.name
-    if (!isSeleted(uuid)) {
+    let from = application.from.uuid
+    if (!isSeleted(from)) {
         return
     }
     let booster: UserBooster = application.from.booster
@@ -251,7 +261,7 @@ const removeBooster = (application: ApplicationDTO) => {
         if (result) {
             _teamStore.updateGroupBooster(uuid)
             selected.value.splice(
-                selected.value.indexOf({ uuid: uuid, name: name }),
+                selected.value.indexOf({ uuid: from, name: name }),
                 1
             )
         }
@@ -259,28 +269,24 @@ const removeBooster = (application: ApplicationDTO) => {
 }
 
 const invite = (application: ApplicationDTO) => {
-    let uuid = application.team.uuid
     let name = application.from.name
-    navigator.clipboard
-        .writeText('/invite' + '\xa0' + name)
-        .then(() => {
-            addBooster(application)
-            if (!isSeleted(uuid)) {
-                selected.value.push({
-                    uuid: uuid,
-                    name: name,
-                })
-            }
+    let from = application.from.uuid
+    if (!isSeleted(from)) {
+        selected.value.push({
+            uuid: from,
+            name: name,
         })
-        .finally(() => {
-            // wss广播
-        })
+    }
 }
 const rejectApplication = (application: ApplicationDTO) => {
     let uuid = application.team.uuid
     let name = application.from.name
-    selected.value.splice(selected.value.indexOf({ uuid: uuid, name: name }), 1)
+    let from = application.from.uuid
+    selected.value.splice(selected.value.indexOf({ uuid: from, name: name }), 1)
     _teamStore.removeApplication(uuid, application)
+}
+const broadcastInvite = (ApplicationGroup: ApplicationGroup, uuid: string) => {
+    console.log(ApplicationGroup, uuid)
 }
 </script>
 
