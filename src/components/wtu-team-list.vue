@@ -135,8 +135,6 @@
                                     ?.user.name
                             "
                             prefix="/join"
-                            icon="i-ep:document"
-                            checked="i-ep:document-checked"
                         >
                         </ryu-clipboard>
                     </el-collapse-item>

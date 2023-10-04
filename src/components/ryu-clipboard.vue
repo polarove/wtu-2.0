@@ -35,11 +35,11 @@ const props = defineProps({
     },
     icon: {
         type: String,
-        required: true,
+        default: 'i-ep:document',
     },
     checked: {
         type: String,
-        required: true,
+        default: 'i-ep:document-checked',
     },
     fontSize: {
         type: String,
