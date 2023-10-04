@@ -44,81 +44,146 @@
                                     </div>
                                 </div>
                             </template>
-                            <el-row>
-                                <el-col
-                                    :span="6"
-                                    v-for="application in group.applications"
-                                    class="animate__animated animate__faster"
-                                    :class="{
-                                        animate__bounceInRight: !isEmptyGroup,
-                                    }"
-                                >
-                                    <div class="flex-col items-center">
-                                        <el-popover
-                                            placement="bottom"
-                                            trigger="hover"
-                                            width="auto"
-                                        >
-                                            <template #reference>
-                                                <wtu-warframe
-                                                    :class="{
-                                                        selected:
-                                                            selected.includes(
-                                                                group.uuid
-                                                            ),
-                                                    }"
-                                                    @click="
-                                                        toggleSelect(
-                                                            group.uuid,
-                                                            application.from
-                                                                .booster
-                                                        )
-                                                    "
-                                                    :modelValue="
-                                                        application.build
-                                                            .warframe
-                                                    "
-                                                    :showName="false"
-                                                />
-                                            </template>
-                                            <div class="flex-col">
-                                                <div
-                                                    class="flex-between items-center"
-                                                >
+                            <ryu-empty :empty="group.applications.length === 0">
+                                <el-row>
+                                    <el-col
+                                        :span="6"
+                                        v-for="application in group.applications"
+                                        class="animate__animated animate__faster"
+                                        :class="{
+                                            animate__bounceInRight:
+                                                !isEmptyGroup,
+                                        }"
+                                    >
+                                        <div class="flex-col items-center">
+                                            <el-popover
+                                                placement="bottom"
+                                                trigger="hover"
+                                                width="auto"
+                                            >
+                                                <template #reference>
                                                     <div
-                                                        class="select-none text-size-[1.1em] font-bold cursor-pointer hover-color-blue"
-                                                        @click="
-                                                            invite(application)
-                                                        "
+                                                        class="flex-col justify-center items-center"
                                                     >
+                                                        <wtu-warframe
+                                                            :class="{
+                                                                active: selected.includes(
+                                                                    group.uuid
+                                                                ),
+                                                            }"
+                                                            @mouseenter="
+                                                                toggleSelect(
+                                                                    group.uuid,
+                                                                    application
+                                                                        .from
+                                                                        .booster
+                                                                )
+                                                            "
+                                                            @mouseleave="
+                                                                toggleSelect(
+                                                                    group.uuid,
+                                                                    application
+                                                                        .from
+                                                                        .booster
+                                                                )
+                                                            "
+                                                            :modelValue="
+                                                                application
+                                                                    .build
+                                                                    .warframe
+                                                            "
+                                                            :showName="false"
+                                                        />
+                                                        <div class="options">
+                                                            <el-button
+                                                                :type="
+                                                                    application.status ===
+                                                                    APPLICATION_STATUS.accepted
+                                                                        ? 'success'
+                                                                        : 'default'
+                                                                "
+                                                                size="small"
+                                                                @click="
+                                                                    invite(
+                                                                        group.uuid,
+                                                                        application
+                                                                            .from
+                                                                            .booster,
+                                                                        application
+                                                                            .from
+                                                                            .name
+                                                                    ),
+                                                                        (application.status =
+                                                                            APPLICATION_STATUS.accepted as keyof typeof APPLICATION_STATUS)
+                                                                "
+                                                                ><div
+                                                                    class="i-ep:check"
+                                                                ></div> </el-button
+                                                            ><el-button
+                                                                size="small"
+                                                                :type="
+                                                                    application.status ===
+                                                                    APPLICATION_STATUS.rejected
+                                                                        ? 'info'
+                                                                        : 'default'
+                                                                "
+                                                                @click="
+                                                                    rejectApplication(
+                                                                        group.uuid,
+                                                                        application
+                                                                    ),
+                                                                        (application.status =
+                                                                            APPLICATION_STATUS.rejected as keyof typeof APPLICATION_STATUS)
+                                                                "
+                                                            >
+                                                                <div
+                                                                    class="i-ep:close"
+                                                                ></div
+                                                            ></el-button>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                <div class="flex-col">
+                                                    <div
+                                                        class="flex-between items-center"
+                                                    >
+                                                        <div
+                                                            class="select-none text-size-[1.1em] font-bold cursor-pointer hover-color-blue"
+                                                        >
+                                                            {{
+                                                                application.from
+                                                                    .name
+                                                            }}
+                                                        </div>
+
+                                                        <wtu-focus
+                                                            :name="
+                                                                application
+                                                                    .build.focus
+                                                            "
+                                                            size="2em"
+                                                        />
+                                                    </div>
+                                                    <div class="pt-5px pb-5px">
                                                         {{
                                                             application.from
-                                                                .name
+                                                                .accelerator
                                                         }}
                                                     </div>
-                                                    <wtu-focus
-                                                        :name="
-                                                            application.build
-                                                                .focus
+                                                    <wtu-booster-list
+                                                        :booster="
+                                                            application.from
+                                                                .booster
                                                         "
                                                         size="2em"
+                                                        active-size="2em"
                                                     />
                                                 </div>
-                                                <wtu-booster-list
-                                                    :booster="
-                                                        application.from.booster
-                                                    "
-                                                    size="2em"
-                                                    active-size="2em"
-                                                />
-                                            </div>
-                                        </el-popover>
-                                        <div>
-                                            {{ application.from.accelerator }}
+                                            </el-popover>
                                         </div>
-                                    </div>
-                                </el-col>
-                            </el-row>
+                                    </el-col>
+                                </el-row>
+                            </ryu-empty>
                         </el-card>
                     </div>
                 </ryu-empty>
@@ -136,59 +201,69 @@
 </template>
 
 <script setup lang="ts">
-//@ts-nocheck
-import type { JoinTeamDTO, ApplicationGroup } from '@/composables/team'
-import { layoutStore, teamStore, authStore } from '@/store'
+import type { ApplicationDTO, ApplicationGroup } from '@/composables/team'
+import { layoutStore, teamStore } from '@/store'
 import { boosters } from '@/composables/booster'
-import { BOOSTER_STATUS } from '@/composables/enums'
+import { BOOSTER_STATUS, APPLICATION_STATUS } from '@/composables/enums'
 import { UserBooster } from '@/composables/user'
 const _layoutStore = layoutStore()
 const _teamStore = teamStore()
-const _authStore = authStore()
 const visible = ref<boolean>(false)
 const loading = _teamStore.getApplicationGroupLoading()
-const groups: Array<ApplicationGroup> = _teamStore.getApplicationGroups()
-const groupLength = computed(() => groups.length)
+const groups: ComputedRef<Array<ApplicationGroup>> = computed(() => {
+    return _teamStore.getApplicationGroups()
+})
+const groupLength = computed(() => groups.value.length)
 const isEmptyGroup = computed(() => groupLength.value === 0)
 
 const selected = ref<string[]>([])
 const toggleSelect = (uuid: string, booster: UserBooster) => {
     if (selected.value.includes(uuid)) {
-        selected.value = selected.value.filter((item) => item !== uuid)
         removeBooster(uuid, booster)
     } else {
-        selected.value.push(uuid)
         addBooster(uuid, booster)
     }
 }
 
 const addBooster = (uuid: string, booster: UserBooster) => {
-    _teamStore.addMatrixColumnForGroup(uuid, booster, (result) => {
+    _teamStore.addMatrixColumnForGroup(uuid, booster, (result: boolean) => {
         if (result) {
-            _teamStore.updateGroupBooster(uuid, booster)
+            _teamStore.updateGroupBooster(uuid)
+            selected.value.push(uuid)
         }
     })
 }
 
 const removeBooster = (uuid: string, booster: UserBooster) => {
-    _teamStore.removeMatrixColumnForGroup(uuid, booster, (result) => {
+    _teamStore.removeMatrixColumnForGroup(uuid, booster, (result: boolean) => {
         if (result) {
-            _teamStore.updateGroupBooster(uuid, booster)
+            _teamStore.updateGroupBooster(uuid)
+            selected.value = selected.value.filter((item) => item !== uuid)
         }
     })
 }
 
-const invite = (application: JoinTeamDTO) => {
-    console.log(application)
+const invite = (uuid: string, booster: UserBooster, name: string) => {
+    navigator.clipboard
+        .writeText('/invite' + '\xa0' + name)
+        .then(() => {
+            addBooster(uuid, booster)
+            selected.value.push(uuid)
+        })
+        .finally(() => {})
 }
-const rejectApplication = (application: JoinTeamDTO) => {
-    console.log(application)
+const rejectApplication = (uuid: string, application: ApplicationDTO) => {
+    let index = selected.value.indexOf(uuid)
+    if (index !== -1) {
+        selected.value.splice(index, 1)
+    }
+    _teamStore.removeApplication(uuid, application)
 }
 </script>
 
 <style lang="scss" scoped>
-.selected {
-    transform: scale(1.2);
+.active {
+    transform: scale(1.05);
 
     &::after {
         content: '✔';
@@ -200,5 +275,9 @@ const rejectApplication = (application: JoinTeamDTO) => {
         font-size: 1.3em;
         color: var(--el-color-primary);
     }
+}
+
+.options > * {
+    margin: 0 !important;
 }
 </style>

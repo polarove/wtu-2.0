@@ -13,7 +13,7 @@
                 v-for="(instance, index) in teamList"
             >
                 <template #header>
-                    <div class="flex-between">
+                    <div class="flex-between items-center">
                         <div class="vertical-middle">
                             <el-tag
                                 v-if="showChannel"
@@ -26,9 +26,6 @@
                             </span>
                         </div>
                         <div class="text-end">
-                            <span class="date">
-                                {{ TimePassed(instance.team.updateTime) }}
-                            </span>
                             <div
                                 class="flex justify-end mt-3px"
                                 v-if="isCreator(instance.team.creatorUuid)"
@@ -72,8 +69,7 @@
                                             instance.team.id,
                                             instance.team.server,
                                             instance.team.channel
-                                        ),
-                                            (instance.team.isDeleted = 1)
+                                        )
                                     "
                                     :hide-icon="true"
                                     confirm-button-type="default"
@@ -88,14 +84,22 @@
                         </div>
                     </div>
                 </template>
+                <div class="date">
+                    {{ TimePassed(instance.team.updateTime) }}
+                </div>
                 <el-row>
                     <el-col :span="6" v-for="build in instance.members">
                         <wtu-team-member
                             :member="build"
+                            :name-visible="instance.team.isPublic"
+                            :local-status="build.localStatus"
+                            :isHost="build.leader"
                             @join="
                                 isCreator(instance.team.creatorUuid)
                                     ? check(build)
-                                    : aqua(instance.team, build)
+                                    : aqua(instance.team, build),
+                                    (build.localStatus =
+                                        APPLICATION_STATUS.pending)
                             "
                         />
                     </el-col>
@@ -125,6 +129,7 @@
                             </span>
                         </div>
                         <ryu-clipboard
+                            :visible="instance.team.isPublic"
                             :content="
                                 instance.members.find((member) => member.leader)
                                     ?.user.name
@@ -133,11 +138,6 @@
                             icon="i-ep:document"
                             checked="i-ep:document-checked"
                         >
-                            <template #append>
-                                <div
-                                    class="i-ep:chat-dot-square hover-color-blue ml-5px text-size-[1.4em]"
-                                ></div>
-                            </template>
                         </ryu-clipboard>
                     </el-collapse-item>
                 </el-collapse>
@@ -151,11 +151,10 @@
                     icon="i-ep:document"
                     checked="i-ep:document-checked"
                     fontSize="0.8em"
+                    :visible="instance.team.isPublic"
                 >
-                    <template #append>
-                        <div
-                            class="i-ep:chat-dot-square hover-color-blue ml-5px text-size-[1.4em]"
-                        ></div>
+                    <template #replacement>
+                        <div class="text-size-[0.88em]">仅限邀请加入</div>
                     </template>
                 </ryu-clipboard>
             </el-card>
@@ -175,11 +174,11 @@ import {
 import { teamStore, authStore } from '@/store'
 import { isDark } from '@composables/theme'
 import { TimePassed } from '@util/DateUtil'
-import { DELETE_OR_NOT } from '@/composables/enums'
+import { DELETE_OR_NOT, APPLICATION_STATUS } from '@/composables/enums'
 import type {
     TeamBO,
     TeamMemberBO,
-    JoinTeamDTO,
+    ApplicationDTO,
     TeamVO,
 } from '@/composables/team'
 
@@ -258,7 +257,7 @@ const removeTeam = async (id: number, server: number, channel: string) => {
     }
 }
 
-const joinTeamParam: JoinTeamDTO = reactive({
+const applicationDTO: ApplicationDTO = reactive({
     receiver: '',
     status: 'pending',
     isDeleted: DELETE_OR_NOT.NOT_DELETE,
@@ -298,13 +297,13 @@ const check = (build: TeamMemberBO) => {
 }
 
 const prepareJoinTeamParma = (team: TeamBO, member: TeamMemberBO): boolean => {
-    joinTeamParam.receiver = team.creatorUuid
-    joinTeamParam.status = 'pending'
-    joinTeamParam.from = _authStore.getUser()
-    joinTeamParam.team = {
+    applicationDTO.receiver = team.creatorUuid
+    applicationDTO.status = 'pending'
+    applicationDTO.from = _authStore.getUser()
+    applicationDTO.team = {
         ...team,
     }
-    joinTeamParam.build = {
+    applicationDTO.build = {
         id: member.id,
         focus: member.focus,
         warframe: {
@@ -323,7 +322,7 @@ const aqua = (team: TeamBO, member: TeamMemberBO) => {
         return
     }
     prepareJoinTeamParma(team, member)
-    JoinTeam(joinTeamParam)
+    JoinTeam(applicationDTO)
 }
 </script>
 
@@ -351,8 +350,18 @@ const aqua = (team: TeamBO, member: TeamMemberBO) => {
         margin-top: 0.3em;
     }
 }
-.date {
-    font-size: 0.8em;
-    color: #909399;
+::v-deep(.el-card__body) {
+    position: relative;
+    .date {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -160%);
+        font-size: 0.8em;
+
+        border-radius: 2px;
+        padding: 1px 8px;
+        color: var(--el-text-color-secondary);
+        background-color: var(--el-bg-color-overlay);
+    }
 }
 </style>

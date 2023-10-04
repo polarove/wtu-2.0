@@ -1,5 +1,5 @@
 <template>
-    <div class="copy" :style="{ fontSize: fontSize }">
+    <div v-if="visible" class="copy" :style="{ fontSize: fontSize }">
         <span @click="copy()" class="hover-color-blue">
             {{ prefix }}&nbsp;{{ content }}
         </span>
@@ -16,8 +16,10 @@
                 class="text-size-[1.4em]"
                 @click="copy()"
             ></div>
-            <slot name="append"></slot>
         </div>
+    </div>
+    <div v-else class="copy">
+        <slot name="replacement"></slot>
     </div>
 </template>
 
@@ -42,6 +44,10 @@ const props = defineProps({
     fontSize: {
         type: String,
         default: '1em',
+    },
+    visible: {
+        type: Boolean,
+        default: true,
     },
 })
 

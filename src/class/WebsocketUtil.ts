@@ -3,7 +3,7 @@ import {
     WSS_MESSAGE_TYPE,
     RESPONSE_CODE,
 } from '@/composables/enums'
-import { JoinTeamDTO, TeamVO } from '@/composables/team'
+import { ApplicationDTO, TeamVO } from '@/composables/team'
 import { teamStore, authStore } from '@/store'
 import { isNotBlank } from '@util/StrUtil'
 import { requires } from '@/util/ObjectUtil'
@@ -101,7 +101,7 @@ export class websocket {
                     }
                     break
                 case WSS_MESSAGE_TYPE.JOIN:
-                    let application: JoinTeamDTO = JSON.parse(result.data)
+                    let application: ApplicationDTO = JSON.parse(result.data)
                     let uuid = application.team.uuid
                     let group = _teamStore.findGroupByUUID(uuid)
                     if (requires(group)) {
@@ -112,13 +112,16 @@ export class websocket {
                         let matrix = _teamStore.getUserBoosterMatrix(
                             _authStore.getUserBooster()
                         )
+
                         // 创建一个新的队伍
                         let newGroup = _teamStore.createGroup(
                             application,
                             matrix
                         )
+
                         // 设置队伍的booster为本地用户booster
                         newGroup.booster = _authStore.getUserBooster()
+
                         // 添加队伍
                         _teamStore.addApplicationGroup(newGroup)
 

@@ -85,8 +85,9 @@ export const DIRECTION_ENUM = {
     vertical: 2,
 }
 
-export const JOIN_TEAM_STATUS = {
-    PENDING: 'pending',
-    ACCEPTED: 'accepted',
-    REJECTED: 'rejected',
+export const APPLICATION_STATUS = {
+    static: 'static',
+    pending: 'pending',
+    accepted: 'accepted',
+    rejected: 'rejected',
 }

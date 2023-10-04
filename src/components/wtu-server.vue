@@ -1,5 +1,5 @@
 <template>
-    <span v-if="loading" class="i-ep:loading loading"></span>
+    <span v-if="loading" class="i-ep:loading animation-rotate"></span>
     <span v-else class="font-smiley" @click="toggleServer()">
         {{ isUpperCase ? toUpperCase(server.toLocaleString()) : server }}
     </span>
@@ -51,16 +51,4 @@ const toggleServer = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
-.loading {
-    animation: loading 1s infinite;
-}
-@keyframes loading {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-</style>
+<style lang="scss" scoped></style>

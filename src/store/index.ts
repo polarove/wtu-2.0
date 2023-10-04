@@ -10,12 +10,13 @@ import type {
     TeamVO,
     TeamPage,
     TeamListParams,
-    JoinTeamDTO,
+    ApplicationDTO,
     ApplicationGroup,
 } from '@composables/team'
 import { GetTeamList } from '@api/team'
 import { BOOSTER_STATUS, LAYOUT_ENUM, SERVER_TYPE } from '@/composables/enums'
 import { boosters } from '@/composables/booster'
+import { toRaw } from 'vue'
 
 const names = boosters.map((value) => {
     return value.en
@@ -207,10 +208,18 @@ export const teamStore = defineStore({
             this.param.page = 1
             this.isEnd = false
         },
+        addTeam(team: TeamVO) {
+            this.teamPage.records.unshift(team)
+        },
         removeTeam(id: number) {
-            this.teamPage.records = this.teamPage.records.filter(
-                (item) => item.team.id !== id
-            )
+            this.teamPage.records.map((item, index) => {
+                if (item.team.id === id) {
+                    item.team.isDeleted = 1
+                }
+                setTimeout(() => {
+                    this.teamPage.records.splice(index, 1)
+                }, 200)
+            })
         },
         toggleTeamStatus(id: number, status: number) {
             this.teamPage.records.map((item) => {
@@ -235,14 +244,10 @@ export const teamStore = defineStore({
             this.teamPage.records = TeamVO
         },
         getTeam(): Array<TeamVO> {
-            console.log(this.teamPage.records)
             return this.teamPage.records
         },
         getTeamPage(): TeamPage {
             return this.teamPage
-        },
-        addTeam(team: TeamVO) {
-            this.teamPage.records.unshift(team)
         },
         nextPage(callback: Function) {
             this.pageLoading = true
@@ -290,13 +295,13 @@ export const teamStore = defineStore({
             return this.applicationGroup.find((item) => item.uuid === uuid)
         },
         createGroup(
-            application: JoinTeamDTO,
-            matrix: MatrixUtil<number[]>
+            application: ApplicationDTO,
+            matrix: number[][]
         ): ApplicationGroup {
             return {
                 uuid: application.team.uuid,
                 title: application.team.title,
-                matrix: matrix.rows,
+                matrix: matrix,
                 booster: {
                     affinityBooster: 0,
                     creditBooster: 0,
@@ -307,23 +312,23 @@ export const teamStore = defineStore({
                 applications: [],
             }
         },
-        getUserBoosterMatrix(booster: UserBooster): MatrixUtil<number[]> {
+        getUserBoosterMatrix(booster: UserBooster): number[][] {
             return new MatrixUtil(
                 names.map((value) => {
                     return booster[value]
                 })
-            )
+            ).rows
         },
-        addApplicationGroup(application: ApplicationGroup) {
-            this.applicationGroup.unshift(application)
+        addApplicationGroup(applicationGroup: ApplicationGroup) {
+            this.applicationGroup.unshift(applicationGroup)
         },
         getApplicationGroups(): Array<ApplicationGroup> {
             return this.applicationGroup
         },
         clearApplicationGroup() {
-            this.applicationGroup = []
+            this.applicationGroup.splice(0, this.applicationGroup.length)
         },
-        addApplication(uuid: string, application: JoinTeamDTO): void {
+        addApplication(uuid: string, application: ApplicationDTO): void {
             let group = this.findGroupByUUID(uuid)
             if (
                 group &&
@@ -335,17 +340,20 @@ export const teamStore = defineStore({
                 // this.updateGroupBooster(group!)
             }
         },
-        removeApplication(uuid: string, application: JoinTeamDTO): void {
+        removeApplication(uuid: string, application: ApplicationDTO): void {
             let group = this.findGroupByUUID(uuid)
             if (requires(group)) {
                 let applications = group!.applications
-                let index = applications.indexOf(application)
-                applications.splice(index, 1)
-                // this.removeMatrixColumnForGroup(
-                //     group!,
-                //     application.from.booster
-                // )
-                // this.updateGroupBooster(group!)
+                applications.splice(applications.indexOf(application), 1)
+                this.removeMatrixColumnForGroup(
+                    uuid,
+                    application.from.booster,
+                    (res: boolean) => {
+                        if (res) {
+                            this.updateGroupBooster(uuid)
+                        }
+                    }
+                )
             }
         },
         addMatrixColumnForGroup(
@@ -365,14 +373,18 @@ export const teamStore = defineStore({
             callback?: Function
         ) {
             let group = this.findGroupByUUID(uuid)
-            group!.matrix.splice(
-                group!.matrix
-                    .map((value) => {
-                        return value
-                    })
-                    .indexOf(this.generateMatrixColumn(booster)),
-                1
-            )
+            let c = group!.matrix
+            let b = this.generateMatrixColumn(booster)
+            let caonimashabijavascript
+            c.map((value, index) => {
+                if (toRaw(value).join('') === b.join('')) {
+                    caonimashabijavascript = index
+                }
+            })
+            if (caonimashabijavascript === -1) {
+                return
+            }
+            group!.matrix.splice(1)
             if (callback) {
                 callback(true)
             }

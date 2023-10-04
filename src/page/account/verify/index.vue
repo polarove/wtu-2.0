@@ -1,7 +1,7 @@
 <template>
     <div class="page-account-verify">
         <div
-            class="i-ep:loading text-size-[3rem] rotating"
+            class="i-ep:loading text-size-[3rem] animation-rotate"
             :class="{ invisible: verificationStatus.compeleted }"
         ></div>
         <div
@@ -159,25 +159,11 @@ const saveMyProfile = async (formEl: FormInstance | undefined) => {
     text-align: center;
 }
 
-.rotating {
-    animation: rotating 3s linear infinite;
-}
-
 .visible {
     display: inline-block;
 }
 
 .invisible {
     display: none;
-}
-
-@keyframes rotating {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
 }
 </style>

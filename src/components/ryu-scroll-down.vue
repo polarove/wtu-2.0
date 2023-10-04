@@ -3,7 +3,7 @@
         :class="{
             'i-ep:loading': loading,
             'i-ep:arrow-down': !loading,
-            rotate: loading,
+            'animation-rotate': loading,
         }"
         @click="scrollDown()"
     ></div>
@@ -28,17 +28,4 @@ const scrollDown = () => {
 }
 </script>
 
-<style lang="scss" scoped>
-.rotate {
-    animation: rotate 1s linear infinite;
-}
-
-@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-</style>
+<style lang="scss" scoped></style>

@@ -42,6 +42,7 @@ export interface TeamBO {
     status: number
     creatorUuid: string
     isDeleted: number
+    isPublic: boolean
     updateTime: string
 }
 
@@ -53,6 +54,8 @@ export interface TeamMemberBO {
     occupied: number
     user: TeamUserBO
     isDeleted: number
+    // below is a local only variable
+    localStatus: string
 }
 
 export interface TeamRequirementBO {
@@ -80,9 +83,9 @@ export interface TeamListParams {
     uuid: string | null
 }
 
-export interface JoinTeamDTO {
+export interface ApplicationDTO {
     receiver: string
-    status: 'accepted' | 'rejected' | 'pending'
+    status: 'static' | 'accepted' | 'rejected' | 'pending'
     isDeleted: number
     from: TeamUserBO
     team: {
@@ -104,7 +107,7 @@ export interface ApplicationGroup {
     title: string
     booster: UserBooster
     matrix: Array<Array<number>>
-    applications: Array<JoinTeamDTO>
+    applications: Array<ApplicationDTO>
 }
 
 export interface BroadcastDeleteTeamDTO {

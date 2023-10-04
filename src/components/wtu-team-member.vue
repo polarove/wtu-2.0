@@ -2,7 +2,10 @@
     <div class="flex-center">
         <div class="flex-col items-center">
             <div class="lt-lg:display-none">
-                <div class="font-bold" v-if="isNotBlank(member.user.name)">
+                <div
+                    class="font-bold"
+                    v-if="isNotBlank(member.user.name) && nameVisible"
+                >
                     {{ member.user.name }}
                 </div>
                 <div v-else class="color-gray">.....</div>
@@ -28,7 +31,9 @@
                         <div class="lg:display-none">
                             <div
                                 class="font-bold"
-                                v-if="isNotBlank(member.user.name)"
+                                v-if="
+                                    isNotBlank(member.user.name) && nameVisible
+                                "
                             >
                                 {{ member.user.name }}
                             </div>
@@ -63,8 +68,13 @@
             </el-popover>
 
             <div class="font-size-[0.78em] color-gray mt-0.25em mb-0.25em">
+                <span v-if="isHost">主机:</span>
                 {{ member.user.accelerator }}
             </div>
+            <div
+                class="i-ep:loading animation-rotate"
+                v-if="localStatus === APPLICATION_STATUS.pending"
+            ></div>
         </div>
     </div>
 </template>
@@ -73,12 +83,28 @@
 import type { TeamMemberBO } from '@/composables/team'
 import { authStore } from '@/store'
 import { isNotBlank } from '@/util/StrUtil'
-import { ONLINE_STATUS, DIRECTION_ENUM } from '@/composables/enums'
+import {
+    ONLINE_STATUS,
+    DIRECTION_ENUM,
+    APPLICATION_STATUS,
+} from '@/composables/enums'
 const _authStore = authStore()
 defineProps({
     member: {
         type: Object as PropType<TeamMemberBO>,
         required: true,
+    },
+    nameVisible: {
+        type: Boolean,
+        default: true,
+    },
+    isHost: {
+        type: Number,
+        default: 1,
+    },
+    localStatus: {
+        type: String,
+        default: 'static',
     },
 })
 
