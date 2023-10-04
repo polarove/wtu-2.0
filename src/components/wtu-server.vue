@@ -1,21 +1,22 @@
 <template>
     <span v-if="loading" class="i-ep:loading animation-rotate"></span>
     <span v-else class="font-smiley" @click="toggleServer()">
-        {{ isUpperCase ? toUpperCase(server.toLocaleString()) : server }}
+        <!-- {{ isUpperCase ? toUpperCase(server.toLocaleString()) : server }} -->
+        {{ server }}
     </span>
 </template>
 
 <script setup lang="ts">
 import { authStore, teamStore } from '@/store'
-import { toUpperCase } from '@/util/StrUtil'
-import { SERVER_TYPE } from '@composables/enums'
+// import { toUpperCase } from '@/util/StrUtil'
+import { SERVER_CHAR } from '@composables/enums'
 import { ToggleServer } from '@api/account'
 import { response } from '@/composables/types'
 import type { UserVO } from '@/composables/user'
 const _authStore = authStore()
 const _teamStore = teamStore()
 const server = computed(() => {
-    return _authStore.getServer() ? SERVER_TYPE.en : SERVER_TYPE.cn
+    return _authStore.getServer() ? SERVER_CHAR.en : SERVER_CHAR.cn
 })
 
 defineProps({

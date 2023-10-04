@@ -17,6 +17,7 @@ import { GetTeamList } from '@api/team'
 import { BOOSTER_STATUS, LAYOUT_ENUM, SERVER_TYPE } from '@/composables/enums'
 import { boosters } from '@/composables/booster'
 import { toRaw } from 'vue'
+import { new_application_pumps } from '@/util/NotificationUtil'
 
 const names = boosters.map((value) => {
     return value.en
@@ -336,8 +337,7 @@ export const teamStore = defineStore({
                 !this.containsApplication(application.from.uuid, group)
             ) {
                 group.applications.push(application)
-                // this.addMatrixColumnForGroup(group!, application.from.booster)
-                // this.updateGroupBooster(group!)
+                new_application_pumps(application)
             }
         },
         removeApplication(uuid: string, application: ApplicationDTO): void {

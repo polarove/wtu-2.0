@@ -14,6 +14,11 @@ export enum SERVER_TYPE {
     en = 'en',
 }
 
+export enum SERVER_CHAR {
+    cn = '国服',
+    en = '国际服',
+}
+
 export enum WSS_ACTION {
     PING = 0,
     CONNECT = 1,

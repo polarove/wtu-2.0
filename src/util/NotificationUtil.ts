@@ -11,7 +11,7 @@ export const requestPermission = () => {
     })
 }
 
-export const team = (application: ApplicationDTO) => {
+export const new_application_pumps = (application: ApplicationDTO) => {
     window.Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
             new Notification(application.from.name + '申请加入你的队伍', {
