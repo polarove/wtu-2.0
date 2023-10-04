@@ -242,6 +242,7 @@ const addBooster = (application: ApplicationDTO) => {
 
 const removeBooster = (application: ApplicationDTO) => {
     let uuid = application.team.uuid
+    let name = application.from.name
     if (!isSeleted(uuid)) {
         return
     }
@@ -249,7 +250,10 @@ const removeBooster = (application: ApplicationDTO) => {
     _teamStore.removeMatrixColumnForGroup(uuid, booster, (result: boolean) => {
         if (result) {
             _teamStore.updateGroupBooster(uuid)
-            selected.value = selected.value.filter((item) => item.uuid !== uuid)
+            selected.value.splice(
+                selected.value.indexOf({ uuid: uuid, name: name }),
+                1
+            )
         }
     })
 }
@@ -261,10 +265,12 @@ const invite = (application: ApplicationDTO) => {
         .writeText('/invite' + '\xa0' + name)
         .then(() => {
             addBooster(application)
-            selected.value.push({
-                uuid: uuid,
-                name: name,
-            })
+            if (!isSeleted(uuid)) {
+                selected.value.push({
+                    uuid: uuid,
+                    name: name,
+                })
+            }
         })
         .finally(() => {
             // wss广播
@@ -273,10 +279,7 @@ const invite = (application: ApplicationDTO) => {
 const rejectApplication = (application: ApplicationDTO) => {
     let uuid = application.team.uuid
     let name = application.from.name
-    let index = selected.value.indexOf({ uuid: uuid, name: name })
-    if (index !== -1) {
-        selected.value.splice(index, 1)
-    }
+    selected.value.splice(selected.value.indexOf({ uuid: uuid, name: name }), 1)
     _teamStore.removeApplication(uuid, application)
 }
 </script>
