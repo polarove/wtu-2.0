@@ -1,8 +1,9 @@
 <template>
     <wtu-header></wtu-header>
     <div class="selections">
-        <ryu-arrows />
+        <wtu-selections />
     </div>
+
     <div class="banner-wrapper">
         <img src="@img/banner/ivara.jpg" />
         <wtu-profile-route direction="vertical" class="absolute-routes" />

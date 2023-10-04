@@ -53,26 +53,25 @@ const TeamParams = reactive<TeamListParams>({
     uuid: null,
 })
 
-const wss = new websocket(_authStore.getServer())
+let wss = new websocket(_authStore.getServer())
 
 const clients = ref<number>(0)
 
 const ChannelParam = reactive({
-    route: route.name,
+    route: null as RouteRecordName | null | undefined,
     uuid: _authStore.getUUID(),
-    server: _authStore.getServer(),
-    action: 1,
+    server: null as number | null,
+    action: null as WSS_ACTION | null,
 })
 
-const createConnection = () => {
-    wss.on_open(() => {
-        joinChannel()
-    })
-}
-
-const joinChannel = (to?: RouteRecordName | null | undefined) => {
+const joinChannel = (
+    server: number | null,
+    to?: RouteRecordName | null | undefined
+) => {
     ChannelParam.action = WSS_ACTION.CONNECT
+    ChannelParam.server = server
     to ? (ChannelParam.route = to) : (ChannelParam.route = route.name)
+    console.log('join:', ChannelParam)
     wss.send(ChannelParam, () => {
         wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
             clients.value = data.clients
@@ -81,11 +80,15 @@ const joinChannel = (to?: RouteRecordName | null | undefined) => {
 }
 
 const disconnect = (
+    server: number | null,
     from?: RouteRecordName | null | undefined,
     callback?: Function
 ) => {
     ChannelParam.action = WSS_ACTION.DISCONNECT
+    ChannelParam.server = server
+
     from ? (ChannelParam.route = from) : (ChannelParam.route = route.name)
+    console.log('disconnect:', ChannelParam)
     wss.send(ChannelParam, () => {
         wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
             clients.value = data.clients
@@ -96,14 +99,21 @@ const disconnect = (
     }
 }
 
-const switchChannel = (
-    from: RouteRecordName | null | undefined,
-    to: RouteRecordName | null | undefined
-) => {
-    disconnect(from, () => {
-        joinChannel(to)
-    })
-}
+watch(
+    () => _authStore.getServer(),
+    (var1) => {
+        let previous = var1 ? 0 : 1
+        disconnect(previous, route.name)
+
+        wss.close()
+
+        wss = new websocket(var1)
+        wss.on_open(() => {
+            joinChannel(var1, route.name)
+        })
+    },
+    { deep: true }
+)
 
 const autoRefresh = (interval: number) => {
     setInterval(() => {
@@ -122,16 +132,8 @@ onMounted(() => {
     TeamParams.channel = route.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
-    createConnection()
     autoRefresh(1000 * 60 * 3)
 })
-
-watch(
-    () => _authStore.getServer(),
-    (oldValue, newValue) => {
-        console.log(oldValue, newValue)
-    }
-)
 
 //component life cycle
 onBeforeRouteUpdate((to, from) => {
@@ -139,27 +141,40 @@ onBeforeRouteUpdate((to, from) => {
     _teamStore.resetPage()
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
-    switchChannel(from.name, to.name)
+    let server = _authStore.getServer()
+    disconnect(server, from.name, () => {
+        joinChannel(server, to.name)
+    })
 })
 
 onBeforeRouteLeave((_, from) => {
-    disconnect(from.name)
+    disconnect(_authStore.getServer(), from.name)
     wss.close()
 })
 
 // window事件
-onbeforeunload = () => {
-    disconnect(route.name)
-    wss.close()
-}
+// onbeforeunload = () => {
+//     disconnect(_authStore.getServer(), route.name)
+//     wss.close()
+// }
 
 // watcher
+
+// watch(
+//     () => _authStore.getServer(),
+//     (var1) => {
+//         console.log(var1)
+//     },
+//     { deep: true }
+// )
+
 const notified = ref<boolean>(false)
 const message = computed(() => {
     return _layoutStore.getMode() === LAYOUT_ENUM.default
         ? '双击上方昵称可以进行修改哦~方便大家加入你的队伍'
         : '点击头像进入个人空间，双击昵称可以进行修改哦，方便大家加入你的队伍'
 })
+
 watchEffect(() => {
     if (isDefualtUserName(_authStore.getName()) && !notified.value) {
         notified.value = true

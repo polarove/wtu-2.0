@@ -3,11 +3,12 @@
         <span class="i-ep:loading animation-rotate"></span>
     </div>
 
-    <span v-else class="font-smiley" @click="toggleServer()">
+    <span v-else class="font-smiley">
         <!-- {{ isUpperCase ? toUpperCase(server.toLocaleString()) : server }} -->
         <span
             class="server-name"
             :class="{ active: server, inactive: !server }"
+            @click="toggleServer(1)"
         >
             {{ SERVER_CHAR.en }}
         </span>
@@ -15,6 +16,7 @@
         <span
             class="server-name"
             :class="{ active: !server, inactive: server }"
+            @click="toggleServer(0)"
         >
             {{ SERVER_CHAR.cn }}
         </span>
@@ -28,34 +30,35 @@ import { SERVER_CHAR } from '@composables/enums'
 import { ToggleServer } from '@api/account'
 import { response } from '@/composables/types'
 import type { UserVO } from '@/composables/user'
+
 const _authStore = authStore()
 const _teamStore = teamStore()
-const server = _authStore.getServer()
+
+const server = computed(() => _authStore.getServer())
 defineProps({
     isUpperCase: {
         type: Boolean,
         default: false,
     },
 })
-
 const loading = ref(false)
-const toggleServer = async () => {
-    if (loading.value) {
+const toggleServer = async (target: number) => {
+    if (loading.value || target === server.value) {
         return
     }
     loading.value = true
-    let state = _authStore.getServer()
     const result = (await ToggleServer({
-        previous: state,
-        current: state ? 0 : 1,
+        previous: server.value,
+        current: server.value ? 0 : 1,
     })) as response<UserVO>
     if (result.success) {
         _authStore.setUser(result.data)
         _teamStore.setParam({
             ..._teamStore.getParam(),
-            server: _authStore.getServer(),
+            server: server.value,
         })
         _teamStore.initTeamList()
+
         loading.value = false
     } else {
         loading.value = false
