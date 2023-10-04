@@ -84,3 +84,9 @@ export const DIRECTION_ENUM = {
     horizental: 1,
     vertical: 2,
 }
+
+export const JOIN_TEAM_STATUS = {
+    PENDING: 'pending',
+    ACCEPTED: 'accepted',
+    REJECTED: 'rejected',
+}

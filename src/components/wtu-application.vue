@@ -1,10 +1,6 @@
 <template>
     <div @click="visible = true">
-        <el-badge
-            :value="_teamStore.getApplicationGroup().length"
-            :hidden="_teamStore.getApplicationGroup().length === 0"
-            type="warning"
-        >
+        <el-badge :value="groupLength" :hidden="isEmptyGroup" type="warning">
             <span class="i-ant-design:user-switch-outlined"></span>
         </el-badge>
 
@@ -20,8 +16,8 @@
                 </div>
             </template>
             <ryu-loading :loading="loading">
-                <ryu-empty :empty="empty">
-                    <div v-for="group in _teamStore.getApplicationGroup()">
+                <ryu-empty :empty="isEmptyGroup">
+                    <div v-for="group in groups">
                         <el-card shadow="hover">
                             <template #header>
                                 <div class="flex-between">
@@ -53,7 +49,9 @@
                                     :span="6"
                                     v-for="application in group.applications"
                                     class="animate__animated animate__faster"
-                                    :class="{ animate__bounceInRight: !empty }"
+                                    :class="{
+                                        animate__bounceInRight: !isEmptyGroup,
+                                    }"
                                 >
                                     <div class="flex-col items-center">
                                         <el-popover
@@ -63,6 +61,19 @@
                                         >
                                             <template #reference>
                                                 <wtu-warframe
+                                                    :class="{
+                                                        selected:
+                                                            selected.includes(
+                                                                group.uuid
+                                                            ),
+                                                    }"
+                                                    @click="
+                                                        toggleSelect(
+                                                            group.uuid,
+                                                            application.from
+                                                                .booster
+                                                        )
+                                                    "
                                                     :modelValue="
                                                         application.build
                                                             .warframe
@@ -102,6 +113,9 @@
                                                 />
                                             </div>
                                         </el-popover>
+                                        <div>
+                                            {{ application.from.accelerator }}
+                                        </div>
                                     </div>
                                 </el-col>
                             </el-row>
@@ -127,14 +141,43 @@ import type { JoinTeamDTO, ApplicationGroup } from '@/composables/team'
 import { layoutStore, teamStore, authStore } from '@/store'
 import { boosters } from '@/composables/booster'
 import { BOOSTER_STATUS } from '@/composables/enums'
+import { UserBooster } from '@/composables/user'
 const _layoutStore = layoutStore()
 const _teamStore = teamStore()
 const _authStore = authStore()
 const visible = ref<boolean>(false)
 const loading = _teamStore.getApplicationGroupLoading()
-const group: Array<ApplicationGroup> = _teamStore.getApplicationGroup()
-const length = computed(() => group.length)
-const empty = computed(() => length.value === 0)
+const groups: Array<ApplicationGroup> = _teamStore.getApplicationGroups()
+const groupLength = computed(() => groups.length)
+const isEmptyGroup = computed(() => groupLength.value === 0)
+
+const selected = ref<string[]>([])
+const toggleSelect = (uuid: string, booster: UserBooster) => {
+    if (selected.value.includes(uuid)) {
+        selected.value = selected.value.filter((item) => item !== uuid)
+        removeBooster(uuid, booster)
+    } else {
+        selected.value.push(uuid)
+        addBooster(uuid, booster)
+    }
+}
+
+const addBooster = (uuid: string, booster: UserBooster) => {
+    _teamStore.addMatrixColumnForGroup(uuid, booster, (result) => {
+        if (result) {
+            _teamStore.updateGroupBooster(uuid, booster)
+        }
+    })
+}
+
+const removeBooster = (uuid: string, booster: UserBooster) => {
+    _teamStore.removeMatrixColumnForGroup(uuid, booster, (result) => {
+        if (result) {
+            _teamStore.updateGroupBooster(uuid, booster)
+        }
+    })
+}
+
 const invite = (application: JoinTeamDTO) => {
     console.log(application)
 }
@@ -143,4 +186,19 @@ const rejectApplication = (application: JoinTeamDTO) => {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.selected {
+    transform: scale(1.2);
+
+    &::after {
+        content: '✔';
+        position: absolute;
+        top: -10px;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 1.3em;
+        color: var(--el-color-primary);
+    }
+}
+</style>

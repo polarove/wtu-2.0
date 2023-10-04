@@ -3,6 +3,8 @@ import type { response } from '@composables/types'
 import type { UserBooster, UserVO } from '@composables/user'
 import { getUserVOByUUID } from '@api/account'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
+import { MatrixUtil } from '@/class/MatrixUtil'
+import { requires } from '@/util/ObjectUtil'
 import { warframe } from '@/composables/warframe'
 import type {
     TeamVO,
@@ -13,6 +15,11 @@ import type {
 } from '@composables/team'
 import { GetTeamList } from '@api/team'
 import { BOOSTER_STATUS, LAYOUT_ENUM, SERVER_TYPE } from '@/composables/enums'
+import { boosters } from '@/composables/booster'
+
+const names = boosters.map((value) => {
+    return value.en
+})
 
 interface xhr_response {
     config: any
@@ -221,16 +228,14 @@ export const teamStore = defineStore({
         getParam(): TeamListParams {
             return this.param
         },
-        setParam(param: TeamListParams, callback?: Function) {
+        setParam(param: TeamListParams) {
             this.param = param
-            if (callback) {
-                callback()
-            }
         },
         setTeam(TeamVO: Array<TeamVO>) {
             this.teamPage.records = TeamVO
         },
         getTeam(): Array<TeamVO> {
+            console.log(this.teamPage.records)
             return this.teamPage.records
         },
         getTeamPage(): TeamPage {
@@ -276,33 +281,118 @@ export const teamStore = defineStore({
         getApplicationGroupLoading(): boolean {
             return this.applicationGroupLoading
         },
-        containsApplicationGroup(uuid: string): boolean {
-            return this.applicationGroup.some((item) => item.uuid === uuid)
+        containsApplication(uuid: string, group: ApplicationGroup): boolean {
+            return group.applications.some(
+                (application) => application.from.uuid === uuid
+            )
+        },
+        findGroupByUUID(uuid: string): ApplicationGroup | undefined {
+            return this.applicationGroup.find((item) => item.uuid === uuid)
+        },
+        createGroup(
+            application: JoinTeamDTO,
+            matrix: MatrixUtil<number[]>
+        ): ApplicationGroup {
+            return {
+                uuid: application.team.uuid,
+                title: application.team.title,
+                matrix: matrix.rows,
+                booster: {
+                    affinityBooster: 0,
+                    creditBooster: 0,
+                    modDropRateBooster: 0,
+                    resourceBooster: 0,
+                    resourceDropRateBooster: 0,
+                },
+                applications: [],
+            }
+        },
+        getUserBoosterMatrix(booster: UserBooster): MatrixUtil<number[]> {
+            return new MatrixUtil(
+                names.map((value) => {
+                    return booster[value]
+                })
+            )
         },
         addApplicationGroup(application: ApplicationGroup) {
             this.applicationGroup.unshift(application)
         },
-        getApplicationGroup(): Array<ApplicationGroup> {
+        getApplicationGroups(): Array<ApplicationGroup> {
             return this.applicationGroup
         },
-        // updateBoosterMatrix(uuid: string, booster: UserBooster) {},
         clearApplicationGroup() {
             this.applicationGroup = []
         },
-        addApplication(
+        addApplication(uuid: string, application: JoinTeamDTO): void {
+            let group = this.findGroupByUUID(uuid)
+            if (
+                group &&
+                group.applications.length <= 4 &&
+                !this.containsApplication(application.from.uuid, group)
+            ) {
+                group.applications.push(application)
+                // this.addMatrixColumnForGroup(group!, application.from.booster)
+                // this.updateGroupBooster(group!)
+            }
+        },
+        removeApplication(uuid: string, application: JoinTeamDTO): void {
+            let group = this.findGroupByUUID(uuid)
+            if (requires(group)) {
+                let applications = group!.applications
+                let index = applications.indexOf(application)
+                applications.splice(index, 1)
+                // this.removeMatrixColumnForGroup(
+                //     group!,
+                //     application.from.booster
+                // )
+                // this.updateGroupBooster(group!)
+            }
+        },
+        addMatrixColumnForGroup(
             uuid: string,
-            applicationGroup: JoinTeamDTO
-        ): ApplicationGroup | null {
-            let group = this.applicationGroup.find(
-                (item) => item.uuid === uuid
-            ) as ApplicationGroup
-            if (group.applications.length >= 4) {
-                return null
+            booster: UserBooster,
+            callback?: Function
+        ) {
+            let group = this.findGroupByUUID(uuid)
+            group!.matrix.push(this.generateMatrixColumn(booster))
+            if (callback) {
+                callback(true)
             }
-            if (group) {
-                group.applications.unshift(applicationGroup)
+        },
+        removeMatrixColumnForGroup(
+            uuid: string,
+            booster: UserBooster,
+            callback?: Function
+        ) {
+            let group = this.findGroupByUUID(uuid)
+            group!.matrix.splice(
+                group!.matrix
+                    .map((value) => {
+                        return value
+                    })
+                    .indexOf(this.generateMatrixColumn(booster)),
+                1
+            )
+            if (callback) {
+                callback(true)
             }
-            return group
+        },
+        updateGroupBooster(uuid: string) {
+            let group = this.findGroupByUUID(uuid)
+            names.map((value, index) => {
+                group!.booster[value] = group!.matrix
+                    .map((value) => {
+                        return value[index]
+                    })
+                    .includes(1)
+                    ? 1
+                    : 0
+            })
+        },
+        generateMatrixColumn(booster: UserBooster): number[] {
+            return names.map((value) => {
+                return booster[value]
+            })
         },
     },
 })

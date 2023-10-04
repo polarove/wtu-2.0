@@ -10,7 +10,7 @@
                         instance.team.isDeleted === DELETE_OR_NOT.NOT_DELETE,
                 }"
                 :key="index"
-                v-for="(instance, index) in _teamStore.getTeam()"
+                v-for="(instance, index) in teamList"
             >
                 <template #header>
                     <div class="flex-between">
@@ -195,13 +195,12 @@ defineProps({
 const _teamStore = teamStore()
 const _authStore = authStore()
 const Router = useRouter()
+const teamList = computed(() => {
+    return _teamStore.getTeam()
+})
 
 const empty = computed(() => {
-    if (_teamStore.getTeam() !== undefined) {
-        return _teamStore.getTeam().length === 0
-    } else {
-        return false
-    }
+    return teamList.value?.length === 0
 })
 
 const getChannel = (routeName: string) => {
@@ -261,6 +260,8 @@ const removeTeam = async (id: number, server: number, channel: string) => {
 
 const joinTeamParam: JoinTeamDTO = reactive({
     receiver: '',
+    status: 'pending',
+    isDeleted: DELETE_OR_NOT.NOT_DELETE,
     from: {
         uuid: '',
         name: '',
@@ -298,6 +299,7 @@ const check = (build: TeamMemberBO) => {
 
 const prepareJoinTeamParma = (team: TeamBO, member: TeamMemberBO): boolean => {
     joinTeamParam.receiver = team.creatorUuid
+    joinTeamParam.status = 'pending'
     joinTeamParam.from = _authStore.getUser()
     joinTeamParam.team = {
         ...team,
@@ -322,9 +324,6 @@ const aqua = (team: TeamBO, member: TeamMemberBO) => {
     }
     prepareJoinTeamParma(team, member)
     JoinTeam(joinTeamParam)
-    console.log(joinTeamParam)
-    // JoinTeam(joinTeamParam)
-    // console.log(_teamStore.getTeam())
 }
 </script>
 

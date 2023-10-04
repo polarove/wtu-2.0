@@ -28,6 +28,7 @@ export interface TeamDTO {
     title: string
     server: number
     channel: RouteRecordName | null | undefined
+    isPublic: boolean
     requirements: Array<teamRequirement>
     members: Array<TeamMate>
 }
@@ -81,6 +82,8 @@ export interface TeamListParams {
 
 export interface JoinTeamDTO {
     receiver: string
+    status: 'accepted' | 'rejected' | 'pending'
+    isDeleted: number
     from: TeamUserBO
     team: {
         uuid: string

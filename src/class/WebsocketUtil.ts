@@ -3,15 +3,15 @@ import {
     WSS_MESSAGE_TYPE,
     RESPONSE_CODE,
 } from '@/composables/enums'
-import { JoinTeamDTO, TeamVO, ApplicationGroup } from '@/composables/team'
+import { JoinTeamDTO, TeamVO } from '@/composables/team'
 import { teamStore, authStore } from '@/store'
 import { isNotBlank } from '@util/StrUtil'
-import { MatrixUtil } from '@class/MatrixUtil'
-import { boosters } from '@/composables/booster'
+import { requires } from '@/util/ObjectUtil'
 
 const _teamStore = teamStore()
 const _authStore = authStore()
 
+// import { boosters } from '@/composables/booster'
 // const matrix = new MatrixUtil(
 //     [1, 0, 0, 0, 1],
 //     [1, 0, 0, 0, 1],
@@ -19,9 +19,9 @@ const _authStore = authStore()
 //     [1, 0, 0, 0, 1]
 // )
 
-let names = boosters.map((value) => {
-    return value.en
-})
+// let names = boosters.map((value) => {
+//     return value.en
+// })
 
 // matrix.columns().forEach((value: Array<any>, index: number) => {
 //     bolist[names[index]] = value.includes(1) ? 1 : 0
@@ -103,62 +103,27 @@ export class websocket {
                 case WSS_MESSAGE_TYPE.JOIN:
                     let application: JoinTeamDTO = JSON.parse(result.data)
                     let uuid = application.team.uuid
-                    let title = application.team.title
-                    if (_teamStore.containsApplicationGroup(uuid)) {
-                        // 待检查
-                        const group = _teamStore.addApplication(
-                            uuid,
-                            application
-                        )
-                        if (group) {
-                            group.matrix.push(
-                                names.map((value) => {
-                                    return application.from.booster[value]
-                                })
-                            )
-                            names.map((value, index) => {
-                                group.booster[value] = group.matrix
-                                    .map((value) => {
-                                        return value[index]
-                                    })
-                                    .includes(1)
-                                    ? 1
-                                    : 0
-                            })
-                        }
+                    let group = _teamStore.findGroupByUUID(uuid)
+                    if (requires(group)) {
+                        // 添加申请
+                        _teamStore.addApplication(uuid, application)
                     } else {
-                        const matrix = new MatrixUtil(
-                            names.map((value) => {
-                                return _authStore.getUserBooster()[value]
-                            }),
-                            names.map((value) => {
-                                return application.from.booster[value]
-                            })
+                        // 获得本地用户booster矩阵
+                        let matrix = _teamStore.getUserBoosterMatrix(
+                            _authStore.getUserBooster()
                         )
-                        let newGroup: ApplicationGroup = {
-                            uuid: uuid,
-                            title: title,
-                            matrix: matrix.rows,
-                            booster: {
-                                affinityBooster: 0,
-                                creditBooster: 0,
-                                modDropRateBooster: 0,
-                                resourceBooster: 0,
-                                resourceDropRateBooster: 0,
-                            },
-                            applications: [...[application]],
-                        }
-                        matrix
-                            .columns()
-                            .map((value: number[], index: number) => {
-                                newGroup.booster[names[index]] = value.includes(
-                                    1
-                                )
-                                    ? 1
-                                    : 0
-                            })
+                        // 创建一个新的队伍
+                        let newGroup = _teamStore.createGroup(
+                            application,
+                            matrix
+                        )
+                        // 设置队伍的booster为本地用户booster
+                        newGroup.booster = _authStore.getUserBooster()
+                        // 添加队伍
                         _teamStore.addApplicationGroup(newGroup)
-                        console.log(newGroup.booster)
+
+                        // 添加申请
+                        _teamStore.addApplication(uuid, application)
                     }
                     break
                 default:

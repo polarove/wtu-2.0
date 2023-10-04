@@ -35,6 +35,16 @@
                         v-model="createTeamForm.title"
                     />
                 </el-form-item>
+                <el-form-item> 队伍类型 </el-form-item>
+                <el-form-item>
+                    <el-select
+                        placeholder="请选择队伍类型"
+                        v-model="createTeamForm.isPublic"
+                    >
+                        <el-option label="公开可见" :value="true"></el-option>
+                        <el-option label="仅限邀请" :value="false"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item> 进队要求 </el-form-item>
                 <el-form-item
                     v-for="(requirement, index) in createTeamForm.requirements"
@@ -168,6 +178,7 @@ const createTeamForm = reactive<TeamDTO>({
     title: '未修改的标题',
     server: _authStore.getServer(),
     channel: null,
+    isPublic: true,
     requirements: [],
     members: [
         {
@@ -314,6 +325,8 @@ const publishTeam = (formEl: FormInstance | undefined) => {
             return
         }
         createTeamForm.channel = routes.name
+        console.log(createTeamForm)
+
         if (checkDTO()) {
             createTeam()
         } else {

@@ -11,3 +11,11 @@ export const parseData = (object: any, key: string): any => {
         }
     }
 }
+
+export const requires = (object: any): boolean => {
+    return object !== null && object !== undefined
+}
+
+export const isNull = (object: any): boolean => {
+    return !requires(object)
+}
