@@ -71,7 +71,6 @@ const joinChannel = (
     ChannelParam.action = WSS_ACTION.CONNECT
     ChannelParam.server = server
     to ? (ChannelParam.route = to) : (ChannelParam.route = route.name)
-    console.log('join:', ChannelParam)
     wss.send(ChannelParam, () => {
         wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
             clients.value = data.clients
@@ -88,7 +87,6 @@ const disconnect = (
     ChannelParam.server = server
 
     from ? (ChannelParam.route = from) : (ChannelParam.route = route.name)
-    console.log('disconnect:', ChannelParam)
     wss.send(ChannelParam, () => {
         wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
             clients.value = data.clients
@@ -104,9 +102,7 @@ watch(
     (var1) => {
         let previous = var1 ? 0 : 1
         disconnect(previous, route.name)
-
         wss.close()
-
         wss = new websocket(var1)
         wss.on_open(() => {
             joinChannel(var1, route.name)
@@ -151,22 +147,6 @@ onBeforeRouteLeave((_, from) => {
     disconnect(_authStore.getServer(), from.name)
     wss.close()
 })
-
-// window事件
-// onbeforeunload = () => {
-//     disconnect(_authStore.getServer(), route.name)
-//     wss.close()
-// }
-
-// watcher
-
-// watch(
-//     () => _authStore.getServer(),
-//     (var1) => {
-//         console.log(var1)
-//     },
-//     { deep: true }
-// )
 
 const notified = ref<boolean>(false)
 const message = computed(() => {
