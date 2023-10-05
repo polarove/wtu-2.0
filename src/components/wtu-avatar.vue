@@ -28,7 +28,7 @@
         </template>
         <template #default>
             <wtu-booster-list
-                :booster="booster"
+                :booster="_authStore.getUserBooster()"
                 @toggle="toggleBooster($event)"
                 :direction="DIRECTION_ENUM.horizental"
                 size="2.7em"
@@ -52,20 +52,7 @@ import { authStore } from '@/store'
 import { isBlank } from '@util/StrUtil'
 import { ONLINE_STATUS, DIRECTION_ENUM } from '@composables/enums'
 import { UpdateUserBooster } from '@api/account'
-import { UserBooster } from '@/composables/user'
 const _authStore = authStore()
-
-const booster = ref<UserBooster>({
-    affinityBooster: 0,
-    creditBooster: 0,
-    modDropRateBooster: 0,
-    resourceBooster: 0,
-    resourceDropRateBooster: 0,
-})
-
-nextTick(() => {
-    booster.value = _authStore.getUserBooster()
-})
 
 const user_unknown = computed(() => {
     return isBlank(_authStore.getUUID())
@@ -110,13 +97,14 @@ const NaviPrivateHome = () => {
     }
     router.push({ name: 'profile' })
 }
-const toggleBooster = async (booster: string) => {
-    if (_authStore.hasBooster(booster)) {
-        _authStore.removeBooster(booster)
-    } else {
-        _authStore.setBooster(booster)
-    }
-    await UpdateUserBooster(_authStore.getUserBooster())
+const toggleBooster = (booster: string) => {
+    UpdateUserBooster(_authStore.getUserBooster()).then(() => {
+        if (_authStore.hasBooster(booster)) {
+            _authStore.removeBooster(booster)
+        } else {
+            _authStore.setBooster(booster)
+        }
+    })
 }
 
 const avatarLoadingErrorHandler = (e: Event) => {
