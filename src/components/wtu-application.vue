@@ -234,7 +234,7 @@
                             </el-row>
                             <ryu-clipboard
                                 v-if="accepted(result.status)"
-                                :content="result.receiver"
+                                :content="result.receiver.name"
                                 prefix="/join"
                                 :ref="(el:any)=> el && el.copy()"
                             >
@@ -375,7 +375,7 @@ const invite = (application: ApplicationDTO) => {
     }
     application.status =
         APPLICATION_STATUS.accepted as keyof typeof APPLICATION_STATUS
-    application.receiver = _authStore.getName()
+    application.receiver.name = _authStore.getName()
     ApplicationResult(application)
 }
 
@@ -389,7 +389,7 @@ const rejectApplication = (application: ApplicationDTO) => {
     }
     application.status =
         APPLICATION_STATUS.rejected as keyof typeof APPLICATION_STATUS
-    application.receiver = _authStore.getName()
+    application.receiver.name = _authStore.getName()
     ApplicationResult(application)
 }
 

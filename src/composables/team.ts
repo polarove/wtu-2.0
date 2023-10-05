@@ -84,7 +84,11 @@ export interface TeamListParams {
 }
 
 export interface ApplicationDTO {
-    receiver: string
+    receiver: {
+        uuid: string
+        name: string
+        avatar: string
+    }
     status: 'static' | 'accepted' | 'rejected' | 'pending'
     isDeleted: number
     from: TeamUserBO

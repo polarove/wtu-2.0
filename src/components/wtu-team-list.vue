@@ -254,7 +254,11 @@ const removeTeam = async (id: number, server: number, channel: string) => {
 }
 
 const applicationDTO: ApplicationDTO = reactive({
-    receiver: '',
+    receiver: {
+        uuid: '',
+        name: '',
+        avatar: '',
+    },
     status: 'pending',
     isDeleted: DELETE_OR_NOT.NOT_DELETE,
     from: {
@@ -293,7 +297,11 @@ const check = (build: TeamMemberBO) => {
 }
 
 const prepareJoinTeamParma = (team: TeamBO, member: TeamMemberBO): boolean => {
-    applicationDTO.receiver = team.creatorUuid
+    applicationDTO.receiver = {
+        uuid: team.creatorUuid,
+        name: member.user.name,
+        avatar: member.user.avatar,
+    }
     applicationDTO.status = 'pending'
     applicationDTO.from = _authStore.getUser()
     applicationDTO.team = {

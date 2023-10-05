@@ -11,7 +11,3 @@ export const isBlank = (str: string) => {
 export const isNotBlank = (str: string) => {
     return !isBlank(str)
 }
-
-export const toUpperCase = (str: string) => {
-    return str.toUpperCase()
-}

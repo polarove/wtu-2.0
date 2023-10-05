@@ -432,7 +432,19 @@ export const teamStore = defineStore({
                 return
             }
             this.applicationResultList.unshift(application)
-            console.log(this.applicationResultList)
+            window.Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    new Notification(application.from.name, {
+                        body:
+                            application.status === 'accepted'
+                                ? '已接受入队申请'
+                                : '已拒绝入队申请',
+                        icon: application.receiver.avatar,
+                    })
+                } else {
+                    alert('您已关闭通知, 请在浏览器设置中开启通知')
+                }
+            })
         },
         getApplicationResultList(): Array<ApplicationDTO> {
             return this.applicationResultList
