@@ -1,6 +1,7 @@
 <template>
-    <div @click="visible = true">
+    <div>
         <el-badge
+            @click="visible = true"
             :value="lengthInTotal"
             :hidden="bothEmpty"
             :max="99"
