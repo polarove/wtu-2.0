@@ -17,7 +17,6 @@ import { GetTeamList } from '@api/team'
 import { BOOSTER_STATUS, LAYOUT_ENUM, SERVER_TYPE } from '@/composables/enums'
 import { boosters } from '@/composables/booster'
 import { toRaw } from 'vue'
-import { new_application_pumps } from '@/util/NotificationUtil'
 
 const names = boosters.map((value) => {
     return value.en
@@ -183,6 +182,8 @@ export const teamStore = defineStore({
         isEnd: false,
         applicationGroup: [] as Array<ApplicationGroup>,
         applicationGroupLoading: false,
+        applicationResultList: [] as Array<ApplicationDTO>,
+        panel: true,
     }),
     actions: {
         initTeamList() {
@@ -329,7 +330,8 @@ export const teamStore = defineStore({
         clearApplicationGroup() {
             this.applicationGroup.splice(0, this.applicationGroup.length)
         },
-        addApplication(uuid: string, application: ApplicationDTO): void {
+        addApplication(application: ApplicationDTO): void {
+            let uuid = application.team.uuid
             let group = this.findGroupByUUID(uuid)
             if (
                 group &&
@@ -337,10 +339,23 @@ export const teamStore = defineStore({
                 !this.containsApplication(application.from.uuid, group)
             ) {
                 group.applications.push(application)
-                new_application_pumps(application)
+                window.Notification.requestPermission().then((permission) => {
+                    if (permission === 'granted') {
+                        new Notification(
+                            application.from.name + '申请加入你的队伍',
+                            {
+                                body: application.team.title,
+                                icon: application.from.avatar,
+                            }
+                        )
+                    } else {
+                        alert('您已关闭通知, 请在浏览器设置中开启通知')
+                    }
+                })
             }
         },
-        removeApplication(uuid: string, application: ApplicationDTO): void {
+        removeApplication(application: ApplicationDTO): void {
+            let uuid = application.team.uuid
             let group = this.findGroupByUUID(uuid)
             if (requires(group)) {
                 let applications = group!.applications
@@ -405,6 +420,34 @@ export const teamStore = defineStore({
             return names.map((value) => {
                 return booster[value]
             })
+        },
+
+        containsApplicationResult(uuid: string): boolean {
+            return this.applicationResultList.some(
+                (item) => item.team.uuid === uuid
+            )
+        },
+        addApplicationResult(application: ApplicationDTO) {
+            if (this.containsApplicationResult(application.team.uuid)) {
+                return
+            }
+            this.applicationResultList.unshift(application)
+            console.log(this.applicationResultList)
+        },
+        getApplicationResultList(): Array<ApplicationDTO> {
+            return this.applicationResultList
+        },
+        getPanel(): boolean {
+            return this.panel
+        },
+        setPanel(panel: boolean) {
+            this.panel = panel
+        },
+        clearResultList() {
+            this.applicationResultList.splice(
+                0,
+                this.applicationResultList.length
+            )
         },
     },
 })

@@ -97,9 +97,7 @@
                             @join="
                                 isCreator(instance.team.creatorUuid)
                                     ? check(build)
-                                    : aqua(instance.team, build),
-                                    (build.localStatus =
-                                        APPLICATION_STATUS.pending)
+                                    : aqua(instance.team, build)
                             "
                         />
                     </el-col>
@@ -313,12 +311,21 @@ const prepareJoinTeamParma = (team: TeamBO, member: TeamMemberBO): boolean => {
 }
 const aqua = (team: TeamBO, member: TeamMemberBO) => {
     if (
-        member.leader ||
-        team.creatorUuid === _authStore.getUUID() ||
-        member.occupied
+        member.leader === 1 ||
+        isCreator(team.creatorUuid) ||
+        member.occupied === 1
     ) {
         return
     }
+    teamList.value.map((item) => {
+        if (item.team.id === team.id) {
+            item.members.map((build) => {
+                if (build.id === member.id) {
+                    build.localStatus = APPLICATION_STATUS.pending
+                }
+            })
+        }
+    })
     prepareJoinTeamParma(team, member)
     JoinTeam(applicationDTO)
 }

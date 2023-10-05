@@ -115,6 +115,7 @@ watch(
     },
     { deep: true }
 )
+
 const autoRefresh = (interval: number) => {
     setInterval(() => {
         GetTeamList(_teamStore.getParam()).then(
@@ -152,6 +153,11 @@ onBeforeRouteLeave((_, from) => {
     disconnect(_authStore.getServer(), from.name)
     wss.close()
 })
+
+onbeforeunload = () => {
+    disconnect(_authStore.getServer(), route.name)
+    wss.close()
+}
 
 const notified = ref<boolean>(false)
 const message = computed(() => {

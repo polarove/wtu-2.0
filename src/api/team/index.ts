@@ -40,3 +40,7 @@ export const GetTeamById = (teamId: number) => {
 export const JoinTeam = (data: ApplicationDTO) => {
     return TeamController.post('/joinTeam', data)
 }
+
+export const ApplicationResult = (data: ApplicationDTO) => {
+    return TeamController.post('/joinTeam/result', data)
+}

@@ -1,6 +1,11 @@
 <template>
     <div @click="visible = true">
-        <el-badge :value="groupLength" :hidden="isEmptyGroup" type="warning">
+        <el-badge
+            :value="lengthInTotal"
+            :hidden="bothEmpty"
+            :max="99"
+            type="warning"
+        >
             <span class="i-ant-design:user-switch-outlined"></span>
         </el-badge>
 
@@ -10,44 +15,66 @@
             :size="_layoutStore.isWide() ? '40%' : '100%'"
         >
             <template #header>
-                <div class="vertical-middle">
-                    <span class="i-ep:info-filled icon"></span>
-                    <span class="color-gray">入队申请只保存10分钟</span>
+                <div class="vertical-middle panels">
+                    <el-badge
+                        :value="groupLength"
+                        type="primary"
+                        :hidden="isEmptyGroup"
+                        :max="99"
+                    >
+                        <span
+                            @click="_teamStore.setPanel(true)"
+                            class="option"
+                            :class="{ active: panel, inactive: !panel }"
+                            >入队申请</span
+                        >
+                    </el-badge>
+                    <span>&nbsp;/&nbsp;</span>
+                    <el-badge
+                        :value="resultLength"
+                        type="primary"
+                        :hidden="isEmptyResult"
+                        :max="99"
+                    >
+                        <span
+                            class="option"
+                            :class="{ active: !panel, inactive: panel }"
+                            @click="_teamStore.setPanel(false)"
+                        >
+                            申请结果
+                        </span>
+                    </el-badge>
                 </div>
             </template>
             <ryu-loading :loading="loading">
-                <ryu-empty :empty="isEmptyGroup">
-                    <div v-for="group in groups">
+                <ryu-empty :empty="whichIsEmpty">
+                    <div v-for="group in groups" v-if="panel" class="wrapper">
                         <el-card shadow="hover">
                             <template #header>
-                                <div class="flex-between">
-                                    <div>
-                                        {{ group.title }}
-                                    </div>
-                                    <div>
-                                        <wtu-booster
-                                            size="2.3em"
-                                            active-size="2.3em"
-                                            class="booster"
-                                            v-for="(booster, index) in boosters"
-                                            :key="index"
-                                            :src="
-                                                group.booster[booster.en]
-                                                    ? booster.valid
-                                                    : booster.invalid
-                                            "
-                                            :active="
-                                                group.booster[booster.en] ===
-                                                BOOSTER_STATUS.ACTIVE
-                                            "
-                                        />
-                                    </div>
+                                <wtu-booster
+                                    size="2.3em"
+                                    active-size="2.3em"
+                                    class="booster"
+                                    v-for="(booster, index) in boosters"
+                                    :key="index"
+                                    :src="
+                                        group.booster[booster.en]
+                                            ? booster.valid
+                                            : booster.invalid
+                                    "
+                                    :active="
+                                        group.booster[booster.en] ===
+                                        BOOSTER_STATUS.ACTIVE
+                                    "
+                                />
+                                <div>
+                                    {{ group.title }}
                                 </div>
                             </template>
                             <ryu-empty :empty="group.applications.length === 0">
                                 <el-row>
                                     <el-col
-                                        :span="6"
+                                        :span="4"
                                         v-for="application in group.applications"
                                         class="animate__animated animate__faster"
                                         :class="{
@@ -55,136 +82,160 @@
                                                 !isEmptyGroup,
                                         }"
                                     >
-                                        <div class="flex-col items-center">
-                                            <el-popover
-                                                placement="bottom"
-                                                trigger="hover"
-                                                width="auto"
-                                            >
-                                                <template #reference>
+                                        <el-popover
+                                            placement="bottom"
+                                            trigger="hover"
+                                            width="auto"
+                                        >
+                                            <template #reference>
+                                                <div
+                                                    class="flex-col justify-center items-center"
+                                                >
                                                     <div
-                                                        class="flex-col justify-center items-center"
+                                                        class="pt-5px pb-5px font-size-sm color-gray"
                                                     >
-                                                        <wtu-warframe
-                                                            :class="{
-                                                                active: isSeleted(
-                                                                    application
-                                                                        .from
-                                                                        .uuid
-                                                                ),
-                                                            }"
-                                                            @mouseenter="
-                                                                toggleSelect(
-                                                                    application
-                                                                        .from
-                                                                        .uuid,
-                                                                    application
-                                                                )
-                                                            "
-                                                            @mouseleave="
-                                                                toggleSelect(
-                                                                    application
-                                                                        .from
-                                                                        .uuid,
-                                                                    application
-                                                                )
-                                                            "
-                                                            :modelValue="
-                                                                application
-                                                                    .build
-                                                                    .warframe
-                                                            "
-                                                            :showName="false"
-                                                        />
-                                                        <div class="options">
-                                                            <el-button
-                                                                :type="
-                                                                    application.status ===
-                                                                    APPLICATION_STATUS.accepted
-                                                                        ? 'success'
-                                                                        : 'default'
-                                                                "
-                                                                size="small"
-                                                                @click="
-                                                                    invite(
-                                                                        application
-                                                                    ),
-                                                                        (application.status =
-                                                                            APPLICATION_STATUS.accepted as keyof typeof APPLICATION_STATUS)
-                                                                "
-                                                                ><div
-                                                                    class="i-ep:check"
-                                                                ></div> </el-button
-                                                            ><el-button
-                                                                size="small"
-                                                                :type="
-                                                                    application.status ===
-                                                                    APPLICATION_STATUS.rejected
-                                                                        ? 'info'
-                                                                        : 'default'
-                                                                "
-                                                                @click="
-                                                                    rejectApplication(
-                                                                        application
-                                                                    ),
-                                                                        (application.status =
-                                                                            APPLICATION_STATUS.rejected as keyof typeof APPLICATION_STATUS)
-                                                                "
-                                                            >
-                                                                <div
-                                                                    class="i-ep:close"
-                                                                ></div
-                                                            ></el-button>
-                                                        </div>
-                                                    </div>
-                                                </template>
-                                                <div class="flex-col">
-                                                    <div
-                                                        class="flex-between items-center"
-                                                    >
-                                                        <div
-                                                            class="select-none text-size-[1.1em] font-bold cursor-pointer hover-color-blue"
-                                                        >
-                                                            {{
-                                                                application.from
-                                                                    .name
-                                                            }}
-                                                        </div>
-
-                                                        <wtu-focus
-                                                            :name="
-                                                                application
-                                                                    .build.focus
-                                                            "
-                                                            size="2em"
-                                                        />
-                                                    </div>
-                                                    <div class="pt-5px pb-5px">
                                                         {{
                                                             application.from
                                                                 .accelerator
                                                         }}
                                                     </div>
-                                                    <wtu-booster-list
-                                                        :booster="
+                                                    <wtu-warframe
+                                                        :class="{
+                                                            active: isSeleted(
+                                                                application.from
+                                                                    .uuid
+                                                            ),
+                                                        }"
+                                                        @mouseenter="
+                                                            toggleSelect(
+                                                                application.from
+                                                                    .uuid,
+                                                                application
+                                                            )
+                                                        "
+                                                        @mouseleave="
+                                                            toggleSelect(
+                                                                application.from
+                                                                    .uuid,
+                                                                application
+                                                            )
+                                                        "
+                                                        :modelValue="
+                                                            application.build
+                                                                .warframe
+                                                        "
+                                                        :showName="false"
+                                                    />
+                                                    <div class="options">
+                                                        <el-button
+                                                            :type="
+                                                                application.status ===
+                                                                APPLICATION_STATUS.accepted
+                                                                    ? 'success'
+                                                                    : 'default'
+                                                            "
+                                                            size="small"
+                                                            @click="
+                                                                invite(
+                                                                    application
+                                                                )
+                                                            "
+                                                            ><div
+                                                                class="i-ep:check"
+                                                            ></div> </el-button
+                                                        ><el-button
+                                                            size="small"
+                                                            :type="
+                                                                application.status ===
+                                                                APPLICATION_STATUS.rejected
+                                                                    ? 'info'
+                                                                    : 'default'
+                                                            "
+                                                            @click="
+                                                                rejectApplication(
+                                                                    application
+                                                                )
+                                                            "
+                                                        >
+                                                            <div
+                                                                class="i-ep:close"
+                                                            ></div
+                                                        ></el-button>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <div class="flex-col">
+                                                <div
+                                                    class="flex-between items-center"
+                                                >
+                                                    <div
+                                                        class="select-none text-size-[1.1em] font-bold cursor-pointer hover-color-blue"
+                                                    >
+                                                        {{
                                                             application.from
-                                                                .booster
+                                                                .name
+                                                        }}
+                                                    </div>
+
+                                                    <wtu-focus
+                                                        :name="
+                                                            application.build
+                                                                .focus
                                                         "
                                                         size="2em"
-                                                        active-size="2em"
                                                     />
                                                 </div>
-                                            </el-popover>
-                                        </div>
+                                                <wtu-booster-list
+                                                    :booster="
+                                                        application.from.booster
+                                                    "
+                                                    size="2em"
+                                                    active-size="2em"
+                                                />
+                                            </div>
+                                        </el-popover>
                                     </el-col>
                                 </el-row>
                             </ryu-empty>
                             <ryu-clipboard
                                 v-for="item in selected"
                                 :content="item.name"
+                                prefix="/invite"
+                                :ref="(el:any)=> el && el.copy()"
+                            >
+                            </ryu-clipboard>
+                        </el-card>
+                    </div>
+                    <div v-for="result in resultList" v-else class="wrapper">
+                        <el-card shadow="hover">
+                            <el-row>
+                                <el-col :span="23">{{
+                                    result.team.title
+                                }}</el-col>
+                                <el-col :span="1">
+                                    <el-tooltip content="已接受">
+                                        <ryu-result-icon
+                                            v-if="accepted(result.status)"
+                                            class="accepted"
+                                        >
+                                            <span class="i-ep:check c-p"></span>
+                                        </ryu-result-icon>
+                                    </el-tooltip>
+                                    <el-tooltip content="已拒绝">
+                                        <ryu-result-icon
+                                            v-if="rejected(result.status)"
+                                            class="rejected"
+                                        >
+                                            <span class="i-ep:close c-p"></span>
+                                        </ryu-result-icon>
+                                    </el-tooltip>
+                                </el-col>
+                            </el-row>
+                            <ryu-clipboard
+                                v-if="accepted(result.status)"
+                                :content="result.receiver"
                                 prefix="/join"
                                 :ref="(el:any)=> el && el.copy()"
-                                @copied="broadcastInvite(group, item.uuid)"
                             >
                             </ryu-clipboard>
                         </el-card>
@@ -194,7 +245,13 @@
             <template #footer>
                 <div class="flex-between">
                     <ryu-sponsor />
-                    <el-button @click="_teamStore.clearApplicationGroup()">
+                    <el-button
+                        @click="
+                            panel
+                                ? _teamStore.clearApplicationGroup()
+                                : _teamStore.clearResultList()
+                        "
+                    >
                         清空
                     </el-button>
                 </div>
@@ -209,23 +266,61 @@ import { layoutStore, teamStore } from '@/store'
 import { boosters } from '@/composables/booster'
 import { BOOSTER_STATUS, APPLICATION_STATUS } from '@/composables/enums'
 import { UserBooster } from '@/composables/user'
+import { ApplicationResult } from '@api/team'
+import { authStore } from '@/store'
+
+const accepted = (type: string) => {
+    return type === APPLICATION_STATUS.accepted
+}
+
+const rejected = (type: string) => {
+    return type === APPLICATION_STATUS.rejected
+}
+
 const _layoutStore = layoutStore()
+const _authStore = authStore()
+
+const panel = computed(() => {
+    return _teamStore.getPanel()
+})
+
 const _teamStore = teamStore()
+
 const visible = ref<boolean>(false)
+
 const loading = _teamStore.getApplicationGroupLoading()
+
 const groups: ComputedRef<Array<ApplicationGroup>> = computed(() => {
     return _teamStore.getApplicationGroups()
 })
+
 const groupLength = computed(() => groups.value.length)
+
 const isEmptyGroup = computed(() => groupLength.value === 0)
+
 interface dsdsd {
     uuid: string
     name: string
 }
+
 const selected = ref<dsdsd[]>([])
+
+const whichIsEmpty = computed(() => {
+    return panel.value ? isEmptyGroup.value : isEmptyResult.value
+})
+
+const lengthInTotal = computed(() => {
+    return groupLength.value + resultLength.value
+})
+
+const bothEmpty = computed(() => {
+    return isEmptyGroup.value && isEmptyResult.value
+})
+
 const isSeleted = (uuid: string): boolean => {
     return selected.value.some((item) => item.uuid === uuid)
 }
+
 const toggleSelect = (from: string, application: ApplicationDTO) => {
     isSeleted(from) ? removeBooster(application) : addBooster(application)
 }
@@ -277,33 +372,71 @@ const invite = (application: ApplicationDTO) => {
             name: name,
         })
     }
+    application.status =
+        APPLICATION_STATUS.accepted as keyof typeof APPLICATION_STATUS
+    application.receiver = _authStore.getName()
+    ApplicationResult(application)
 }
+
 const rejectApplication = (application: ApplicationDTO) => {
-    let uuid = application.team.uuid
     let name = application.from.name
     let from = application.from.uuid
     selected.value.splice(selected.value.indexOf({ uuid: from, name: name }), 1)
-    _teamStore.removeApplication(uuid, application)
+    _teamStore.removeApplication(application)
+    if (application.status === APPLICATION_STATUS.accepted) {
+        return
+    }
+    application.status =
+        APPLICATION_STATUS.rejected as keyof typeof APPLICATION_STATUS
+    application.receiver = _authStore.getName()
+    ApplicationResult(application)
 }
-const broadcastInvite = (ApplicationGroup: ApplicationGroup, uuid: string) => {
-    console.log(ApplicationGroup, uuid)
-}
+
+const resultList: ComputedRef<Array<ApplicationDTO>> = computed(() => {
+    return _teamStore.getApplicationResultList()
+})
+
+const resultLength: ComputedRef<number> = computed(
+    () => resultList.value.length
+)
+
+const isEmptyResult: ComputedRef<boolean> = computed(
+    () => resultLength.value === 0
+)
 </script>
 
 <style lang="scss" scoped>
-.active {
-    transform: scale(1.05);
-
-    &::after {
-        content: '✔';
-        position: absolute;
-        top: -10px;
-        right: 0;
-        margin: 0;
-        padding: 0;
-        font-size: 1.3em;
-        color: var(--el-color-primary);
+.panels {
+    .option {
+        cursor: pointer;
     }
+    .option.active {
+        color: var(--el-color-primary);
+        &:hover {
+            color: var(--el-color-primary);
+        }
+    }
+    .option.inactive {
+        color: var(--el-color-secondary);
+        &:hover {
+            color: var(--el-color-primary);
+        }
+    }
+}
+
+.wrapper {
+    .accepted {
+        background-color: var(--el-color-success);
+        color: var(--el-color-white);
+    }
+    .rejected {
+        background-color: var(--el-color-danger);
+        color: var(--el-color-white);
+    }
+}
+
+.wrapper:nth-child(n + 2) {
+    margin-bottom: 10px;
 }
 
 .options > * {

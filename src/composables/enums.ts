@@ -72,6 +72,8 @@ export const WSS_MESSAGE_TYPE = {
     REMOVE_TEAM: 3,
     TOGGLE_STATUS: 4,
     JOIN: 5,
+    JOIN_ACCEPT: 6,
+    JOIN_REJECT: 7,
 }
 
 export const LAYOUT_ENUM = {

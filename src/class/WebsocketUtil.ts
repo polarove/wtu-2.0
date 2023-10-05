@@ -113,7 +113,7 @@ export class websocket {
                     let group = _teamStore.findGroupByUUID(uuid)
                     if (requires(group)) {
                         // 添加申请
-                        _teamStore.addApplication(uuid, application)
+                        _teamStore.addApplication(application)
                     } else {
                         // 获得本地用户booster矩阵
                         let matrix = _teamStore.getUserBoosterMatrix(
@@ -133,8 +133,20 @@ export class websocket {
                         _teamStore.addApplicationGroup(newGroup)
 
                         // 添加申请
-                        _teamStore.addApplication(uuid, application)
+                        _teamStore.addApplication(application)
                     }
+                    break
+                case WSS_MESSAGE_TYPE.JOIN_ACCEPT:
+                    let feedback_accept: ApplicationDTO = JSON.parse(
+                        result.data
+                    )
+                    _teamStore.addApplicationResult(feedback_accept)
+                    break
+                case WSS_MESSAGE_TYPE.JOIN_REJECT:
+                    let feedback_reject: ApplicationDTO = JSON.parse(
+                        result.data
+                    )
+                    _teamStore.addApplicationResult(feedback_reject)
                     break
                 default:
                     break
