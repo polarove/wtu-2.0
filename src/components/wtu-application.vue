@@ -437,7 +437,7 @@ const isEmptyResult: ComputedRef<boolean> = computed(
 }
 
 .wrapper:nth-child(n + 2) {
-    margin-bottom: 10px;
+    margin-top: 1em;
 }
 
 .options > * {
