@@ -434,11 +434,11 @@ export const teamStore = defineStore({
             this.applicationResultList.unshift(application)
             window.Notification.requestPermission().then((permission) => {
                 if (permission === 'granted') {
-                    new Notification(application.from.name, {
+                    new Notification(application.receiver.name, {
                         body:
                             application.status === 'accepted'
-                                ? '已接受入队申请'
-                                : '已拒绝入队申请',
+                                ? '已接受入队你的申请'
+                                : '已拒绝入队你的申请',
                         icon: application.receiver.avatar,
                     })
                 } else {
