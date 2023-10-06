@@ -178,8 +178,6 @@ import type {
     TeamVO,
 } from '@/composables/team'
 
-const route = useRoute()
-
 defineProps({
     showChannel: {
         type: Boolean,
@@ -234,13 +232,8 @@ const toggleTeamStatus = async (instance: TeamVO) => {
 }
 
 const removeTeam = async (id: number, server: number, channel: string) => {
-    loading.delete = true
     const result = (await RemoveTeam(id)) as response<string>
     if (result.success) {
-        loading.delete = false
-        if (route.name === 'team') {
-            _teamStore.removeTeam(id)
-        }
         BroadcastDeleteTeam({
             teamId: id,
             server: server,
@@ -248,7 +241,6 @@ const removeTeam = async (id: number, server: number, channel: string) => {
         })
         return
     } else {
-        loading.delete = false
         ElMessage.error(result.message)
     }
 }

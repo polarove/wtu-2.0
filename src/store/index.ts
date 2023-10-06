@@ -14,7 +14,12 @@ import type {
     ApplicationGroup,
 } from '@composables/team'
 import { GetTeamList } from '@api/team'
-import { BOOSTER_STATUS, LAYOUT_ENUM, SERVER_TYPE } from '@/composables/enums'
+import {
+    BOOSTER_STATUS,
+    DELETE_OR_NOT,
+    LAYOUT_ENUM,
+    SERVER_TYPE,
+} from '@/composables/enums'
 import { boosters } from '@/composables/booster'
 import { toRaw } from 'vue'
 
@@ -206,6 +211,9 @@ export const teamStore = defineStore({
                     this.teamListLoading = false
                 })
         },
+        setTeam(TeamVO: Array<TeamVO>) {
+            this.teamPage.records = TeamVO
+        },
         resetPage() {
             this.param.page = 1
             this.isEnd = false
@@ -216,11 +224,12 @@ export const teamStore = defineStore({
         removeTeam(id: number) {
             this.teamPage.records.map((item, index) => {
                 if (item.team.id === id) {
-                    item.team.isDeleted = 1
+                    item.team.isDeleted = DELETE_OR_NOT.DELETE
+                    setTimeout(() => {
+                        this.teamPage.records.splice(index, 1)
+                    }, 100)
+                    return
                 }
-                setTimeout(() => {
-                    this.teamPage.records.splice(index, 1)
-                }, 200)
             })
         },
         toggleTeamStatus(id: number, status: number) {
@@ -241,9 +250,6 @@ export const teamStore = defineStore({
         },
         setParam(param: TeamListParams) {
             this.param = param
-        },
-        setTeam(TeamVO: Array<TeamVO>) {
-            this.teamPage.records = TeamVO
         },
         getTeam(): Array<TeamVO> {
             return this.teamPage.records

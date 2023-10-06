@@ -1,6 +1,7 @@
 export interface I_sponsor {
     level: string
     sponsros: sponsor[]
+    range?: string
 }
 
 export interface sponsor {
@@ -31,7 +32,13 @@ export const sponsors: I_sponsor[] = [
     },
     {
         level: sponsor_level.PLATINUM,
-        sponsros: [],
+        sponsros: [
+            {
+                name: 'Onesade',
+                avatar: 'https://www.neorae.cn/data/img/sponsor/2023-10-06/Onesade.jpg',
+                amount: 100,
+            },
+        ],
     },
     {
         level: sponsor_level.GOLD,

@@ -161,7 +161,7 @@ import { CreateTeam, GetTeamById, BroadcastTeam } from '@api/team'
 import type { response } from '@/composables/types'
 import { SERVER_CODE } from '@/composables/enums'
 
-const routes = useRoute()
+const route = useRoute()
 const _authStore = authStore()
 
 const createTeamFormRef = ref<FormInstance>()
@@ -176,7 +176,7 @@ const createTeamFormRules = reactive<FormRules>({
 })
 const createTeamForm = reactive<TeamDTO>({
     title: '未修改的标题',
-    server: _authStore.getServer(),
+    server: 1,
     channel: null,
     isPublic: true,
     requirements: [],
@@ -298,7 +298,7 @@ const title = computed(() => {
 
 const toggleCreateTeamDrawer = (index: number) => {
     teamDrawer.visible = true
-    teamDrawer.title = '在 ' + routes.meta.forehead + ' 招募队友'
+    teamDrawer.title = '在 ' + route.meta.forehead + ' 招募队友'
     teamDrawer.from = index
 }
 
@@ -324,11 +324,10 @@ const publishTeam = (formEl: FormInstance | undefined) => {
             loading.value = false
             return
         }
-        createTeamForm.channel = routes.name
-        console.log(createTeamForm)
 
         if (checkDTO()) {
             createTeam()
+            loading.value = false
         } else {
             ElNotification.error({
                 position: 'bottom-right',
@@ -350,6 +349,9 @@ const checkDTO = (): boolean => {
 }
 
 const createTeam = () => {
+    createTeamForm.channel = route.name
+    createTeamForm.server = _authStore.getServer()
+
     CreateTeam(createTeamForm)
         .then(async (res: any) => {
             if (res.success) {
