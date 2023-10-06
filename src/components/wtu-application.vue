@@ -376,6 +376,7 @@ const invite = (application: ApplicationDTO) => {
     application.status =
         APPLICATION_STATUS.accepted as keyof typeof APPLICATION_STATUS
     application.receiver.name = _authStore.getName()
+    addBooster(application)
     ApplicationResult(application)
 }
 
@@ -385,6 +386,7 @@ const rejectApplication = (application: ApplicationDTO) => {
     selected.value.splice(selected.value.indexOf({ uuid: from, name: name }), 1)
     _teamStore.removeApplication(application)
     if (application.status === APPLICATION_STATUS.accepted) {
+        removeBooster(application)
         return
     }
     application.status =
