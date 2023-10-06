@@ -1,81 +1,72 @@
 <template>
-    <div class="flex-center">
-        <div class="flex-col items-center">
-            <div class="lt-lg:display-none">
-                <div
-                    class="font-bold"
-                    v-if="isNotBlank(member.user.name) && nameVisible"
-                >
-                    {{ member.user.name }}
-                </div>
-                <div v-else class="color-gray">.....</div>
-            </div>
-            <el-popover width="auto">
-                <template #reference>
-                    <wtu-warframe
-                        :class="{
-                            unknown: user_unknown(member.user.onlineStatus),
-                            offline: user_offline(member.user.onlineStatus),
-                            online: user_online(member.user.onlineStatus),
-                            ingame: user_ingame(member.user.onlineStatus),
-                        }"
-                        :modelValue="member.warframe"
-                        width="60px"
-                        class="flex-center b-rounded ma-1"
-                        :showName="false"
-                        @click="$emit('join')"
-                    />
-                </template>
-                <div class="flex">
-                    <div class="equipments">
-                        <div class="lg:display-none">
-                            <div
-                                class="font-bold"
-                                v-if="
-                                    isNotBlank(member.user.name) && nameVisible
-                                "
-                            >
-                                {{ member.user.name }}
-                            </div>
-                            <div v-else class="color-gray">.....</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="text-size-[1.2em]">
-                                {{
-                                    _authStore.getServer()
-                                        ? member.warframe.en
-                                        : member.warframe.cn
-                                }}
-                            </div>
-                            <wtu-focus
-                                :name="member.focus"
-                                size="2em"
-                                simplified
-                            />
-                        </div>
-                        <wtu-booster-list
-                            v-if="
-                                member.user.booster !== null &&
-                                member.user.booster !== undefined
-                            "
-                            :booster="member.user.booster"
-                            size="2.4em"
-                            activeSize="2.4em"
-                            :direction="DIRECTION_ENUM.horizental"
-                        />
-                    </div>
-                </div>
-            </el-popover>
-
-            <div class="font-size-[0.78em] color-gray mt-0.25em mb-0.25em">
-                <span v-if="isHost">主机:</span>
-                {{ member.user.accelerator }}
-            </div>
+    <div class="flex-col items-center justify-center">
+        <div class="lt-lg:display-none">
             <div
-                class="i-ep:loading animation-rotate"
-                v-if="localStatus === APPLICATION_STATUS.pending"
-            ></div>
+                class="font-bold"
+                v-if="isNotBlank(member.user.name) && nameVisible"
+            >
+                {{ member.user.name }}
+            </div>
+            <div v-else class="color-gray">.....</div>
         </div>
+        <el-popover width="auto">
+            <template #reference>
+                <wtu-warframe
+                    :class="{
+                        unknown: user_unknown(member.user.onlineStatus),
+                        offline: user_offline(member.user.onlineStatus),
+                        online: user_online(member.user.onlineStatus),
+                        ingame: user_ingame(member.user.onlineStatus),
+                    }"
+                    :modelValue="member.warframe"
+                    width="60px"
+                    class="flex-center b-rounded ma-1"
+                    :showName="false"
+                    @click="$emit('join')"
+                />
+            </template>
+            <div class="flex">
+                <div class="equipments">
+                    <div class="lg:display-none">
+                        <div
+                            class="font-bold"
+                            v-if="isNotBlank(member.user.name) && nameVisible"
+                        >
+                            {{ member.user.name }}
+                        </div>
+                        <div v-else class="color-gray">.....</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="text-size-[1.2em]">
+                            {{
+                                _authStore.getServer()
+                                    ? member.warframe.en
+                                    : member.warframe.cn
+                            }}
+                        </div>
+                        <wtu-focus :name="member.focus" size="2em" simplified />
+                    </div>
+                    <wtu-booster-list
+                        v-if="
+                            member.user.booster !== null &&
+                            member.user.booster !== undefined
+                        "
+                        :booster="member.user.booster"
+                        size="2.4em"
+                        activeSize="2.4em"
+                        :direction="DIRECTION_ENUM.horizental"
+                    />
+                </div>
+            </div>
+        </el-popover>
+        <div class="font-size-[0.78em] color-gray mt-0.25em mb-0.25em">
+            <span v-if="isHost" class="lt-lg:display-none">主机:</span>
+            {{ member.user.accelerator }}
+        </div>
+        <div
+            class="i-ep:loading animation-rotate"
+            v-if="localStatus === APPLICATION_STATUS.pending"
+        ></div>
     </div>
 </template>
 
