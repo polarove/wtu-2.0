@@ -127,6 +127,28 @@ const autoRefresh = (interval: number) => {
     }, interval)
 }
 
+const message = computed(() => {
+    return _layoutStore.getMode() === LAYOUT_ENUM.default
+        ? '双击上方昵称可以进行修改哦~方便大家加入你的队伍'
+        : '点击头像进入个人空间，双击昵称可以进行修改哦，方便大家加入你的队伍'
+})
+
+const notified = ref<boolean>(false)
+const isDefaultName = () => {
+    if (isDefualtUserName(_authStore.getName()) && !notified.value) {
+        notified.value = true
+        ElNotification.warning({
+            title: message.value,
+            duration: 0,
+            position: 'bottom-right',
+            showClose: true,
+        })
+    }
+    if (isNotDefualtUserName(_authStore.getName())) {
+        ElNotification.closeAll()
+    }
+}
+
 // component life cycle
 onMounted(() => {
     // event listener
@@ -135,6 +157,7 @@ onMounted(() => {
     _teamStore.initTeamList()
     fuckyoujavascript()
     autoRefresh(1000 * 60 * 3)
+    isDefaultName()
 })
 
 //component life cycle
@@ -147,6 +170,7 @@ onBeforeRouteUpdate((to, from) => {
     disconnect(server, from.name, () => {
         joinChannel(server, to.name)
     })
+    isDefaultName()
 })
 
 onBeforeRouteLeave((_, from) => {
@@ -158,28 +182,6 @@ onbeforeunload = () => {
     disconnect(_authStore.getServer(), route.name)
     wss.close()
 }
-
-const notified = ref<boolean>(false)
-const message = computed(() => {
-    return _layoutStore.getMode() === LAYOUT_ENUM.default
-        ? '双击上方昵称可以进行修改哦~方便大家加入你的队伍'
-        : '点击头像进入个人空间，双击昵称可以进行修改哦，方便大家加入你的队伍'
-})
-
-watchEffect(() => {
-    if (isDefualtUserName(_authStore.getName()) && !notified.value) {
-        notified.value = true
-        ElNotification.warning({
-            title: message.value,
-            duration: 0,
-            position: 'bottom-right',
-            showClose: false,
-        })
-    }
-    if (isNotDefualtUserName(_authStore.getName())) {
-        ElNotification.closeAll()
-    }
-})
 </script>
 
 <style lang="scss" scoped>
