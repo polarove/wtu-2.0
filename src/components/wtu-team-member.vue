@@ -67,6 +67,14 @@
             class="i-ep:loading animation-rotate"
             v-if="localStatus === APPLICATION_STATUS.pending"
         ></div>
+        <div
+            class="i-ep:check color-blue"
+            v-if="localStatus === APPLICATION_STATUS.accepted"
+        ></div>
+        <div
+            class="i-ep:close color-red"
+            v-if="localStatus === APPLICATION_STATUS.rejected"
+        ></div>
     </div>
 </template>
 
@@ -74,11 +82,9 @@
 import type { TeamMemberBO } from '@/composables/team'
 import { authStore } from '@/store'
 import { isNotBlank } from '@/util/StrUtil'
-import {
-    ONLINE_STATUS,
-    DIRECTION_ENUM,
-    APPLICATION_STATUS,
-} from '@/composables/enums'
+import { ONLINE_STATUS, DIRECTION_ENUM } from '@/composables/enums'
+import { APPLICATION_STATUS } from '@/composables/wss'
+
 const _authStore = authStore()
 defineProps({
     member: {

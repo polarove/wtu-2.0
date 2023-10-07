@@ -102,14 +102,17 @@ watchEffect(() => {
         case WSS_MESSAGE_TYPE.CONNECTION:
             let feedback: WSS_CONNECTION_FEEDBACK = JSON.parse(result.data)
             clients.value = feedback.clients
+            data.value = null
             break
         case WSS_MESSAGE_TYPE.ADD_TEAM:
             let TeamVO: TeamVO = JSON.parse(result.data)
             _teamStore.addTeam(TeamVO)
+            data.value = null
             break
         case WSS_MESSAGE_TYPE.REMOVE_TEAM:
             let teamId: number = JSON.parse(result.data)
             _teamStore.removeTeam(teamId)
+            data.value = null
             break
         case WSS_MESSAGE_TYPE.TOGGLE_STATUS:
             let TeamVO_: TeamVO = JSON.parse(result.data)
@@ -120,9 +123,11 @@ watchEffect(() => {
             } else {
                 _teamStore.removeTeam(TeamVO_.team.id)
             }
+            data.value = null
             break
         case WSS_MESSAGE_TYPE.JOIN:
             let application: ApplicationDTO = JSON.parse(result.data)
+
             let uuid = application.team.uuid
             let group = _teamStore.findGroupByUUID(uuid)
             if (requires(group)) {
@@ -146,14 +151,17 @@ watchEffect(() => {
                 // 添加申请
                 _teamStore.addApplication(application)
             }
+            data.value = null
             break
         case WSS_MESSAGE_TYPE.JOIN_ACCEPT:
             let feedback_accept: ApplicationDTO = JSON.parse(result.data)
             _teamStore.addApplicationResult(feedback_accept)
+            data.value = null
             break
         case WSS_MESSAGE_TYPE.JOIN_REJECT:
             let feedback_reject: ApplicationDTO = JSON.parse(result.data)
             _teamStore.addApplicationResult(feedback_reject)
+            data.value = null
             break
         default:
             break

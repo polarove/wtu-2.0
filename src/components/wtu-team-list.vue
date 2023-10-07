@@ -170,7 +170,9 @@ import {
 import { teamStore, authStore } from '@/store'
 import { isDark } from '@composables/theme'
 import { TimePassed } from '@util/DateUtil'
-import { DELETE_OR_NOT, APPLICATION_STATUS } from '@/composables/enums'
+import { DELETE_OR_NOT } from '@/composables/enums'
+import { APPLICATION_STATUS } from '@/composables/wss'
+
 import type {
     TeamBO,
     TeamMemberBO,
@@ -294,7 +296,7 @@ const prepareJoinTeamParma = (team: TeamBO, member: TeamMemberBO): boolean => {
         name: member.user.name,
         avatar: member.user.avatar,
     }
-    applicationDTO.status = 'pending'
+    applicationDTO.status = APPLICATION_STATUS.pending
     applicationDTO.from = _authStore.getUser()
     applicationDTO.team = {
         ...team,
@@ -309,6 +311,7 @@ const prepareJoinTeamParma = (team: TeamBO, member: TeamMemberBO): boolean => {
     }
     return true
 }
+
 const aqua = (team: TeamBO, member: TeamMemberBO) => {
     if (
         member.leader === 1 ||
@@ -317,17 +320,9 @@ const aqua = (team: TeamBO, member: TeamMemberBO) => {
     ) {
         return
     }
-    teamList.value.map((item) => {
-        if (item.team.id === team.id) {
-            item.members.map((build) => {
-                if (build.id === member.id) {
-                    build.localStatus = APPLICATION_STATUS.pending
-                }
-            })
-        }
-    })
     prepareJoinTeamParma(team, member)
     JoinTeam(applicationDTO)
+    _teamStore.startPending(team.uuid, member.id)
 }
 </script>
 

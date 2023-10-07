@@ -108,16 +108,12 @@
                                                             ),
                                                         }"
                                                         @mouseenter="
-                                                            toggleSelect(
-                                                                application.from
-                                                                    .uuid,
+                                                            addBooster(
                                                                 application
                                                             )
                                                         "
                                                         @mouseleave="
-                                                            toggleSelect(
-                                                                application.from
-                                                                    .uuid,
+                                                            removeBooster(
                                                                 application
                                                             )
                                                         "
@@ -141,10 +137,12 @@
                                                                     application
                                                                 )
                                                             "
-                                                            ><div
+                                                        >
+                                                            <div
                                                                 class="i-ep:check"
-                                                            ></div> </el-button
-                                                        ><el-button
+                                                            ></div>
+                                                        </el-button>
+                                                        <el-button
                                                             size="small"
                                                             :type="
                                                                 application.status ===
@@ -160,8 +158,8 @@
                                                         >
                                                             <div
                                                                 class="i-ep:close"
-                                                            ></div
-                                                        ></el-button>
+                                                            ></div>
+                                                        </el-button>
                                                     </div>
                                                 </div>
                                             </template>
@@ -170,6 +168,14 @@
                                                     class="flex-between items-center"
                                                 >
                                                     <div
+                                                        @click="
+                                                            inviteMessage(
+                                                                application.team
+                                                                    .title,
+                                                                application.from
+                                                                    .name
+                                                            )
+                                                        "
                                                         class="select-none text-size-[1.1em] font-bold cursor-pointer hover-color-blue"
                                                     >
                                                         {{
@@ -198,13 +204,6 @@
                                     </el-col>
                                 </el-row>
                             </ryu-empty>
-                            <ryu-clipboard
-                                v-for="item in selected"
-                                :content="item.name"
-                                prefix="/invite"
-                                :ref="(el:any)=> el && el.copy()"
-                            >
-                            </ryu-clipboard>
                         </el-card>
                     </div>
                     <div v-for="result in resultList" v-else class="wrapper">
@@ -236,7 +235,7 @@
                                 v-if="accepted(result.status)"
                                 :content="result.receiver.name"
                                 prefix="/join"
-                                :ref="(el:any)=> el && el.copy()"
+                                :ref="(el: any) => el && el.copy()"
                             >
                             </ryu-clipboard>
                         </el-card>
@@ -265,7 +264,8 @@
 import type { ApplicationDTO, ApplicationGroup } from '@/composables/team'
 import { layoutStore, teamStore } from '@/store'
 import { boosters } from '@/composables/booster'
-import { BOOSTER_STATUS, APPLICATION_STATUS } from '@/composables/enums'
+import { BOOSTER_STATUS } from '@/composables/enums'
+import { APPLICATION_STATUS } from '@composables/wss'
 import { UserBooster } from '@/composables/user'
 import { ApplicationResult } from '@api/team'
 import { authStore } from '@/store'
@@ -304,7 +304,7 @@ interface dsdsd {
     name: string
 }
 
-const selected = ref<dsdsd[]>([])
+const selected = reactive<dsdsd[]>([])
 
 const whichIsEmpty = computed(() => {
     return panel.value ? isEmptyGroup.value : isEmptyResult.value
@@ -319,80 +319,56 @@ const bothEmpty = computed(() => {
 })
 
 const isSeleted = (uuid: string): boolean => {
-    return selected.value.some((item) => item.uuid === uuid)
-}
-
-const toggleSelect = (from: string, application: ApplicationDTO) => {
-    isSeleted(from) ? removeBooster(application) : addBooster(application)
+    return selected.some((item) => item.uuid === uuid)
 }
 
 const addBooster = (application: ApplicationDTO) => {
+    if (application.status === APPLICATION_STATUS.rejected) return
     let uuid = application.team.uuid
-    let from = application.from.uuid
-    if (isSeleted(from)) {
-        return
-    }
-    let name: string = application.from.name
     let booster: UserBooster = application.from.booster
     _teamStore.addMatrixColumnForGroup(uuid, booster, (result: boolean) => {
         if (result) {
             _teamStore.updateGroupBooster(uuid)
-            selected.value.push({
-                uuid: from,
-                name: name,
-            })
         }
     })
 }
 
 const removeBooster = (application: ApplicationDTO) => {
     let uuid = application.team.uuid
-    let name = application.from.name
-    let from = application.from.uuid
-    if (!isSeleted(from)) {
-        return
-    }
     let booster: UserBooster = application.from.booster
     _teamStore.removeMatrixColumnForGroup(uuid, booster, (result: boolean) => {
         if (result) {
             _teamStore.updateGroupBooster(uuid)
-            selected.value.splice(
-                selected.value.indexOf({ uuid: from, name: name }),
-                1
-            )
         }
     })
 }
 
 const invite = (application: ApplicationDTO) => {
-    let name = application.from.name
-    let from = application.from.uuid
-    if (!isSeleted(from)) {
-        selected.value.push({
-            uuid: from,
-            name: name,
-        })
+    if (application.status === APPLICATION_STATUS.pending) {
+        application.status =
+            APPLICATION_STATUS.accepted as keyof typeof APPLICATION_STATUS
+        application.receiver.name = _authStore.getName()
+        addBooster(application)
+        ApplicationResult(application)
+        inviteMessage(application.team.title, application.from.name)
+        _teamStore.resolvedAsAccepted(
+            application.team.uuid,
+            application.build.id
+        )
+        return
     }
-    application.status =
-        APPLICATION_STATUS.accepted as keyof typeof APPLICATION_STATUS
-    application.receiver.name = _authStore.getName()
-    addBooster(application)
-    ApplicationResult(application)
 }
 
 const rejectApplication = (application: ApplicationDTO) => {
-    let name = application.from.name
-    let from = application.from.uuid
-    selected.value.splice(selected.value.indexOf({ uuid: from, name: name }), 1)
-    _teamStore.removeApplication(application)
-    if (application.status === APPLICATION_STATUS.accepted) {
-        removeBooster(application)
-        return
+    if (application.status === APPLICATION_STATUS.pending) {
+        application.status =
+            APPLICATION_STATUS.rejected as keyof typeof APPLICATION_STATUS
+        application.receiver.name = _authStore.getName()
+        application.receiver.avatar = _authStore.getAvatar()
+        ApplicationResult(application)
     }
-    application.status =
-        APPLICATION_STATUS.rejected as keyof typeof APPLICATION_STATUS
-    application.receiver.name = _authStore.getName()
-    ApplicationResult(application)
+    _teamStore.resolvedAsRejected(application.team.uuid, application.build.id)
+    _teamStore.removeApplication(application)
 }
 
 const resultList: ComputedRef<Array<ApplicationDTO>> = computed(() => {
@@ -406,6 +382,18 @@ const resultLength: ComputedRef<number> = computed(
 const isEmptyResult: ComputedRef<boolean> = computed(
     () => resultLength.value === 0
 )
+
+const inviteMessage = (title: string, name: string) => {
+    navigator.clipboard.writeText(
+        '/w ' +
+            name +
+            ' ' +
+            title +
+            ', ' +
+            '我希望你加入我的队伍' +
+            ' (warframe.team.up)'
+    )
+}
 </script>
 
 <style lang="scss" scoped>
@@ -413,14 +401,18 @@ const isEmptyResult: ComputedRef<boolean> = computed(
     .option {
         cursor: pointer;
     }
+
     .option.active {
         color: var(--el-color-primary);
+
         &:hover {
             color: var(--el-color-primary);
         }
     }
+
     .option.inactive {
         color: var(--el-color-secondary);
+
         &:hover {
             color: var(--el-color-primary);
         }
@@ -432,6 +424,7 @@ const isEmptyResult: ComputedRef<boolean> = computed(
         background-color: var(--el-color-success);
         color: var(--el-color-white);
     }
+
     .rejected {
         background-color: var(--el-color-danger);
         color: var(--el-color-white);

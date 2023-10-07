@@ -28,3 +28,10 @@ export enum WSS_READY_STATE {
     CLOSING = 2,
     CLOSED = 3,
 }
+
+export enum APPLICATION_STATUS {
+    static = 'static',
+    pending = 'pending',
+    accepted = 'accepted',
+    rejected = 'rejected',
+}

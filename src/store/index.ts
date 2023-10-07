@@ -22,11 +22,21 @@ import {
 } from '@/composables/enums'
 import { boosters } from '@/composables/booster'
 import { toRaw } from 'vue'
+import { useWebNotification } from '@vueuse/core'
+import type { UseWebNotificationOptions } from '@vueuse/core'
+import { APPLICATION_STATUS } from '@/composables/wss'
 
 const names = boosters.map((value) => {
     return value.en
 })
-
+const notification: UseWebNotificationOptions = {
+    title: '',
+    body: '',
+    dir: 'auto',
+    lang: 'zh',
+    renotify: false,
+}
+const { isSupported, show } = useWebNotification(notification)
 interface xhr_response {
     config: any
     data: response<any>
@@ -291,6 +301,39 @@ export const teamStore = defineStore({
                     callback()
                 })
         },
+        startPending(team_uuid: string, memberId: number) {
+            this.getTeam().map((item) => {
+                if (item.team.uuid === team_uuid) {
+                    item.members.map((build) => {
+                        if (build.id === memberId) {
+                            build.localStatus = APPLICATION_STATUS.pending
+                        }
+                    })
+                }
+            })
+        },
+        resolvedAsAccepted(team_uuid: string, memberId: number) {
+            this.getTeam().map((item) => {
+                if (item.team.uuid === team_uuid) {
+                    item.members.map((build) => {
+                        if (build.id === memberId) {
+                            build.localStatus = APPLICATION_STATUS.accepted
+                        }
+                    })
+                }
+            })
+        },
+        resolvedAsRejected(team_uuid: string, memberId: number) {
+            this.getTeam().map((item) => {
+                if (item.team.uuid === team_uuid) {
+                    item.members.map((build) => {
+                        if (build.id === memberId) {
+                            build.localStatus = APPLICATION_STATUS.rejected
+                        }
+                    })
+                }
+            })
+        },
         getApplicationGroupLoading(): boolean {
             return this.applicationGroupLoading
         },
@@ -345,19 +388,11 @@ export const teamStore = defineStore({
                 !this.containsApplication(application.from.uuid, group)
             ) {
                 group.applications.push(application)
-                window.Notification.requestPermission().then((permission) => {
-                    if (permission === 'granted') {
-                        new Notification(
-                            application.from.name + '申请加入你的队伍',
-                            {
-                                body: application.team.title,
-                                icon: application.from.avatar,
-                            }
-                        )
-                    } else {
-                        alert('您已关闭通知, 请在浏览器设置中开启通知')
-                    }
-                })
+                if (isSupported.value) {
+                    this.prepareNotification(application)
+                } else {
+                    alert('您已关闭通知, 请在浏览器设置中开启通知')
+                }
             }
         },
         removeApplication(application: ApplicationDTO): void {
@@ -365,7 +400,11 @@ export const teamStore = defineStore({
             let group = this.findGroupByUUID(uuid)
             if (requires(group)) {
                 let applications = group!.applications
-                applications.splice(applications.indexOf(application), 1)
+                let index = applications.indexOf(application)
+                if (index === -1) {
+                    return
+                }
+                applications.splice(index, 1)
                 this.removeMatrixColumnForGroup(
                     uuid,
                     application.from.booster,
@@ -427,7 +466,6 @@ export const teamStore = defineStore({
                 return booster[value]
             })
         },
-
         containsApplicationResult(uuid: string): boolean {
             return this.applicationResultList.some(
                 (item) => item.team.uuid === uuid
@@ -438,19 +476,11 @@ export const teamStore = defineStore({
                 return
             }
             this.applicationResultList.unshift(application)
-            window.Notification.requestPermission().then((permission) => {
-                if (permission === 'granted') {
-                    new Notification(application.receiver.name, {
-                        body:
-                            application.status === 'accepted'
-                                ? '已接受入队你的申请'
-                                : '已拒绝入队你的申请',
-                        icon: application.receiver.avatar,
-                    })
-                } else {
-                    alert('您已关闭通知, 请在浏览器设置中开启通知')
-                }
-            })
+            if (isSupported.value) {
+                this.prepareNotification(application)
+            } else {
+                alert('您已关闭通知, 请在浏览器设置中开启通知')
+            }
         },
         getApplicationResultList(): Array<ApplicationDTO> {
             return this.applicationResultList
@@ -466,6 +496,43 @@ export const teamStore = defineStore({
                 0,
                 this.applicationResultList.length
             )
+        },
+        prepareNotification(application: ApplicationDTO) {
+            switch (application.status) {
+                case APPLICATION_STATUS.pending:
+                    notification.title = application.from.name
+                    notification.body = '申请加入你的队伍'
+                    notification.icon = application.from.avatar
+                    this.startPending(
+                        application.team.uuid,
+                        application.build.id
+                    )
+                    show()
+                    break
+                case APPLICATION_STATUS.accepted:
+                    notification.title = application.receiver.name
+                    notification.body = '已接受入队你的申请'
+                    notification.icon = application.receiver.avatar
+                    this.resolvedAsAccepted(
+                        application.team.uuid,
+                        application.build.id
+                    )
+                    show()
+                    break
+                case APPLICATION_STATUS.rejected:
+                    notification.title = application.from.name
+                    notification.body = '已拒绝入队你的申请'
+                    notification.icon = application.from.avatar
+                    this.resolvedAsRejected(
+                        application.team.uuid,
+                        application.build.id
+                    )
+                    show()
+                    break
+                default:
+                    console.log('error: unknown application status')
+                    break
+            }
         },
     },
 })

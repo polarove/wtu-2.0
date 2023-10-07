@@ -72,10 +72,3 @@ export enum DIRECTION_ENUM {
     horizental = 1,
     vertical = 2,
 }
-
-export enum APPLICATION_STATUS {
-    static = 'static',
-    pending = 'pending',
-    accepted = 'accepted',
-    rejected = 'rejected',
-}
