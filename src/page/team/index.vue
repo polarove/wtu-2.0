@@ -28,15 +28,8 @@
 </template>
 
 <script setup lang="ts">
-import type {
-    TeamVO,
-    TeamListParams,
-    TeamPage,
-    ApplicationDTO,
-} from '@/composables/team'
+import type { TeamVO, TeamListParams, ApplicationDTO } from '@/composables/team'
 import { teamStore, authStore, layoutStore } from '@/store'
-import { GetTeamList } from '@api/team'
-import type { response } from '@/composables/types'
 import { useWebSocket } from '@vueuse/core'
 import type { RouteRecordName } from 'vue-router'
 import { WSS_ACTION, SERVER_CODE } from '@composables/enums'
@@ -57,7 +50,7 @@ const _teamStore = teamStore()
 const _authStore = authStore()
 const _layoutStore = layoutStore()
 const route = useRoute()
-const TeamParams = reactive<TeamListParams>({
+const TeamListDTO = reactive<TeamListParams>({
     page: 1,
     size: 6,
     server: _authStore.getServer(),
@@ -90,13 +83,11 @@ const wss_address = computed(() => {
 
 const { data, send, close } = useWebSocket(wss_address.value, {
     immediate: true,
-    autoClose: true,
+    autoClose: false,
 })
 
 watchEffect(() => {
     let result: WSS_RESPONSE = JSON.parse(data.value)
-    console.log(result)
-
     if (result === null) {
         return
     }
@@ -258,17 +249,6 @@ watch(
     }
 )
 
-const autoRefresh = (interval: number) => {
-    setInterval(() => {
-        GetTeamList(_teamStore.getParam()).then(
-            (res: response<TeamPage> | any) => {
-                _teamStore.setTeam(res.data.records as Array<TeamVO>)
-            }
-        )
-        console.log('重新获取队伍列表中...')
-    }, interval)
-}
-
 const message = computed(() => {
     return _layoutStore.getMode() === LAYOUT_ENUM.default
         ? '双击上方昵称可以进行修改哦~方便大家加入你的队伍'
@@ -294,19 +274,18 @@ const isDefaultName = () => {
 // component life cycle
 onMounted(() => {
     // event listener
-    TeamParams.channel = route.name
-    _teamStore.setParam(TeamParams)
+    TeamListDTO.channel = route.name
+    _teamStore.setParam(TeamListDTO)
     _teamStore.initTeamList()
     joinChannel(_authStore.getServer(), route.name)
-    autoRefresh(1000 * 60 * 3)
     isDefaultName()
 })
 
 //component life cycle
 onBeforeRouteUpdate((to, from) => {
-    TeamParams.channel = to.name
+    TeamListDTO.channel = to.name
     _teamStore.resetPage()
-    _teamStore.setParam(TeamParams)
+    _teamStore.setParam(TeamListDTO)
     _teamStore.initTeamList()
     switchChannel(from.name, to.name)
     isDefaultName()
@@ -316,6 +295,11 @@ onBeforeRouteLeave((_, from) => {
     leftChannel(_authStore.getServer(), from.name)
     close()
 })
+
+onbeforeunload = () => {
+    leftChannel(_authStore.getServer(), route.name)
+    close()
+}
 </script>
 
 <style lang="scss" scoped>
