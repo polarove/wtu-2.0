@@ -1,7 +1,14 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { RESPONSE_CODE } from '@composables/enums'
+
 import router from '@/router'
 
+export enum RESPONSE_CODE {
+    server_restart = 1,
+    user_not_found = 207,
+    user_not_login = 208,
+    redirect_login = 209,
+    unknown_game_server = 2013,
+}
 export default class request {
     private instance: AxiosInstance | undefined
 

@@ -20,7 +20,6 @@ export enum SERVER_CHAR {
 }
 
 export enum WSS_ACTION {
-    PING = 0,
     CONNECT = 1,
     DISCONNECT = 2,
     MESSAGE = 3,
@@ -45,14 +44,6 @@ export enum DEFAULT {
     name = '一般路过Tenno',
 }
 
-export enum RESPONSE_CODE {
-    server_restart = 1,
-    user_not_found = 207,
-    user_not_login = 208,
-    redirect_login = 209,
-    unknown_game_server = 2013,
-}
-
 export const isDefualtUserName = (name: string): boolean => {
     return name === DEFAULT.name
 }
@@ -66,35 +57,25 @@ export const DIFFICULTY = {
     ORIGIN: false,
 }
 
-export const WSS_MESSAGE_TYPE = {
-    CONNECTION: 1,
-    ADD_TEAM: 2,
-    REMOVE_TEAM: 3,
-    TOGGLE_STATUS: 4,
-    JOIN: 5,
-    JOIN_ACCEPT: 6,
-    JOIN_REJECT: 7,
+export enum LAYOUT_ENUM {
+    default = 1,
+    wide = 1,
+    compact = 2,
 }
 
-export const LAYOUT_ENUM = {
-    default: 1,
-    wide: 1,
-    compact: 2,
+export enum DOCUMENT_VISIBILITY {
+    hidden = 'hidden',
+    visible = 'visible',
 }
 
-export const DOCUMENT_VISIBILITY = {
-    hidden: 'hidden',
-    visible: 'visible',
+export enum DIRECTION_ENUM {
+    horizental = 1,
+    vertical = 2,
 }
 
-export const DIRECTION_ENUM = {
-    horizental: 1,
-    vertical: 2,
-}
-
-export const APPLICATION_STATUS = {
-    static: 'static',
-    pending: 'pending',
-    accepted: 'accepted',
-    rejected: 'rejected',
+export enum APPLICATION_STATUS {
+    static = 'static',
+    pending = 'pending',
+    accepted = 'accepted',
+    rejected = 'rejected',
 }

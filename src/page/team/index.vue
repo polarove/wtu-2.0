@@ -28,18 +28,30 @@
 </template>
 
 <script setup lang="ts">
-import type { TeamVO, TeamListParams, TeamPage } from '@/composables/team'
+import type {
+    TeamVO,
+    TeamListParams,
+    TeamPage,
+    ApplicationDTO,
+} from '@/composables/team'
 import { teamStore, authStore, layoutStore } from '@/store'
 import { GetTeamList } from '@api/team'
 import type { response } from '@/composables/types'
-import { websocket, type WSS_CONNECTION_FEEDBACK } from '@/class/WebsocketUtil'
+import { useWebSocket } from '@vueuse/core'
 import type { RouteRecordName } from 'vue-router'
-import { WSS_ACTION } from '@composables/enums'
+import { WSS_ACTION, SERVER_CODE } from '@composables/enums'
 import {
     isDefualtUserName,
     isNotDefualtUserName,
     LAYOUT_ENUM,
 } from '@/composables/enums'
+import {
+    WSS_RESPONSE,
+    WSS_CONNECTION_FEEDBACK,
+    WSS_MESSAGE_TYPE,
+} from '@/composables/wss'
+import { RESPONSE_CODE } from '@/api'
+import { requires } from '@/util/ObjectUtil'
 
 const _teamStore = teamStore()
 const _authStore = authStore()
@@ -53,67 +65,197 @@ const TeamParams = reactive<TeamListParams>({
     uuid: null,
 })
 
-const ChannelParam = reactive({
-    route: null as RouteRecordName | null | undefined,
-    uuid: _authStore.getUUID(),
-    server: null as number | null,
-    action: null as WSS_ACTION | null,
+interface ChannelDTO {
+    route: RouteRecordName | null | undefined
+    uuid: string
+    server: number | null
+    action: WSS_ACTION | null
+}
+const channelDTO = reactive<ChannelDTO>({
+    route: null,
+    uuid: '',
+    server: null,
+    action: null,
 })
 
-let wss = new websocket(_authStore.getServer())
-const fuckyoujavascript = () => {
-    wss.on_open(() => {
-        joinChannel(_authStore.getServer(), route.name)
-    })
-}
 const clients = ref<number>(0)
+
+const wss_address = computed(() => {
+    if (SERVER_CODE.en === _authStore.getServer()) {
+        return import.meta.env.VITE_APP_WSS_EN_ORIGIN + '/en'
+    } else {
+        return import.meta.env.VITE_APP_WSS_CN_ORIGIN + '/cn'
+    }
+})
+
+const { data, send, close } = useWebSocket(wss_address.value, {
+    immediate: true,
+    autoClose: true,
+})
+
+watchEffect(() => {
+    let result: WSS_RESPONSE = JSON.parse(data.value)
+    console.log(result)
+
+    if (result === null) {
+        return
+    }
+    if (
+        result.code === RESPONSE_CODE.user_not_login ||
+        result.code === RESPONSE_CODE.redirect_login ||
+        result.code === RESPONSE_CODE.unknown_game_server
+    ) {
+        return
+    }
+    switch (result.action) {
+        case WSS_MESSAGE_TYPE.CONNECTION:
+            let feedback: WSS_CONNECTION_FEEDBACK = JSON.parse(result.data)
+            clients.value = feedback.clients
+            break
+        case WSS_MESSAGE_TYPE.ADD_TEAM:
+            let TeamVO: TeamVO = JSON.parse(result.data)
+            _teamStore.addTeam(TeamVO)
+            break
+        case WSS_MESSAGE_TYPE.REMOVE_TEAM:
+            let teamId: number = JSON.parse(result.data)
+            _teamStore.removeTeam(teamId)
+            break
+        case WSS_MESSAGE_TYPE.TOGGLE_STATUS:
+            let TeamVO_: TeamVO = JSON.parse(result.data)
+            if (TeamVO_.team.creatorUuid === _authStore.getUUID()) {
+                break
+            } else if (TeamVO_.team.status) {
+                _teamStore.addTeam(TeamVO_)
+            } else {
+                _teamStore.removeTeam(TeamVO_.team.id)
+            }
+            break
+        case WSS_MESSAGE_TYPE.JOIN:
+            let application: ApplicationDTO = JSON.parse(result.data)
+            let uuid = application.team.uuid
+            let group = _teamStore.findGroupByUUID(uuid)
+            if (requires(group)) {
+                // 添加申请
+                _teamStore.addApplication(application)
+            } else {
+                // 获得本地用户booster矩阵
+                let matrix = _teamStore.getUserBoosterMatrix(
+                    _authStore.getUserBooster()
+                )
+
+                // 创建一个新的队伍
+                let newGroup = _teamStore.createGroup(application, matrix)
+
+                // 设置队伍的booster为本地用户booster
+                newGroup.booster = _authStore.getUserBooster()
+
+                // 添加队伍
+                _teamStore.addApplicationGroup(newGroup)
+
+                // 添加申请
+                _teamStore.addApplication(application)
+            }
+            break
+        case WSS_MESSAGE_TYPE.JOIN_ACCEPT:
+            let feedback_accept: ApplicationDTO = JSON.parse(result.data)
+            _teamStore.addApplicationResult(feedback_accept)
+            break
+        case WSS_MESSAGE_TYPE.JOIN_REJECT:
+            let feedback_reject: ApplicationDTO = JSON.parse(result.data)
+            _teamStore.addApplicationResult(feedback_reject)
+            break
+        default:
+            break
+    }
+})
 
 const joinChannel = (
     server: number | null,
-    to?: RouteRecordName | null | undefined
+    to: RouteRecordName | null | undefined
 ) => {
-    ChannelParam.action = WSS_ACTION.CONNECT
-    ChannelParam.server = server
-    to ? (ChannelParam.route = to) : (ChannelParam.route = route.name)
-    wss.send(ChannelParam, () => {
-        wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
-            clients.value = data.clients
-        })
-    })
+    channelDTO.action = WSS_ACTION.CONNECT
+    channelDTO.route = to
+    channelDTO.server = server
+    channelDTO.uuid = _authStore.getUUID()
+    send(JSON.stringify(channelDTO))
 }
 
-const disconnect = (
+const leftChannel = (
     server: number | null,
-    from?: RouteRecordName | null | undefined,
+    from: RouteRecordName | null | undefined,
     callback?: Function
 ) => {
-    ChannelParam.action = WSS_ACTION.DISCONNECT
-    ChannelParam.server = server
-
-    from ? (ChannelParam.route = from) : (ChannelParam.route = route.name)
-    wss.send(ChannelParam, () => {
-        wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
-            clients.value = data.clients
-        })
-    })
+    channelDTO.action = WSS_ACTION.DISCONNECT
+    channelDTO.route = from
+    channelDTO.server = server
+    channelDTO.uuid = _authStore.getUUID()
+    send(JSON.stringify(channelDTO))
     if (callback) {
         callback()
     }
 }
 
-const switchChannel = (previous: number, current: number) => {
-    disconnect(previous, route.name, () => {
-        joinChannel(current, route.name)
+const switchChannel = (
+    from: RouteRecordName | null | undefined,
+    to: RouteRecordName | null | undefined
+) => {
+    let server = _authStore.getServer()
+    leftChannel(server, from, () => {
+        joinChannel(server, to)
     })
 }
 
+const switchServer = (previous_server: number, target_server: number) => {
+    leftChannel(previous_server, route.name, () => {
+        joinChannel(target_server, route.name)
+    })
+}
+
+// const joinChannel = (
+//     server: number | null,
+//     to?: RouteRecordName | null | undefined
+// ) => {
+//     ChannelParam.action = WSS_ACTION.CONNECT
+//     ChannelParam.server = server
+//     to ? (ChannelParam.route = to) : (ChannelParam.route = route.name)
+//     wss.send(ChannelParam, () => {
+//         wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
+//             clients.value = data.clients
+//         })
+//     })
+// }
+
+// const disconnect = (
+//     server: number | null,
+//     from?: RouteRecordName | null | undefined,
+//     callback?: Function
+// ) => {
+//     ChannelParam.action = WSS_ACTION.DISCONNECT
+//     ChannelParam.server = server
+
+//     from ? (ChannelParam.route = from) : (ChannelParam.route = route.name)
+//     wss.send(ChannelParam, () => {
+//         wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
+//             clients.value = data.clients
+//         })
+//     })
+//     if (callback) {
+//         callback()
+//     }
+// }
+
+// const switchChannel = (previous: number, current: number) => {
+//     disconnect(previous, route.name, () => {
+//         joinChannel(current, route.name)
+//     })
+// }
+
 watch(
     () => _authStore.getServer(),
-    (var1) => {
-        let previous = var1 ? 0 : 1
-        switchChannel(previous, var1)
-    },
-    { deep: true }
+    (target_server) => {
+        let previous_server = target_server ? 0 : 1
+        switchServer(previous_server, target_server)
+    }
 )
 
 const autoRefresh = (interval: number) => {
@@ -155,7 +297,7 @@ onMounted(() => {
     TeamParams.channel = route.name
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
-    fuckyoujavascript()
+    joinChannel(_authStore.getServer(), route.name)
     autoRefresh(1000 * 60 * 3)
     isDefaultName()
 })
@@ -166,22 +308,14 @@ onBeforeRouteUpdate((to, from) => {
     _teamStore.resetPage()
     _teamStore.setParam(TeamParams)
     _teamStore.initTeamList()
-    let server = _authStore.getServer()
-    disconnect(server, from.name, () => {
-        joinChannel(server, to.name)
-    })
+    switchChannel(from.name, to.name)
     isDefaultName()
 })
 
 onBeforeRouteLeave((_, from) => {
-    disconnect(_authStore.getServer(), from.name)
-    wss.close()
+    leftChannel(_authStore.getServer(), from.name)
+    close()
 })
-
-onbeforeunload = () => {
-    disconnect(_authStore.getServer(), route.name)
-    wss.close()
-}
 </script>
 
 <style lang="scss" scoped>

@@ -1,8 +1,11 @@
 import {
-    SERVER_CODE,
     WSS_MESSAGE_TYPE,
-    RESPONSE_CODE,
-} from '@/composables/enums'
+    WSS_READY_STATE,
+    WSS_RESPONSE,
+    WSS_CONNECTION_FEEDBACK,
+} from '@/composables/wss'
+import { SERVER_CODE } from '@/composables/enums'
+import { RESPONSE_CODE } from '@/api'
 import { ApplicationDTO, TeamVO } from '@/composables/team'
 import { teamStore, authStore } from '@/store'
 import { isNotBlank } from '@util/StrUtil'
@@ -27,27 +30,6 @@ const _authStore = authStore()
 //     bolist[names[index]] = value.includes(1) ? 1 : 0
 // })
 // console.log(bolist)
-
-interface RESPONSE {
-    action: number
-    code: number
-    data: string
-    message: string
-    success: boolean
-    time: string
-}
-
-enum READY_STATE {
-    CONNECTING = 0,
-    OPEN = 1,
-    CLOSING = 2,
-    CLOSED = 3,
-}
-
-export interface WSS_CONNECTION_FEEDBACK {
-    total: number
-    clients: number
-}
 
 export class websocket {
     public wss: WebSocket
@@ -75,7 +57,7 @@ export class websocket {
 
     on_message(callback: Function) {
         this.wss.onmessage = (event) => {
-            let result: RESPONSE = JSON.parse(event.data)
+            let result: WSS_RESPONSE = JSON.parse(event.data)
             if (
                 result.code === RESPONSE_CODE.user_not_login ||
                 result.code === RESPONSE_CODE.redirect_login ||
@@ -171,7 +153,7 @@ export class websocket {
     }
 
     send(data: any, callback: Function) {
-        if (this.wss.readyState === READY_STATE.OPEN) {
+        if (this.wss.readyState === WSS_READY_STATE.OPEN) {
             this.wss.send(JSON.stringify(data))
         }
         if (callback) {
