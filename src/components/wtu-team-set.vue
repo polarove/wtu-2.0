@@ -324,7 +324,6 @@ const publishTeam = (formEl: FormInstance | undefined) => {
             loading.value = false
             return
         }
-
         if (checkDTO()) {
             createTeam()
             loading.value = false

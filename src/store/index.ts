@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
-import type { response } from '@composables/types'
+import type { response, xhr_response } from '@composables/types'
 import type { UserBooster, UserVO } from '@composables/user'
 import { getUserVOByUUID } from '@api/account'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { MatrixUtil } from '@/class/MatrixUtil'
 import { requires } from '@/util/ObjectUtil'
 import { warframe } from '@/composables/warframe'
+import { RouteRecordName } from 'vue-router'
 import type {
     TeamVO,
     TeamPage,
@@ -25,10 +26,12 @@ import { toRaw } from 'vue'
 import { useWebNotification } from '@vueuse/core'
 import type { UseWebNotificationOptions } from '@vueuse/core'
 import { APPLICATION_STATUS } from '@/composables/wss'
+import type { subscription } from '@/composables/fissure'
 
 const names = boosters.map((value) => {
     return value.en
 })
+
 const notification: UseWebNotificationOptions = {
     title: '',
     body: '',
@@ -37,13 +40,6 @@ const notification: UseWebNotificationOptions = {
     renotify: false,
 }
 const { isSupported, show } = useWebNotification(notification)
-interface xhr_response {
-    config: any
-    data: response<any>
-    headers: any
-    request: any
-    status: number
-}
 
 export const authStore = defineStore({
     id: 'session',
@@ -559,4 +555,54 @@ export const layoutStore = defineStore({
             return this.mode === LAYOUT_ENUM.compact
         },
     },
+})
+
+export const activityStore = defineStore({
+    id: 'activity',
+    state: () => ({
+        subscription: {
+            fissure: [] as Array<subscription>,
+        },
+    }),
+    actions: {
+        getSubscriptions(): Array<subscription> {
+            return this.subscription.fissure
+        },
+        findChannelSubscriptionByChannel(
+            channel: RouteRecordName | null | undefined
+        ): subscription {
+            return this.subscription.fissure.find((item) => {
+                return item.channel === channel
+            }) as subscription
+        },
+        toggleSubscription(
+            channel: RouteRecordName | null | undefined,
+            missionKey: string
+        ) {
+            let subscription = this.subscription.fissure.find((item) => {
+                return item.channel === channel
+            })
+            if (requires(subscription)) {
+                let index = subscription!.missionKey.indexOf(missionKey)
+                if (index === -1) {
+                    subscription!.missionKey.push(missionKey)
+                } else {
+                    subscription!.missionKey.splice(index, 1)
+                }
+            } else {
+                this.createSubscription(channel, missionKey)
+            }
+        },
+        createSubscription(
+            channel: RouteRecordName | null | undefined,
+            missionKey: string
+        ) {
+            let subscription: subscription = {
+                channel: channel,
+                missionKey: [missionKey],
+            }
+            this.subscription.fissure.push(subscription)
+        },
+    },
+    persist: true,
 })

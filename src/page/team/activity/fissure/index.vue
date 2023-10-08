@@ -1,5 +1,5 @@
 <template>
-    <div class="lt-lg:display-none"><wtu-fissure-list /></div>
+    <wtu-fissure-list />
     <wtu-team-list />
 </template>
 

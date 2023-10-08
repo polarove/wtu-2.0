@@ -1,4 +1,5 @@
 import { relicTier, relicTireNum } from '@composables/relic'
+import type { RouteRecordName } from 'vue-router'
 
 export interface fissure {
     activation: string
@@ -18,4 +19,11 @@ export interface fissure {
     startString: string
     tier: relicTier
     tierNum: relicTireNum
+    //local property
+    subscribed: boolean
+}
+
+export interface subscription {
+    channel: RouteRecordName | null | undefined
+    missionKey: Array<string>
 }

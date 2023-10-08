@@ -5,7 +5,12 @@
             class="entry"
             @click="navi(entries.durivi)"
         >
-            <el-badge :value="clients" :max="999" :hidden="!isDurivi">
+            <el-badge
+                :value="clients"
+                :max="999"
+                :hidden="!isDurivi"
+                type="primary"
+            >
                 <img
                     :style="{ transform: `scale(${scale})` }"
                     src="@img/durivi.png"
@@ -18,7 +23,12 @@
             class="entry"
             @click="navi(entries.empyrean)"
         >
-            <el-badge :value="clients" :max="999" :hidden="!isEmpyrean">
+            <el-badge
+                :value="clients"
+                :max="999"
+                :hidden="!isEmpyrean"
+                type="primary"
+            >
                 <img
                     :style="{ transform: `scale(${scale})` }"
                     src="@img/railjet.png"
