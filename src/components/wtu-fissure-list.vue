@@ -158,12 +158,18 @@ const parseFissureList = (
                     fissure.missionKey
                 )
                 fissure.subscribed = subs
-                if (subs && isSupported && !firstLoad.value) {
+                if (
+                    subs &&
+                    isSupported &&
+                    !firstLoad.value &&
+                    !_activityStore.hasNotified(fissure.id)
+                ) {
                     notification.title =
-                        fissure.tier + fissure.node + fissure.missionType
+                        fissure.tier + fissure.missionType + fissure.node
                     notification.body =
-                        '您订阅的' + route.meta.forehead + '虚空裂缝已刷新'
+                        route.meta.forehead + ' 有新的订阅的虚空裂缝模式'
                     show()
+                    _activityStore.addNotifyHistory(fissure.id)
                 }
             }
             return fissure

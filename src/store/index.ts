@@ -562,6 +562,7 @@ export const activityStore = defineStore({
     state: () => ({
         subscription: {
             fissure: [] as Array<subscription>,
+            notifyHistory: [] as Array<string>,
         },
     }),
     actions: {
@@ -602,6 +603,15 @@ export const activityStore = defineStore({
                 missionKey: [missionKey],
             }
             this.subscription.fissure.push(subscription)
+        },
+        getNotifyHistory(): Array<string> {
+            return this.subscription.notifyHistory
+        },
+        hasNotified(id: string): boolean {
+            return this.subscription.notifyHistory.includes(id)
+        },
+        addNotifyHistory(id: string) {
+            this.subscription.notifyHistory.push(id)
         },
     },
     persist: true,
