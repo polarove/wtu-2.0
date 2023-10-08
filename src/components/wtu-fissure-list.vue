@@ -137,6 +137,17 @@ const fetch = async () => {
     firstLoad.value = false
 }
 
+const autoReloadInterval = ref<any>()
+const update = (id: string) => {
+    fissure_list.value = fissure_list.value.splice(
+        fissure_list.value.findIndex((fissure: fissure) => fissure.id === id),
+        1
+    )
+    autoReloadInterval.value = setInterval(() => {
+        fetch()
+    }, 3000)
+}
+
 const parseFissureList = (
     full_list: fissure[],
     channel: relic_channel,
@@ -145,7 +156,12 @@ const parseFissureList = (
 ) => {
     let current_fissure_sub =
         _activityStore.findChannelSubscriptionByChannel(channel)
-    fissure_list.value = diff(full_list, fissure_list.value)
+    let diffs = diff(full_list, fissure_list.value)
+    if (diffs && diffs.length === 0) {
+        clearInterval(autoReloadInterval.value)
+        return
+    }
+    fissure_list.value = diffs
         .filter(
             (fissure: fissure) =>
                 fissure.isHard === isHard &&
@@ -174,14 +190,6 @@ const parseFissureList = (
             }
             return fissure
         })
-}
-
-const update = (id: string) => {
-    fissure_list.value = fissure_list.value.splice(
-        fissure_list.value.findIndex((fissure: fissure) => fissure.id === id),
-        1
-    )
-    fetch()
 }
 
 const toggleSubscription = (fissure: fissure) => {
