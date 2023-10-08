@@ -20,7 +20,7 @@ defineProps({
 const _authStore = authStore()
 const updateDifficulty = () => {
     if (_authStore.getDifficulty()) {
-        router.push({ name: 'origin' })
+        router.push({ name: 'fissure' })
     } else {
         router.push({ name: 'steelpath' })
     }
