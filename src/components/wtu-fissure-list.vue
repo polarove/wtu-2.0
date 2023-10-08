@@ -125,97 +125,49 @@ const fetch = async () => {
     const full_list = (await getFissureList()) as fissure[]
     switch (route.name) {
         case relic_channel.fissure:
-            let current_fissure_sub =
-                _activityStore.findChannelSubscriptionByChannel(
-                    relic_channel.fissure
-                )
-            fissure_list.value = diff(full_list, fissure_list.value)
-                .filter(
-                    (fissure: fissure) =>
-                        fissure.isHard === false &&
-                        fissure.isStorm === false &&
-                        fissure.expired === false
-                )
-                .map((fissure: fissure) => {
-                    if (requires(current_fissure_sub)) {
-                        let subs = current_fissure_sub.missionKey.includes(
-                            fissure.missionKey
-                        )
-                        fissure.subscribed = subs
-                        if (subs && isSupported && !firstLoad.value) {
-                            notification.title =
-                                fissure.tier +
-                                fissure.node +
-                                fissure.missionType
-                            notification.body = '订阅的裂缝已刷新'
-                            show()
-                        }
-                    }
-                    return fissure
-                })
+            parseFissureList(full_list, relic_channel.fissure, false, false)
             break
         case relic_channel.steelpath:
-            let current_steelpath_sub =
-                _activityStore.findChannelSubscriptionByChannel(
-                    relic_channel.steelpath
-                )
-            fissure_list.value = diff(full_list, fissure_list.value)
-                .filter(
-                    (fissure: fissure) =>
-                        fissure.isHard === true &&
-                        fissure.isStorm === false &&
-                        fissure.expired === false
-                )
-                .map((fissure: fissure) => {
-                    if (requires(current_steelpath_sub)) {
-                        let subs = current_steelpath_sub.missionKey.includes(
-                            fissure.missionKey
-                        )
-                        fissure.subscribed = subs
-                        if (subs && isSupported && !firstLoad.value) {
-                            notification.title =
-                                fissure.tier +
-                                fissure.node +
-                                fissure.missionType
-                            notification.body = '订阅的裂缝已刷新'
-                            show()
-                        }
-                    }
-                    return fissure
-                })
+            parseFissureList(full_list, relic_channel.steelpath, true, false)
             break
         case relic_channel.empyrean:
-            let current_empyrean_sub =
-                _activityStore.findChannelSubscriptionByChannel(
-                    relic_channel.empyrean
-                )
-            fissure_list.value = diff(full_list, fissure_list.value)
-                .filter(
-                    (fissure: fissure) =>
-                        fissure.isHard === false &&
-                        fissure.isStorm === true &&
-                        fissure.expired === false
-                )
-                .map((fissure: fissure) => {
-                    if (requires(current_empyrean_sub)) {
-                        let subs = current_empyrean_sub.missionKey.includes(
-                            fissure.missionKey
-                        )
-                        fissure.subscribed = subs
-                        if (subs && isSupported && !firstLoad.value) {
-                            notification.title =
-                                fissure.tier +
-                                fissure.node +
-                                fissure.missionType
-                            notification.body = '订阅的裂缝已刷新'
-                            show()
-                        }
-                    }
-                    return fissure
-                })
+            parseFissureList(full_list, relic_channel.empyrean, false, true)
             break
     }
     firstLoad.value = false
+}
+
+const parseFissureList = (
+    full_list: fissure[],
+    channel: relic_channel,
+    isHard: boolean,
+    isStorm: boolean
+) => {
+    let current_fissure_sub =
+        _activityStore.findChannelSubscriptionByChannel(channel)
+    fissure_list.value = diff(full_list, fissure_list.value)
+        .filter(
+            (fissure: fissure) =>
+                fissure.isHard === isHard &&
+                fissure.isStorm === isStorm &&
+                fissure.expired === false
+        )
+        .map((fissure: fissure) => {
+            if (requires(current_fissure_sub)) {
+                let subs = current_fissure_sub.missionKey.includes(
+                    fissure.missionKey
+                )
+                fissure.subscribed = subs
+                if (subs && isSupported && !firstLoad.value) {
+                    notification.title =
+                        fissure.tier + fissure.node + fissure.missionType
+                    notification.body =
+                        '您订阅的' + route.meta.forehead + '虚空裂缝已刷新'
+                    show()
+                }
+            }
+            return fissure
+        })
 }
 
 const update = (id: string) => {
