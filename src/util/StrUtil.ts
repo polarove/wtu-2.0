@@ -1,4 +1,4 @@
-export const isBlank = (str: string) => {
+export const isBlank = (str: string | undefined | null) => {
     return (
         !str ||
         /^\s*$/.test(str) ||

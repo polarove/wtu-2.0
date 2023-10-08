@@ -1,11 +1,11 @@
 <template>
     <el-skeleton animated :loading="loading" class="animate__animated">
         <template #template>
-            <el-skeleton-item variant="text" :style="{ height: height }" />
-            <el-skeleton-item variant="text" :style="{ height: height }" />
-            <el-skeleton-item variant="text" :style="{ height: height }" />
-            <el-skeleton-item variant="text" :style="{ height: height }" />
-            <el-skeleton-item variant="text" :style="{ height: height }" />
+            <el-skeleton-item
+                v-for="_ in rows"
+                variant="text"
+                :style="{ height: height }"
+            />
         </template>
         <template #default>
             <slot />
@@ -22,6 +22,10 @@ defineProps({
     height: {
         type: String,
         default: '180px',
+    },
+    rows: {
+        type: Number,
+        default: 5,
     },
 })
 </script>

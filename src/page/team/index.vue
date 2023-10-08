@@ -20,7 +20,7 @@
                 class="entry"
             />
         </div>
-        <div class="w-70vw h-100% ma-auto">
+        <div class="w-75vw ma-auto min-h-65vh">
             <RouterView />
         </div>
     </div>
@@ -210,45 +210,6 @@ const switchServer = (previous_server: number, target_server: number) => {
     })
 }
 
-// const joinChannel = (
-//     server: number | null,
-//     to?: RouteRecordName | null | undefined
-// ) => {
-//     ChannelParam.action = WSS_ACTION.CONNECT
-//     ChannelParam.server = server
-//     to ? (ChannelParam.route = to) : (ChannelParam.route = route.name)
-//     wss.send(ChannelParam, () => {
-//         wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
-//             clients.value = data.clients
-//         })
-//     })
-// }
-
-// const disconnect = (
-//     server: number | null,
-//     from?: RouteRecordName | null | undefined,
-//     callback?: Function
-// ) => {
-//     ChannelParam.action = WSS_ACTION.DISCONNECT
-//     ChannelParam.server = server
-
-//     from ? (ChannelParam.route = from) : (ChannelParam.route = route.name)
-//     wss.send(ChannelParam, () => {
-//         wss.on_message((data: WSS_CONNECTION_FEEDBACK) => {
-//             clients.value = data.clients
-//         })
-//     })
-//     if (callback) {
-//         callback()
-//     }
-// }
-
-// const switchChannel = (previous: number, current: number) => {
-//     disconnect(previous, route.name, () => {
-//         joinChannel(current, route.name)
-//     })
-// }
-
 watch(
     () => _authStore.getServer(),
     (target_server) => {
@@ -314,7 +275,7 @@ onbeforeunload = () => {
 .selections {
     position: fixed;
     right: 0.75rem;
-    top: 50%;
+    top: 35%;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -1,6 +1,6 @@
 <template>
-    <RyuLoading :loading="_teamStore.getTeamListLoading()" class="mt-1em">
-        <RyuEmpty iconSize="6em" tip="当前暂无组队信息" :empty="empty">
+    <ryu-loading :loading="_teamStore.getTeamListLoading()" class="mt-1em">
+        <ryu-empty iconSize="6em" tip="当前暂无组队信息" :empty="empty">
             <el-card
                 class="team animate__animated animate__faster"
                 :class="{
@@ -154,8 +154,8 @@
                     </template>
                 </ryu-clipboard>
             </el-card>
-        </RyuEmpty>
-    </RyuLoading>
+        </ryu-empty>
+    </ryu-loading>
 </template>
 
 <script setup lang="ts">
