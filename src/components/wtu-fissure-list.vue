@@ -124,10 +124,9 @@ const fetch = async () => {
 fetch()
 
 const update = (id: string) => {
-    fissure_list.value = fissure_list.value.splice(
-        fissure_list.value.findIndex((fissure: fissure) => fissure.id === id),
-        1
-    )
+    fissure_list.value = fissure_list.value.filter((fissure: fissure) => {
+        return fissure.id !== id
+    })
 }
 
 const parseFissureList = (
