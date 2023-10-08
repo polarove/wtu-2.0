@@ -157,12 +157,12 @@ const fetch = async () => {
         case relic_channel.steelpath:
             let current_steelpath_sub =
                 _activityStore.findChannelSubscriptionByChannel(
-                    relic_channel.fissure
+                    relic_channel.steelpath
                 )
             fissure_list.value = diff(full_list, fissure_list.value)
                 .filter(
                     (fissure: fissure) =>
-                        fissure.isHard === false &&
+                        fissure.isHard === true &&
                         fissure.isStorm === false &&
                         fissure.expired === false
                 )
@@ -187,13 +187,13 @@ const fetch = async () => {
         case relic_channel.empyrean:
             let current_empyrean_sub =
                 _activityStore.findChannelSubscriptionByChannel(
-                    relic_channel.fissure
+                    relic_channel.empyrean
                 )
             fissure_list.value = diff(full_list, fissure_list.value)
                 .filter(
                     (fissure: fissure) =>
                         fissure.isHard === false &&
-                        fissure.isStorm === false &&
+                        fissure.isStorm === true &&
                         fissure.expired === false
                 )
                 .map((fissure: fissure) => {
@@ -235,6 +235,7 @@ const toggleSubscription = (fissure: fissure) => {
         }
     })
     _activityStore.toggleSubscription(channel, missionKey)
+    console.log(_activityStore.getSubscriptions())
 }
 
 watchEffect(() => {

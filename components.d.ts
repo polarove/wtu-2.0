@@ -54,7 +54,6 @@ declare module 'vue' {
     WtuBreadcrumb: typeof import('./src/components/wtu-breadcrumb.vue')['default']
     WtuDifficulty: typeof import('./src/components/wtu-difficulty.vue')['default']
     WtuEntries: typeof import('./src/components/wtu-entries.vue')['default']
-    WtuFissureCard: typeof import('./src/components/wtu-fissure-card.vue')['default']
     WtuFissureList: typeof import('./src/components/wtu-fissure-list.vue')['default']
     WtuFocus: typeof import('./src/components/wtu-focus.vue')['default']
     WtuFocusList: typeof import('./src/components/wtu-focus-list.vue')['default']
