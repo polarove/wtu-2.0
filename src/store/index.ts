@@ -26,7 +26,7 @@ import { toRaw } from 'vue'
 import { useWebNotification } from '@vueuse/core'
 import type { UseWebNotificationOptions } from '@vueuse/core'
 import { APPLICATION_STATUS } from '@/composables/wss'
-import type { subscription } from '@/composables/fissure'
+import type { fissureMission, subscription } from '@/composables/fissure'
 
 const names = boosters.map((value) => {
     return value.en
@@ -560,58 +560,93 @@ export const layoutStore = defineStore({
 export const activityStore = defineStore({
     id: 'activity',
     state: () => ({
-        subscription: {
-            fissure: [] as Array<subscription>,
+        fissure: {
+            subscriptionList: [] as Array<subscription>,
             notifyHistory: [] as Array<string>,
         },
     }),
     actions: {
         getSubscriptions(): Array<subscription> {
-            return this.subscription.fissure
+            return this.fissure.subscriptionList
         },
-        findChannelSubscriptionByChannel(
+        findSubscriptionListByChannel(
             channel: RouteRecordName | null | undefined
-        ): subscription {
-            return this.subscription.fissure.find((item) => {
+        ): Array<fissureMission> {
+            let subscription = this.fissure.subscriptionList.find((item) => {
+                return item.channel === channel
+            })
+            if (requires(subscription)) {
+                return subscription!.mission
+            } else {
+                return []
+            }
+        },
+        findChannel(channel: RouteRecordName | null | undefined): subscription {
+            return this.fissure.subscriptionList.find((item) => {
                 return item.channel === channel
             }) as subscription
         },
         toggleSubscription(
             channel: RouteRecordName | null | undefined,
+            id: string,
+            nodeKey: string,
             missionKey: string
         ) {
-            let subscription = this.subscription.fissure.find((item) => {
-                return item.channel === channel
-            })
+            // 添加订阅
+            // 数据结构：subscriptionList: [{channel: 'fissure', mission: [{nodeKey:"Venus", missionKey:"capture"},{nodeKey:"Venus1", missionKey:"capture1"}]
+            let subscription = this.findChannel(channel)
             if (requires(subscription)) {
-                let index = subscription!.missionKey.indexOf(missionKey)
-                if (index === -1) {
-                    subscription!.missionKey.push(missionKey)
+                let target: fissureMission = {
+                    id: id,
+                    nodeKey: nodeKey,
+                    missionKey: missionKey,
+                }
+                let exsistence = subscription!.mission.findIndex((item) => {
+                    return item.id === id
+                })
+                if (exsistence === -1) {
+                    subscription!.mission.push(target)
                 } else {
-                    subscription!.missionKey.splice(index, 1)
+                    subscription!.mission.splice(exsistence, 1)
                 }
             } else {
-                this.createSubscription(channel, missionKey)
+                this.createSubscription(channel, id, nodeKey, missionKey)
+            }
+        },
+        ifSubscribed(
+            channel: RouteRecordName | null | undefined,
+            nodeKey: string,
+            missionKey: string
+        ): boolean {
+            // 是否订阅了指定星球的指定任务节点
+            let list = this.findSubscriptionListByChannel(channel)
+            if (list.length > 0) {
+                return list.some((item) => {
+                    item.nodeKey === nodeKey && item.missionKey === missionKey
+                })
+            } else {
+                return false
             }
         },
         createSubscription(
             channel: RouteRecordName | null | undefined,
+            id: string,
+            nodeKey: string,
             missionKey: string
         ) {
-            let subscription: subscription = {
+            this.fissure.subscriptionList.push({
                 channel: channel,
-                missionKey: [missionKey],
-            }
-            this.subscription.fissure.push(subscription)
+                mission: [{ id: id, nodeKey: nodeKey, missionKey: missionKey }],
+            } as subscription)
         },
         getNotifyHistory(): Array<string> {
-            return this.subscription.notifyHistory
+            return this.fissure.notifyHistory
         },
         hasNotified(id: string): boolean {
-            return this.subscription.notifyHistory.includes(id)
+            return this.fissure.notifyHistory.includes(id)
         },
         addNotifyHistory(id: string) {
-            this.subscription.notifyHistory.push(id)
+            this.fissure.notifyHistory.push(id)
         },
     },
     persist: true,

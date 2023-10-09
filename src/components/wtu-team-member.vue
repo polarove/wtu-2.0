@@ -22,7 +22,6 @@
                     width="60px"
                     class="flex-center b-rounded ma-1"
                     :showName="false"
-                    @click="$emit('join')"
                 />
             </template>
             <div class="flex">
@@ -60,28 +59,53 @@
             </div>
         </el-popover>
         <div class="font-size-[0.78em] color-gray mt-0.25em mb-0.25em">
-            <span v-if="isHost" class="lt-lg:display-none">主机:</span>
-            {{ member.user.accelerator }}
+            <span v-if="isHost" class="lt-lg:display-none">
+                主机:{{ member.user.accelerator }}
+            </span>
+            <span v-else>
+                <div v-if="localStatus === 'static'">
+                    <el-button
+                        v-if="isBlank(member.user.uuid)"
+                        @click="$emit('join')"
+                        size="small"
+                    >
+                        加入
+                    </el-button>
+                    <span v-else>
+                        {{ member.user.name }}:{{ member.user.accelerator }}
+                    </span>
+                </div>
+                <div v-else>
+                    <div v-if="localStatus === APPLICATION_STATUS.pending">
+                        <span
+                            class="i-ep:loading animation-rotate mr-2px"
+                        ></span>
+                        <span class="font-size-[0.78em] color-gray">
+                            {{ isCreator ? '等待处理' : '申请中' }}
+                        </span>
+                    </div>
+                    <div v-if="localStatus === APPLICATION_STATUS.accepted">
+                        <span class="i-ep:check color-blue mr-2px"></span>
+                        <span class="font-size-[0.78em] color-blue">
+                            已接受
+                        </span>
+                    </div>
+                    <div v-if="localStatus === APPLICATION_STATUS.rejected">
+                        <span class="i-ep:close color-red mr-2px"></span>
+                        <span class="font-size-[0.78em] color-red">
+                            {{ isCreator ? '已拒绝' : '被拒绝' }}
+                        </span>
+                    </div>
+                </div>
+            </span>
         </div>
-        <div
-            class="i-ep:loading animation-rotate"
-            v-if="localStatus === APPLICATION_STATUS.pending"
-        ></div>
-        <div
-            class="i-ep:check color-blue"
-            v-if="localStatus === APPLICATION_STATUS.accepted"
-        ></div>
-        <div
-            class="i-ep:close color-red"
-            v-if="localStatus === APPLICATION_STATUS.rejected"
-        ></div>
     </div>
 </template>
 
 <script setup lang="ts">
 import type { TeamMemberBO } from '@/composables/team'
 import { authStore } from '@/store'
-import { isNotBlank } from '@/util/StrUtil'
+import { isNotBlank, isBlank } from '@/util/StrUtil'
 import { ONLINE_STATUS, DIRECTION_ENUM } from '@/composables/enums'
 import { APPLICATION_STATUS } from '@/composables/wss'
 
@@ -102,6 +126,10 @@ defineProps({
     localStatus: {
         type: String,
         default: 'static',
+    },
+    isCreator: {
+        type: Boolean,
+        default: false,
     },
 })
 

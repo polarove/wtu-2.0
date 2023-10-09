@@ -94,6 +94,7 @@
                             :name-visible="instance.team.isPublic"
                             :local-status="build.localStatus"
                             :isHost="build.leader"
+                            :isCreator="isCreator(instance.team.creatorUuid)"
                             @join="
                                 isCreator(instance.team.creatorUuid)
                                     ? check(build)

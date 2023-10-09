@@ -29,7 +29,7 @@
                         <el-countdown
                             :format="format.hour"
                             :value="utcTimestamp(item.expiry)"
-                            @finish="update(item.id)"
+                            @finish="update(item)"
                         >
                             <template #title>
                                 <div>{{ item.tier }}&nbsp;{{ item.node }}</div>
@@ -123,9 +123,12 @@ const fetch = async () => {
 }
 fetch()
 
-const update = (id: string) => {
-    fissure_list.value = fissure_list.value.filter((fissure: fissure) => {
-        return fissure.id !== id
+const update = (fissure: fissure) => {
+    console.log(fissure)
+    console.log(fissure.expired)
+
+    fissure_list.value = fissure_list.value.filter((target: fissure) => {
+        return target.id !== fissure.id
     })
 }
 
@@ -135,52 +138,66 @@ const parseFissureList = (
     isHard: boolean,
     isStorm: boolean
 ) => {
-    let current_fissure_sub =
-        _activityStore.findChannelSubscriptionByChannel(channel)
-    let diffs = diff(full_list, fissure_list.value)
+    const f = full_list.filter(
+        (fissure: fissure) =>
+            fissure.isHard === isHard &&
+            fissure.isStorm === isStorm &&
+            fissure.expired === false
+    )
+    let diffs = diff(f, fissure_list.value)
     if (diffs && diffs.length === 0) {
         return
     }
-    fissure_list.value = diffs
-        .filter(
-            (fissure: fissure) =>
-                fissure.isHard === isHard &&
-                fissure.isStorm === isStorm &&
-                fissure.expired === false
-        )
-        .map((fissure: fissure) => {
-            if (requires(current_fissure_sub)) {
-                let subs = current_fissure_sub.missionKey.includes(
-                    fissure.missionKey
-                )
-                fissure.subscribed = subs
-                if (
-                    subs &&
-                    isSupported &&
-                    !firstLoad.value &&
-                    !_activityStore.hasNotified(fissure.id)
-                ) {
-                    notification.title =
-                        fissure.tier + fissure.missionType + fissure.node
-                    notification.body =
-                        route.meta.forehead + ' 有新的订阅的虚空裂缝模式'
-                    show()
-                    _activityStore.addNotifyHistory(fissure.id)
-                }
-            }
-            return fissure
-        })
+    diffs.forEach((item) => {
+        if (!fissure_list.value.map((i) => i.id).includes(item.id)) {
+            fissure_list.value.unshift(item)
+        }
+    })
+
+    // 扫描整个新的列表，并根据订阅状态发送通知
+    notify(channel)
 }
 
-const toggleSubscription = (fissure: fissure) => {
-    let missionKey = fissure.missionKey
-    let channel = route.name
+const notify = (channel: string) => {
+    let subscriptionList = _activityStore.findSubscriptionListByChannel(channel)
     fissure_list.value.map((fissure: fissure) => {
-        if (fissure.missionKey === missionKey) {
+        // 这个频道有订阅
+        if (subscriptionList.length > 0) {
+            // 找出订阅列表
+            let subscribed = subscriptionList.find(
+                (item) => item.id === fissure.id
+            )
+            fissure.subscribed = requires(subscribed) ? true : false
+            if (
+                fissure.subscribed &&
+                isSupported.value &&
+                !firstLoad.value &&
+                !_activityStore.hasNotified(fissure.id)
+            ) {
+                notification.title =
+                    fissure.tier + fissure.missionType + fissure.node
+                notification.body =
+                    route.meta.forehead + ' 有新的订阅的虚空裂缝模式'
+                show()
+            }
+        }
+        return fissure
+    })
+}
+
+const toggleSubscription = (target: fissure) => {
+    let id = target.id
+    let missionKey = target.missionKey
+    let channel = route.name
+    let nodeKey = splitNodeKey(target.nodeKey)
+    // 根据裂缝id来订阅指定星球的指定任务类型
+    fissure_list.value.map((fissure: fissure) => {
+        if (target.id === fissure.id) {
             fissure.subscribed = !fissure.subscribed
         }
     })
-    _activityStore.toggleSubscription(channel, missionKey)
+    // 更新订阅列表
+    _activityStore.toggleSubscription(channel, id, nodeKey, missionKey)
 }
 
 watchEffect(() => {
@@ -193,12 +210,8 @@ const diff = (s: any[], d: any[]) => {
     return s.filter((item) => !d.map((i) => i.id).includes(item.id))
 }
 
-let sd = setInterval(() => {
-    fetch()
-}, 1000 * 60)
-
-onbeforeunload = () => {
-    clearInterval(sd)
+const splitNodeKey = (nodeKey: string) => {
+    return nodeKey.split('(')[0]
 }
 </script>
 
