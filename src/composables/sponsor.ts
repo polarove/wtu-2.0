@@ -38,6 +38,11 @@ export const sponsors: I_sponsor[] = [
                 avatar: 'https://www.neorae.cn/data/img/sponsor/2023-10-06/Onesade.jpg',
                 amount: 100,
             },
+            {
+                name: 'Ueana',
+                avatar: 'https://www.neorae.cn/data/img/sponsor/2023-10-08/Ueana.jpg',
+                amount: 88.8,
+            },
         ],
     },
     {
