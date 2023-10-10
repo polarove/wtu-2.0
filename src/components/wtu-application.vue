@@ -388,13 +388,7 @@ const isEmptyResult: ComputedRef<boolean> = computed(
 
 const inviteMessage = (title: string, name: string) => {
     navigator.clipboard.writeText(
-        '/w ' +
-            name +
-            ' ' +
-            title +
-            ', ' +
-            '我希望你加入我的队伍' +
-            ' (warframe.team.up)'
+        '/w ' + name + ' ' + '加入我的队伍吧：' + title + ' (warframe.team.up)'
     )
 }
 </script>

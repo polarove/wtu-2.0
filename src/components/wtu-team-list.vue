@@ -131,9 +131,13 @@
                             :visible="instance.team.isPublic"
                             :content="
                                 instance.members.find((member) => member.leader)
-                                    ?.user.name
+                                    ?.user.name +
+                                ' ' +
+                                '我希望加入你的队伍：' +
+                                instance.team.title +
+                                ' (warframe.team.up)'
                             "
-                            prefix="/join"
+                            prefix="/w"
                         >
                         </ryu-clipboard>
                     </el-collapse-item>
@@ -142,9 +146,13 @@
                     v-else
                     :content="
                         instance.members.find((member) => member.leader)?.user
-                            .name
+                            .name +
+                        ' ' +
+                        '我希望加入你的队伍：' +
+                        instance.team.title +
+                        ' (warframe.team.up)'
                     "
-                    prefix="/join"
+                    prefix="/w"
                     icon="i-ep:document"
                     checked="i-ep:document-checked"
                     fontSize="0.8em"
