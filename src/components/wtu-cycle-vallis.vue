@@ -54,8 +54,6 @@ const vallis = ref<VallisCycle>({
 })
 
 const init = async () => {
-    console.log(1)
-
     vallis.value = (await getVallisCycle()) as VallisCycle
 }
 init()

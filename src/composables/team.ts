@@ -51,7 +51,6 @@ export interface TeamMemberBO {
     focus: string
     leader: number
     warframe: warframe
-    occupied: number
     user: TeamUserBO
     isDeleted: number
     // below is a local only variable

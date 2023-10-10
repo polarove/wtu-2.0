@@ -297,12 +297,13 @@ export const teamStore = defineStore({
                     callback()
                 })
         },
-        startPending(team_uuid: string, memberId: number) {
+        startPending(team_uuid: string, member_id: number, name?: string) {
             this.getTeam().map((item) => {
                 if (item.team.uuid === team_uuid) {
-                    item.members.map((build) => {
-                        if (build.id === memberId) {
-                            build.localStatus = APPLICATION_STATUS.pending
+                    item.members.map((member) => {
+                        if (member.id === member_id) {
+                            member.localStatus = APPLICATION_STATUS.pending
+                            member.user.name = name as string
                         }
                     })
                 }
@@ -322,12 +323,15 @@ export const teamStore = defineStore({
                 }
             })
         },
-        resolvedAsRejected(team_uuid: string, memberId: number) {
+        resolvedAsRejected(application: ApplicationDTO) {
+            let team_uuid = application.team.uuid
+            let member_id = application.build.id
             this.getTeam().map((item) => {
                 if (item.team.uuid === team_uuid) {
-                    item.members.map((build) => {
-                        if (build.id === memberId) {
-                            build.localStatus = APPLICATION_STATUS.rejected
+                    item.members.map((member) => {
+                        if (member.id === member_id) {
+                            member.localStatus = APPLICATION_STATUS.rejected
+                            member.user.name = ''
                         }
                     })
                 }
@@ -379,15 +383,21 @@ export const teamStore = defineStore({
             this.applicationGroup.splice(0, this.applicationGroup.length)
         },
         addApplication(application: ApplicationDTO): void {
-            let uuid = application.team.uuid
-            let group = this.findGroupByUUID(uuid)
+            let team_uuid = application.team.uuid
+            let group = this.findGroupByUUID(team_uuid)
             if (
                 group &&
                 group.applications.length <= 4 &&
                 !this.containsApplication(application.from.uuid, group)
             ) {
-                group.applications.push(application)
+                this.startPending(
+                    application.team.uuid,
+                    application.build.id,
+                    application.from.name
+                )
                 if (isSupported.value) {
+                    // 只有接收申请的人才能收到通知
+                    group.applications.push(application)
                     this.prepareNotification(application)
                 } else {
                     alert('您已关闭通知, 请在浏览器设置中开启通知')
@@ -474,12 +484,21 @@ export const teamStore = defineStore({
             if (this.containsApplicationResult(application.team.uuid)) {
                 return
             }
-            // 只有申请者弹出通知
-            if (isSupported.value && application.from.uuid === uuid) {
-                this.applicationResultList.unshift(application)
-                this.prepareNotification(application)
-            } else {
-                alert('您已关闭通知, 请在浏览器设置中开启通知')
+            switch (application.status) {
+                case APPLICATION_STATUS.accepted:
+                    this.resolvedAsAccepted(application)
+                    if (application.from.uuid === uuid) {
+                        this.applicationResultList.unshift(application)
+                        this.prepareNotification(application)
+                    }
+                    break
+                case APPLICATION_STATUS.rejected:
+                    this.resolvedAsRejected(application)
+                    if (application.from.uuid === uuid) {
+                        this.applicationResultList.unshift(application)
+                        this.prepareNotification(application)
+                    }
+                    break
             }
         },
         getApplicationResultList(): Array<ApplicationDTO> {
@@ -503,27 +522,18 @@ export const teamStore = defineStore({
                     notification.title = application.from.name
                     notification.body = '申请加入你的队伍'
                     notification.icon = application.from.avatar
-                    this.startPending(
-                        application.team.uuid,
-                        application.build.id
-                    )
                     show()
                     break
                 case APPLICATION_STATUS.accepted:
                     notification.title = application.receiver.name
                     notification.body = '已接受入队你的申请'
                     notification.icon = application.receiver.avatar
-                    this.resolvedAsAccepted(application)
                     show()
                     break
                 case APPLICATION_STATUS.rejected:
                     notification.title = application.from.name
                     notification.body = '已拒绝入队你的申请'
                     notification.icon = application.from.avatar
-                    this.resolvedAsRejected(
-                        application.team.uuid,
-                        application.build.id
-                    )
                     show()
                     break
                 default:

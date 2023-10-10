@@ -126,10 +126,11 @@ watchEffect(() => {
             data.value = null
             break
         case WSS_MESSAGE_TYPE.JOIN:
+            let uuid = _authStore.getUUID()
             let application: ApplicationDTO = JSON.parse(result.data)
-
-            let uuid = application.team.uuid
-            let group = _teamStore.findGroupByUUID(uuid)
+            if (uuid !== application.receiver.uuid) return
+            let team_uuid = application.team.uuid
+            let group = _teamStore.findGroupByUUID(team_uuid)
             if (requires(group)) {
                 // 添加申请
                 _teamStore.addApplication(application)
@@ -138,16 +139,12 @@ watchEffect(() => {
                 let matrix = _teamStore.getUserBoosterMatrix(
                     _authStore.getUserBooster()
                 )
-
                 // 创建一个新的队伍
                 let newGroup = _teamStore.createGroup(application, matrix)
-
                 // 设置队伍的booster为本地用户booster
                 newGroup.booster = _authStore.getUserBooster()
-
                 // 添加队伍
                 _teamStore.addApplicationGroup(newGroup)
-
                 // 添加申请
                 _teamStore.addApplication(application)
             }

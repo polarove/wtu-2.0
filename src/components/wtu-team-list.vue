@@ -297,6 +297,7 @@ const applicationDTO: ApplicationDTO = reactive({
 
 const check = (build: TeamMemberBO) => {
     console.log('checking' + build)
+    console.log(2)
 }
 
 const prepareJoinTeamParma = (team: TeamBO, member: TeamMemberBO): boolean => {
@@ -322,15 +323,12 @@ const prepareJoinTeamParma = (team: TeamBO, member: TeamMemberBO): boolean => {
 }
 
 const aqua = (team: TeamBO, member: TeamMemberBO) => {
-    if (
-        member.leader === 1 ||
-        isCreator(team.creatorUuid) ||
-        member.occupied === 1
-    ) {
+    if (member.leader === 1 || isCreator(team.creatorUuid)) {
         return
     }
     prepareJoinTeamParma(team, member)
     JoinTeam(applicationDTO)
+
     _teamStore.startPending(team.uuid, member.id)
 }
 </script>

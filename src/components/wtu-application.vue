@@ -13,12 +13,12 @@
         <el-drawer
             append-to-body
             v-model="visible"
-            :size="_layoutStore.isWide() ? '40%' : '100%'"
+            :size="_layoutStore.isWide() ? '50%' : '100%'"
         >
             <template #header>
                 <div class="vertical-middle panels">
                     <el-badge
-                        :value="groupLength"
+                        :value="applicationLength"
                         type="primary"
                         :hidden="isEmptyGroup"
                         :max="99"
@@ -151,7 +151,7 @@
                                                                     : 'default'
                                                             "
                                                             @click="
-                                                                rejectApplication(
+                                                                reject(
                                                                     application
                                                                 )
                                                             "
@@ -209,26 +209,22 @@
                     <div v-for="result in resultList" v-else class="wrapper">
                         <el-card shadow="hover">
                             <el-row>
-                                <el-col :span="23">{{
-                                    result.team.title
-                                }}</el-col>
+                                <el-col :span="23">
+                                    {{ result.team.title }}
+                                </el-col>
                                 <el-col :span="1">
-                                    <el-tooltip content="已接受">
-                                        <ryu-result-icon
-                                            v-if="accepted(result.status)"
-                                            class="accepted"
-                                        >
-                                            <span class="i-ep:check c-p"></span>
-                                        </ryu-result-icon>
-                                    </el-tooltip>
-                                    <el-tooltip content="已拒绝">
-                                        <ryu-result-icon
-                                            v-if="rejected(result.status)"
-                                            class="rejected"
-                                        >
-                                            <span class="i-ep:close c-p"></span>
-                                        </ryu-result-icon>
-                                    </el-tooltip>
+                                    <ryu-result-icon
+                                        v-if="accepted(result.status)"
+                                        class="accepted"
+                                    >
+                                        <span class="i-ep:check c-p"></span>
+                                    </ryu-result-icon>
+                                    <ryu-result-icon
+                                        v-if="rejected(result.status)"
+                                        class="rejected"
+                                    >
+                                        <span class="i-ep:close c-p"></span>
+                                    </ryu-result-icon>
                                 </el-col>
                             </el-row>
                             <ryu-clipboard
@@ -294,9 +290,15 @@ const groups: ComputedRef<Array<ApplicationGroup>> = computed(() => {
     return _teamStore.getApplicationGroups()
 })
 
-const groupLength = computed(() => groups.value.length)
+const applicationLength = computed(() => {
+    return groups.value.reduce((acc, cur) => {
+        return acc + cur.applications.length
+    }, 0)
+})
 
-const isEmptyGroup = computed(() => groupLength.value === 0)
+const isEmptyGroup = computed(() =>
+    groups.value.every((item) => item.applications.length === 0)
+)
 
 interface dsdsd {
     uuid: string
@@ -310,7 +312,7 @@ const whichIsEmpty = computed(() => {
 })
 
 const lengthInTotal = computed(() => {
-    return groupLength.value + resultLength.value
+    return applicationLength.value + resultLength.value
 })
 
 const bothEmpty = computed(() => {
@@ -355,7 +357,7 @@ const invite = (application: ApplicationDTO) => {
     }
 }
 
-const rejectApplication = (application: ApplicationDTO) => {
+const reject = (application: ApplicationDTO) => {
     if (application.status === APPLICATION_STATUS.pending) {
         application.status =
             APPLICATION_STATUS.rejected as keyof typeof APPLICATION_STATUS
