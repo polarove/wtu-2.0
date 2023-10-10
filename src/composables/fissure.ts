@@ -21,6 +21,7 @@ export interface fissure {
     tierNum: relicTireNum
     //local property
     subscribed: boolean
+    refreshing: boolean
 }
 
 export interface subscription {

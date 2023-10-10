@@ -3,7 +3,7 @@
         v-if="_authStore.getServer() === 0"
         class="text-center color-gray text-size-[0.88em]"
     >
-        国服暂不支持裂缝订阅，或向我提供技术支持
+        国服暂不支持裂缝订阅，若您有想法，可以向我提供技术支持
     </div>
     <div v-else>
         <div class="options">
@@ -44,7 +44,7 @@
                                 <el-countdown
                                     :format="format.hour"
                                     :value="utcTimestamp(item.expiry)"
-                                    @finish="update(item)"
+                                    @finish="refresh(item)"
                                 >
                                     <template #title>
                                         <div>
@@ -61,6 +61,10 @@
                                                 @click="
                                                     toggleSubscription(item)
                                                 "
+                                            ></span>
+                                            <span
+                                                class="i-ep:loading animation-rotate"
+                                                v-if="item.refreshing"
                                             ></span>
                                             <div
                                                 class="text-size-[0.8em] c-p inline hover-color-blue select-none"
@@ -89,6 +93,7 @@ import { utcTimestamp, format } from '@/util/DateUtil'
 import { activityStore, authStore } from '@/store'
 import { requires } from '@/util/ObjectUtil'
 import { useWebNotification, UseWebNotificationOptions } from '@vueuse/core'
+
 const _authStore = authStore()
 const notification: UseWebNotificationOptions = {
     title: '',
@@ -161,36 +166,48 @@ watch(
     }
 )
 
-const update = (fissure: fissure) => {
-    fissure_list.value = fissure_list.value.filter((target: fissure) => {
-        return target.id !== fissure.id
-    })
-}
-
 const parseFissureList = (
     full_list: fissure[],
     channel: relic_channel,
     isHard: boolean,
-    isStorm: boolean
-) => {
-    const f = full_list.filter(
+    isStorm: boolean,
+    callback?: Function
+): any => {
+    let filterred = full_list.filter(
         (fissure: fissure) =>
             fissure.isHard === isHard &&
             fissure.isStorm === isStorm &&
             fissure.expired === false
     )
-    let diffs = diff(f, fissure_list.value)
-    if (diffs && diffs.length === 0) {
-        return
+    let diffs = diff(filterred, fissure_list.value)
+    if (diffs.length === 0) {
+        setTimeout(() => {
+            return parseFissureList(
+                full_list,
+                channel,
+                isHard,
+                isStorm,
+                callback
+            )
+        }, 1000 * 3)
+    } else {
+        diffs.forEach((item) => {
+            if (!fissure_list.value.map((i) => i.id).includes(item.id)) {
+                fissure_list.value.unshift(item)
+            }
+        })
+        // 扫描整个新的列表，并根据订阅状态发送通知
+        notify(channel)
     }
-    diffs.forEach((item) => {
-        if (!fissure_list.value.map((i) => i.id).includes(item.id)) {
-            fissure_list.value.unshift(item)
+}
+
+const refresh = (fissure: fissure) => {
+    fissure_list.value.map((item: fissure) => {
+        if (item.id === fissure.id) {
+            item.refreshing = true
         }
     })
-
-    // 扫描整个新的列表，并根据订阅状态发送通知
-    notify(channel)
+    fetch()
 }
 
 const notify = (channel: string) => {

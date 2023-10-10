@@ -26,6 +26,7 @@
             "@img/*": ["./src/img/*"],
             "@page/*": ["./src/page/*"],
             "@composables/*": ["./src/composables/*"],
+            "components/*": ["./src/components/*"],
             "@util/*": ["./src/util/*"],
             "@api/*": ["./src/api/*"],
             "@class/*": ["./src/class/*"]

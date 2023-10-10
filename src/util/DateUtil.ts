@@ -4,6 +4,7 @@ import { isBlank } from './StrUtil'
 
 export enum format {
     year = 'YYYY-MM-DD HH:mm:ss',
+    day = 'DD [天] HH:mm:ss',
     hour = 'HH:mm:ss',
 }
 
