@@ -80,3 +80,17 @@ export interface ZarimanCycle extends subscribed {
     timeLeft: string
     shortString: string
 }
+
+export interface DuviriCycle extends subscribed {
+    id: string
+    activation: string
+    expiry: string
+    state: string
+    choices: Array<DuviriChoices>
+}
+
+export interface DuviriChoices {
+    category: 'normal' | 'hard'
+    categoryKey: 'EXC_NORMAL' | 'EXC_HARD'
+    choices: Array<string>
+}

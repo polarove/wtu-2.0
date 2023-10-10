@@ -11,11 +11,14 @@
                 :hidden="!isDuviri"
                 type="primary"
             >
-                <img
-                    :style="{ transform: `scale(${scale})` }"
-                    src="@img/duviri.png"
-                    alt="双衍王境"
-                />
+                <span class="vertical-middle overflow-hidden">
+                    <img
+                        :style="{ transform: `scale(${scale})` }"
+                        src="@img/duviri.png"
+                        alt="双衍王境"
+                    />
+                    <span v-if="isDuviri">{{ map.get(duviri.state) }}</span>
+                </span>
             </el-badge>
         </div>
         <div
@@ -42,6 +45,9 @@
 <script setup lang="ts">
 import entries from '@/composables/entries'
 import router from '@/router'
+import { getDuviriCycle } from '@api/warframestat'
+import { DuviriCycle } from '@composables/cycles'
+
 defineProps({
     scale: {
         type: Number,
@@ -52,6 +58,44 @@ defineProps({
         default: 0,
     },
 })
+
+enum Duviris {
+    joy = '喜悦',
+    anger = '愤怒',
+    sorrow = '悲伤',
+    fear = '恐惧',
+    jealousy = '嫉妒',
+}
+
+const map = new Map(Object.entries(Duviris))
+
+const duviri = ref<DuviriCycle>({
+    id: '',
+    activation: '',
+    expiry: '',
+    state: '',
+    choices: [
+        {
+            category: 'normal',
+            categoryKey: 'EXC_NORMAL',
+            // 普通模式战甲
+            choices: [],
+        },
+        {
+            category: 'hard',
+            categoryKey: 'EXC_HARD',
+            // 钢铁之路灵化
+            choices: [],
+        },
+    ],
+    subscribed: false,
+})
+
+const init = async () => {
+    duviri.value = (await getDuviriCycle()) as DuviriCycle
+}
+init()
+
 const isDuviri = computed(
     () => router.currentRoute.value.name === entries.duviri
 )
