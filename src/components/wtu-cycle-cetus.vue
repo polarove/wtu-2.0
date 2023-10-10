@@ -63,6 +63,7 @@ const refresh = async (): Promise<any> => {
     refreshing.value = true
     const reslut = (await getCetusCycle()) as CetusCycle
     if (reslut.id === cetus.value.id) {
+        console.log('cetus cycle not changed, refresh again')
         setTimeout(() => {
             return refresh()
         }, props.heartbeat)

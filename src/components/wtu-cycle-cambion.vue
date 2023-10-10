@@ -61,6 +61,7 @@ const refresh = async (): Promise<any> => {
     refreshing.value = true
     const reslut = (await getCambionCycle()) as CambionCycle
     if (reslut.id === cambion.value.id) {
+        console.log('cambion cycle not changed, refresh again')
         setTimeout(() => {
             return refresh()
         }, props.heartbeat)

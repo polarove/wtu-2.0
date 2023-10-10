@@ -85,6 +85,7 @@ const refresh = async (): Promise<any> => {
     refreshing.value = true
     const reslut = (await getVoidTraderCycle()) as VoidTraderCycle
     if (reslut.id === voidTrader.value.id) {
+        console.log('voidTrader cycle not changed, refresh again')
         setTimeout(() => {
             return refresh()
         }, 1000 * props.heartbeat)

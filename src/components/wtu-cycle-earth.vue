@@ -61,6 +61,7 @@ const refresh = async (): Promise<any> => {
     refreshing.value = true
     const reslut = (await getEarthCycle()) as EarthCycle
     if (reslut.id === earth.value.id) {
+        console.log('earth cycle not changed, refresh again')
         setTimeout(() => {
             return refresh()
         }, props.heartbeat)

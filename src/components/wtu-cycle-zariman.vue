@@ -64,6 +64,7 @@ const refresh = async (): Promise<any> => {
     refreshing.value = true
     const reslut = (await getZarimanCycle()) as ZarimanCycle
     if (reslut.id === zariman.value.id) {
+        console.log('zariman cycle not changed, refresh again')
         setTimeout(() => {
             return refresh()
         }, props.heartbeat)

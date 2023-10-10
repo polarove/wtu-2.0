@@ -63,6 +63,7 @@ const refresh = async (): Promise<any> => {
     refreshing.value = true
     const reslut = (await getVallisCycle()) as VallisCycle
     if (reslut.id === vallis.value.id) {
+        console.log('vallis cycle not changed, refresh again')
         setTimeout(() => {
             return refresh()
         }, props.heartbeat)

@@ -69,6 +69,7 @@ const refresh = async (): Promise<any> => {
     refreshing.value = true
     const reslut = (await getArbitrationCycle()) as ArbitrationCycle
     if (reslut.id === arbitration.value.id) {
+        console.log('arbitration cycle not changed, refresh again')
         setTimeout(() => {
             return refresh()
         }, props.heartbeat)
