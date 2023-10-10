@@ -201,7 +201,7 @@ const toggleSubscription = (target: fissure) => {
 }
 
 watchEffect(() => {
-    if (fissure_list.value.length) {
+    if (fissure_list.value.length || !_authStore.getServer()) {
         loading.value = false
     }
 })
