@@ -29,7 +29,7 @@
                     >
                         <div v-if="localStatus === 'static'">
                             <el-button
-                                v-if="!isCreator"
+                                v-if="!isCreator && !member.leader"
                                 @click="$emit('join')"
                                 size="small"
                             >
