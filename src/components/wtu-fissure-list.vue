@@ -1,59 +1,84 @@
 <template>
-    <div class="options">
-        <span
-            class="option"
-            :class="{ active: !state }"
-            @click="toggleList(false)"
-            >全部</span
-        >
-
-        <span
-            class="option"
-            :class="{ active: state }"
-            @click="toggleList(true)"
-            >订阅</span
-        >
+    <div
+        v-if="_authStore.getServer() === 0"
+        class="text-center color-gray text-size-[0.88em]"
+    >
+        国服暂不支持裂缝订阅，或向我提供技术支持
     </div>
-    <div class="list lt-lg:display-none">
-        <ryu-loading :loading="loading" :rows="1">
-            <el-row>
-                <el-col :span="4" v-for="item in fissure_list" class="p-0.4em">
-                    <el-card
-                        shadow="hover"
-                        class="animate__animated"
-                        :class="{
-                            animate__fadeIn: !item.expired,
-                            animate__fadeOut: item.expired,
-                        }"
-                    >
-                        <el-countdown
-                            :format="format.hour"
-                            :value="utcTimestamp(item.expiry)"
-                            @finish="update(item)"
+    <div v-else>
+        <div class="options">
+            <span
+                class="option"
+                :class="{ active: !state }"
+                @click="toggleList(false)"
+                >全部</span
+            >
+
+            <span
+                class="option"
+                :class="{ active: state }"
+                @click="toggleList(true)"
+                >订阅</span
+            >
+        </div>
+        <div class="list lt-lg:display-none">
+            <ryu-loading :loading="loading" :rows="1">
+                <ryu-empty
+                    :empty="isEmpty"
+                    :tip="state ? '暂无订阅' : '请稍等，正在加载...'"
+                >
+                    <el-row>
+                        <el-col
+                            :span="4"
+                            v-for="item in fissure_list"
+                            class="p-0.4em"
                         >
-                            <template #title>
-                                <div>{{ item.tier }}&nbsp;{{ item.node }}</div>
-                            </template>
-                            <template #prefix>
-                                <div class="transform-translate-y-[-2px]">
-                                    <span
-                                        class="i-ant-design:check-square-outlined c-p color-blue"
-                                        v-if="item.subscribed"
-                                        @click="toggleSubscription(item)"
-                                    ></span>
-                                    <div
-                                        class="text-size-[0.8em] c-p inline hover-color-blue select-none"
-                                        @click="toggleSubscription(item)"
-                                    >
-                                        {{ item.missionType }}&nbsp;
-                                    </div>
-                                </div>
-                            </template>
-                        </el-countdown>
-                    </el-card>
-                </el-col>
-            </el-row>
-        </ryu-loading>
+                            <el-card
+                                shadow="hover"
+                                class="animate__animated"
+                                :class="{
+                                    animate__fadeIn: !item.expired,
+                                    animate__fadeOut: item.expired,
+                                }"
+                            >
+                                <el-countdown
+                                    :format="format.hour"
+                                    :value="utcTimestamp(item.expiry)"
+                                    @finish="update(item)"
+                                >
+                                    <template #title>
+                                        <div>
+                                            {{ item.tier }}&nbsp;{{ item.node }}
+                                        </div>
+                                    </template>
+                                    <template #prefix>
+                                        <div
+                                            class="transform-translate-y-[-2px]"
+                                        >
+                                            <span
+                                                class="i-ant-design:check-square-outlined c-p color-blue"
+                                                v-if="item.subscribed"
+                                                @click="
+                                                    toggleSubscription(item)
+                                                "
+                                            ></span>
+                                            <div
+                                                class="text-size-[0.8em] c-p inline hover-color-blue select-none"
+                                                @click="
+                                                    toggleSubscription(item)
+                                                "
+                                            >
+                                                {{ item.missionType }}&nbsp;
+                                            </div>
+                                        </div>
+                                    </template>
+                                </el-countdown>
+                            </el-card>
+                        </el-col>
+                    </el-row>
+                </ryu-empty>
+            </ryu-loading>
+        </div>
     </div>
 </template>
 
@@ -77,6 +102,7 @@ const { isSupported, show } = useWebNotification(notification)
 
 const _activityStore = activityStore()
 const fissure_list = ref<fissure[]>([])
+const isEmpty = computed(() => fissure_list.value.length === 0)
 const loading = ref<boolean>(true)
 const state = ref<boolean>(false)
 const route = useRoute()
@@ -95,7 +121,6 @@ const toggleList = (stat: boolean) => {
         return
     }
     state.value = stat
-
     if (stat) {
         backup.value = fissure_list.value
         fissure_list.value = fissure_list.value.filter((fissure: fissure) => {
@@ -108,6 +133,7 @@ const toggleList = (stat: boolean) => {
 
 const fetch = async () => {
     if (!_authStore.getServer()) {
+        fissure_list.value = []
         return
     }
     const full_list = (await getFissureList()) as fissure[]
@@ -124,7 +150,16 @@ const fetch = async () => {
     }
     firstLoad.value = false
 }
-fetch()
+
+watch(
+    () => _authStore.getServer(),
+    () => {
+        fetch()
+    },
+    {
+        immediate: true,
+    }
+)
 
 const update = (fissure: fissure) => {
     fissure_list.value = fissure_list.value.filter((target: fissure) => {
