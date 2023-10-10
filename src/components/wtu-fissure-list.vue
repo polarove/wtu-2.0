@@ -61,10 +61,10 @@
 import type { fissure } from '@/composables/fissure'
 import { getFissureList } from '@api/warframestat/index'
 import { utcTimestamp, format } from '@/util/DateUtil'
-import { activityStore } from '@/store'
+import { activityStore, authStore } from '@/store'
 import { requires } from '@/util/ObjectUtil'
 import { useWebNotification, UseWebNotificationOptions } from '@vueuse/core'
-
+const _authStore = authStore()
 const notification: UseWebNotificationOptions = {
     title: '',
     body: '',
@@ -107,6 +107,9 @@ const toggleList = (stat: boolean) => {
 }
 
 const fetch = async () => {
+    if (!_authStore.getServer()) {
+        return
+    }
     const full_list = (await getFissureList()) as fissure[]
     switch (route.name) {
         case relic_channel.fissure:
@@ -124,9 +127,6 @@ const fetch = async () => {
 fetch()
 
 const update = (fissure: fissure) => {
-    console.log(fissure)
-    console.log(fissure.expired)
-
     fissure_list.value = fissure_list.value.filter((target: fissure) => {
         return target.id !== fissure.id
     })
