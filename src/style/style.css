@@ -37,7 +37,7 @@ a {
     margin-right: 0.3em;
 }
 
-.animation-rotate {
+.animation_rotate {
     animation: rotate 1s linear infinite;
 }
 
@@ -47,5 +47,20 @@ a {
     }
     100% {
         transform: rotate(359deg);
+    }
+}
+
+.animation_blink {
+    animation: blink 1s linear infinite;
+}
+@keyframes blink {
+    0% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.5;
     }
 }

@@ -291,14 +291,10 @@ const groups: ComputedRef<Array<ApplicationGroup>> = computed(() => {
 })
 
 const applicationLength = computed(() => {
-    return groups.value.reduce((acc, cur) => {
-        return acc + cur.applications.length
-    }, 0)
+    return groups.value.length
 })
 
-const isEmptyGroup = computed(() =>
-    groups.value.every((item) => item.applications.length === 0)
-)
+const isEmptyGroup = computed(() => applicationLength.value === 0)
 
 interface dsdsd {
     uuid: string

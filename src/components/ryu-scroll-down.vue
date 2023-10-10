@@ -3,7 +3,7 @@
         :class="{
             'i-ep:loading': loading,
             'i-ep:arrow-down': !loading,
-            'animation-rotate': loading,
+            animation_rotate: loading,
         }"
         @click="scrollDown()"
     ></div>

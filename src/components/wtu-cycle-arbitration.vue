@@ -15,7 +15,7 @@
                 </template>
                 <template #prefix>
                     <span
-                        class="i-ep:loading animation-rotate"
+                        class="i-ep:loading animation_rotate"
                         v-if="refreshing"
                     ></span>
                     <span

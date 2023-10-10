@@ -3,11 +3,24 @@
         <div class="lt-lg:display-none">
             <div
                 class="font-bold font-size-[0.88em]"
+                :class="{
+                    animation_blink:
+                        member.localStatus === APPLICATION_STATUS.pending,
+                }"
                 v-if="isNotBlank(member.user.name) && nameVisible"
             >
                 {{ member.user.name }}
             </div>
-            <div v-else class="color-gray font-size-[0.88em]">等待加入</div>
+            <div
+                v-else
+                class="color-gray font-size-[0.88em]"
+                :class="{
+                    animation_blink:
+                        member.localStatus === APPLICATION_STATUS.pending,
+                }"
+            >
+                等待加入
+            </div>
         </div>
         <el-popover width="auto">
             <template #reference>
@@ -46,9 +59,10 @@
                                 v-if="
                                     localStatus === APPLICATION_STATUS.pending
                                 "
+                                class="vertical-middle"
                             >
                                 <span
-                                    class="i-ep:loading animation-rotate mr-2px"
+                                    class="i-ep:loading animation_rotate mr-2px"
                                 ></span>
                                 <span class="font-size-[0.78em] color-gray">
                                     {{ isCreator ? '等待处理' : '申请中' }}

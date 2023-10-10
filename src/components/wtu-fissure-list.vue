@@ -63,7 +63,7 @@
                                                 "
                                             ></span>
                                             <span
-                                                class="i-ep:loading animation-rotate"
+                                                class="i-ep:loading animation_rotate"
                                                 v-if="item.refreshing"
                                             ></span>
                                             <div

@@ -1,6 +1,6 @@
 <template>
     <div v-if="loading" class="text-center">
-        <span class="i-ep:loading animation-rotate"></span>
+        <span class="i-ep:loading animation_rotate"></span>
     </div>
 
     <span v-else class="font-smiley">

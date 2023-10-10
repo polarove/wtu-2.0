@@ -414,15 +414,29 @@ export const teamStore = defineStore({
                     return
                 }
                 applications.splice(index, 1)
-                this.removeMatrixColumnForGroup(
-                    uuid,
-                    application.from.booster,
-                    (res: boolean) => {
-                        if (res) {
-                            this.updateGroupBooster(uuid)
+                if (applications.length === 0) {
+                    this.removeApplicationGroup(uuid)
+                } else {
+                    this.removeMatrixColumnForGroup(
+                        uuid,
+                        application.from.booster,
+                        (res: boolean) => {
+                            if (res) {
+                                this.updateGroupBooster(uuid)
+                            }
                         }
-                    }
-                )
+                    )
+                }
+            }
+        },
+        removeApplicationGroup(uuid: string) {
+            let group = this.findGroupByUUID(uuid)
+            if (requires(group)) {
+                let index = this.applicationGroup.indexOf(group!)
+                if (index === -1) {
+                    return
+                }
+                this.applicationGroup.splice(index, 1)
             }
         },
         addMatrixColumnForGroup(
