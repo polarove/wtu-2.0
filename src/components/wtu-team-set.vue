@@ -18,7 +18,7 @@
         </div>
         <el-drawer
             v-model="teamDrawer.visible"
-            :size="teamDrawer.dynamicSize"
+            :size="_layoutStore.isWide() ? '40%' : '100%'"
             :title="teamDrawer.title"
             :direction="teamDrawer.direction"
             @close="toggleTooltipDisabled()"
@@ -101,7 +101,7 @@
                             <wtu-focus-list
                                 v-model="member.focus"
                                 size="3em"
-                                :rows="rows"
+                                :rows="_layoutStore.isWide() ? 1 : 2"
                                 simplified
                             />
                         </div>
@@ -125,7 +125,7 @@
             <el-drawer
                 v-model="warframeListDrawer.visible"
                 :title="title"
-                :size="warframeListDrawer.dynamicSize"
+                :size="_layoutStore.isWide() ? '40%' : '100%'"
                 :direction="warframeListDrawer.direction"
                 destroy-on-close
                 @close="toggleTooltipDisabled()"
@@ -152,7 +152,7 @@
 </template>
 
 <script setup lang="ts">
-import { authStore } from '@/store'
+import { authStore, layoutStore } from '@/store'
 import { type FormInstance, type FormRules } from 'element-plus'
 import { type TeamDTO, type TeamVO } from '@/composables/team'
 import { type warframe } from '@/composables/warframe'
@@ -163,8 +163,7 @@ import { SERVER_CODE } from '@/composables/enums'
 
 const route = useRoute()
 const _authStore = authStore()
-const _teamStore = teamStore()
-
+const _layoutStore = layoutStore()
 const createTeamFormRef = ref<FormInstance>()
 const createTeamFormRules = reactive<FormRules>({
     title: [
@@ -263,7 +262,6 @@ const addRequirement = () => {
 }
 
 const teamDrawer = reactive({
-    dynamicSize: '40%',
     visible: false,
     title: '',
     direction: 'rtl',
@@ -274,7 +272,6 @@ const teamDrawer = reactive({
 const warframeListDrawer = reactive({
     visible: false,
     title: '选择一个战甲',
-    dynamicSize: '40%',
     direction: 'rtl',
 })
 
@@ -374,32 +371,6 @@ const createTeam = () => {
             teamDrawer.visible = false
         })
 }
-
-const rows = ref<number>(1)
-const initDrawerWidth = () => {
-    if (document.body.clientWidth < 900) {
-        teamDrawer.dynamicSize = '100%'
-        warframeListDrawer.dynamicSize = '95%'
-        rows.value = 2
-    } else {
-        teamDrawer.dynamicSize = '40%'
-        warframeListDrawer.dynamicSize = '35%'
-        rows.value = 1
-    }
-}
-initDrawerWidth()
-
-onMounted(() => {
-    window.addEventListener('resize', () => {
-        initDrawerWidth()
-    })
-})
-
-onBeforeUnmount(() => {
-    window.removeEventListener('resize', () => {
-        initDrawerWidth()
-    })
-})
 </script>
 
 <style lang="scss" scoped>
