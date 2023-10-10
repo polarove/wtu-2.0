@@ -235,7 +235,6 @@
                                 v-if="accepted(result.status)"
                                 :content="result.receiver.name"
                                 prefix="/join"
-                                :ref="(el: any) => el && el.copy()"
                             >
                             </ryu-clipboard>
                         </el-card>
@@ -323,7 +322,7 @@ const isSeleted = (uuid: string): boolean => {
 }
 
 const addBooster = (application: ApplicationDTO) => {
-    if (application.status === APPLICATION_STATUS.rejected) return
+    if (application.status !== APPLICATION_STATUS.pending) return
     let uuid = application.team.uuid
     let booster: UserBooster = application.from.booster
     _teamStore.addMatrixColumnForGroup(uuid, booster, (result: boolean) => {
@@ -334,6 +333,7 @@ const addBooster = (application: ApplicationDTO) => {
 }
 
 const removeBooster = (application: ApplicationDTO) => {
+    if (application.status !== APPLICATION_STATUS.pending) return
     let uuid = application.team.uuid
     let booster: UserBooster = application.from.booster
     _teamStore.removeMatrixColumnForGroup(uuid, booster, (result: boolean) => {
@@ -345,10 +345,10 @@ const removeBooster = (application: ApplicationDTO) => {
 
 const invite = (application: ApplicationDTO) => {
     if (application.status === APPLICATION_STATUS.pending) {
+        addBooster(application)
         application.status =
             APPLICATION_STATUS.accepted as keyof typeof APPLICATION_STATUS
         application.receiver.name = _authStore.getName()
-        addBooster(application)
         ApplicationResult(application)
         inviteMessage(application.team.title, application.from.name)
         _teamStore.resolvedAsAccepted(

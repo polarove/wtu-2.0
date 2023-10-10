@@ -61,10 +61,6 @@ const copy = () => {
         .catch(() => {})
         .finally(() => {})
 }
-
-defineExpose({
-    copy,
-})
 </script>
 
 <style lang="scss" scoped>
