@@ -1,32 +1,36 @@
 <template>
-    <div class="tabs flex-between">
+    <div class="tabs flex-between" v-if="_authStore.getDifficulty()">
         <span
-            @click="router.push({ name: 'origin' })"
             class="tab"
-            :class="{ active: routes.name === entries.origin }"
+            @click="touch(activity)"
+            :class="{ active: activity.name === routes.name }"
+            v-for="(activity, index) in childRoutes"
         >
-            <RyuSvg name="planet" size="1.4em" />
-        </span>
-
-        <span v-if="_authStore.getDifficulty()">
-            <span
-                class="tab"
-                @click="touch(activity)"
-                :class="{ active: activity.name === routes.name }"
-                v-for="(activity, index) in childRoutes"
+            <el-badge
+                type="primary"
+                :value="clients"
+                :hidden="activity.name !== routes.name"
             >
-                <RyuSvg :index="index" :name="activity.name" size="1.4em" />
-            </span>
+                <ryu-svg :index="index" :name="activity.name" size="1.4em" />
+            </el-badge>
         </span>
-        <span v-else>
-            <span
-                class="tab"
-                @click="touch(activity)"
-                :class="{ active: activity.name === routes.name }"
-                v-for="(activity, index) in easyModeRoutes"
+    </div>
+    <div class="tabs flex-between" v-else>
+        <span
+            class="tab"
+            @click="touch(activity)"
+            :class="{ active: activity.name === routes.name }"
+            v-for="(activity, index) in childRoutes?.filter(
+                (item) => item.name !== 'steelpath'
+            )"
+        >
+            <el-badge
+                type="primary"
+                :value="clients"
+                :hidden="activity.name !== routes.name"
             >
-                <RyuSvg :index="index" :name="activity.name" size="1.4em" />
-            </span>
+                <ryu-svg :index="index" :name="activity.name" size="1.4em" />
+            </el-badge>
         </span>
     </div>
 </template>
@@ -35,13 +39,35 @@
 import { authStore } from '@/store'
 import entries from '@composables/entries'
 import router from '@/router'
+import { RouteRecord } from 'vue-router'
 const routes = useRoute()
 const _authStore = authStore()
+
+defineProps({
+    clients: {
+        type: Number,
+        default: 0,
+    },
+})
+
 const childRoutes = routes.matched
     .find((item) => item.name === 'index')
-    ?.children.find((item) => item.name === 'activity')?.children
+    ?.children.filter((item) => item.path.includes('/team'))
+    .filter((item) => {
+        if (item.name === 'activity') {
+            let origin = routes.matched
+                .find((item) => item.redirect == '/team/origin')
+                ?.children.find(
+                    (item) => item.name === entries.origin
+                ) as RouteRecord
+            if (item.children?.includes(origin)) {
+                return item.children
+            } else {
+                return item.children?.unshift(origin)
+            }
+        }
+    })[0].children
 
-const easyModeRoutes = childRoutes?.filter((item) => item.name !== 'steelpath')
 const touch = (activity: any) => {
     router.push({ name: activity.name })
 }

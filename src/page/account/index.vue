@@ -5,21 +5,19 @@
                 class="i-ep:close p-a right-20px top-20px c-p hover-color-blue text-size-[1.2em]"
                 @click="close"
             ></div>
-            <WtuLogo class="mb-1em" />
+            <wtu-logo class="mb-1em" />
             <RouterView />
         </div>
         <img src="@img/lunar.png" alt="background" class="background" />
     </div>
-    <WtuFooter class="p-a bottom-0 left-0" />
+    <wtu-footer class="p-a bottom-0 left-0" />
 </template>
 
 <script setup lang="ts">
 import router from '@/router'
-import { authStore } from '@/store'
 import { isBlank } from '@/util/StrUtil'
-
+import { authStore } from '@/store'
 const _authStore = authStore()
-
 provide('showServer', false)
 
 const close = () => {

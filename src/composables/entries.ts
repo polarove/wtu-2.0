@@ -1,10 +1,10 @@
 class entries {
-    public static readonly durivi = 'durivi'
+    public static readonly duviri = 'duviri'
     public static readonly empyrean = 'empyrean'
     public static readonly origin = 'origin'
 
-    isDurivi(entry: string): boolean {
-        return entry === entries.durivi
+    isduviri(entry: string): boolean {
+        return entry === entries.duviri
     }
 
     isEmpyrean(entry: string): boolean {

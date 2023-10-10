@@ -1,21 +1,23 @@
 <template>
-    <WtuHeader></WtuHeader>
+    <wtu-header></wtu-header>
+    <div class="selections">
+        <wtu-selections />
+    </div>
+
     <div class="banner-wrapper">
         <img src="@img/banner/ivara.jpg" />
-        <WtuProfileRoute direction="vertical" class="absolute-routes" />
+        <wtu-profile-route direction="vertical" class="absolute-routes" />
         <div class="wrapper">
             <div class="avatar">
-                <WtuAvatar :PopDisabled="true" shape="circle" :size="150" />
+                <wtu-avatar :PopDisabled="true" shape="circle" :size="150" />
             </div>
             <div class="inline-block">
-                <WtuProfileRoute class="hidden-router" />
-                <div class="text-size-[2rem] font-bold name">
-                    {{ _authStore.getName() }}
-                </div>
+                <wtu-profile-route class="hidden-router" />
+                <ryu-user-name class="text-size-[2rem] font-bold name" />
                 <div class="text-gray">
-                    <RyuSvg name="quote"></RyuSvg>
+                    <ryu-svg name="quote" />
                     <span>{{ _authStore.getDescription() }}</span>
-                    <RyuSvg name="quote-rotate-180"></RyuSvg>
+                    <ryu-svg name="quote-rotate-180" />
                 </div>
             </div>
         </div>
@@ -23,11 +25,34 @@
     <div class="routerview__container">
         <RouterView />
     </div>
+    <wtu-footer />
 </template>
 
 <script setup lang="ts">
 import { authStore } from '@/store'
 const _authStore = authStore()
+// import { websocket } from '@/util/WebsocketUtil'
+// const route = useRoute()
+// const ChannelParam = reactive({
+//     route: route.name,
+//     uuid: _authStore.getUUID(),
+//     server: _authStore.getServer(),
+//     action: 1,
+// })
+// const wss = new websocket(_authStore.getServer())
+// const createConnection = () => {
+//     ChannelParam.action = 0
+//     console.log(1)
+
+//     wss.on_open(() => {
+//         wss.send(ChannelParam, () => {
+//             wss.on_message((data: any) => {
+//                 console.log(data)
+//             })
+//         })
+//     })
+// }
+// createConnection()
 </script>
 
 <style lang="scss" scoped>
@@ -87,5 +112,14 @@ const _authStore = authStore()
     .wrapper {
         transform: translateY(33.3%) translateX(5%) !important;
     }
+}
+.selections {
+    position: fixed;
+    right: 0.75rem;
+    top: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 </style>

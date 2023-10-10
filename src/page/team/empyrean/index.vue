@@ -1,5 +1,6 @@
 <template>
-    <WtuTeamList />
+    <wtu-fissure-list />
+    <wtu-team-list />
 </template>
 
 <script setup lang="ts"></script>

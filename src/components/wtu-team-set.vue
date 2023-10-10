@@ -1,20 +1,20 @@
 <template>
     <div>
         <div class="teamset" v-if="_authStore.isLogin()">
-            <WtuLoadout
+            <wtu-loadout
                 v-for="(teammate, index) in createTeamForm.members"
                 :teammate="teammate"
                 :index="index"
                 :ref="(el: Component) => setLoadoutRef(el, index)"
                 class="teammate"
-                @emitCreateTeam="createTeam(index)"
+                @emitCreateTeam="toggleCreateTeamDrawer(index)"
             >
                 <template #loadout>
                     <div>
                         {{ teammate.warframe[_authStore.getServerChar()] }}
                     </div>
                 </template>
-            </WtuLoadout>
+            </wtu-loadout>
         </div>
         <el-drawer
             v-model="teamDrawer.visible"
@@ -35,6 +35,16 @@
                         v-model="createTeamForm.title"
                     />
                 </el-form-item>
+                <el-form-item> 队伍类型 </el-form-item>
+                <el-form-item>
+                    <el-select
+                        placeholder="请选择队伍类型"
+                        v-model="createTeamForm.isPublic"
+                    >
+                        <el-option label="公开可见" :value="true"></el-option>
+                        <el-option label="仅限邀请" :value="false"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item> 进队要求 </el-form-item>
                 <el-form-item
                     v-for="(requirement, index) in createTeamForm.requirements"
@@ -52,7 +62,7 @@
                                 <el-option
                                     v-for="(requirement, index) in requirements"
                                     :key="index"
-                                    :value="requirement.type"
+                                    :value="requirement.name"
                                     :label="requirement.name"
                                 />
                             </el-select>
@@ -79,19 +89,20 @@
                 <el-form-item
                     v-for="(member, index) in createTeamForm.members"
                     :key="index"
-                    :label="!index ? member.user.name : '队友_' + index + ':'"
+                    :label="!index ? '我' : '队友_' + index + ':'"
                     class="member"
                 >
                     <div class="flex-between w-100%">
-                        <div class="flex-center">
-                            <WtuWarframe
+                        <div class="flex-start w-100%">
+                            <wtu-warframe
                                 v-model="member.warframe"
                                 @click="toggleWarframeDrawer(index)"
                             />
-                            <WtuFocusList
+                            <wtu-focus-list
                                 v-model="member.focus"
                                 size="3em"
-                                :rows="1"
+                                :rows="rows"
+                                simplified
                             />
                         </div>
                         <div
@@ -105,9 +116,7 @@
                     <div class="addFormItem">
                         <div
                             class="i-ant-design:usergroup-add-outlined icon mr-4"
-                            @click.prevent="
-                                addMember(createTeamForm.members.length)
-                            "
+                            @click.prevent="addMember()"
                         ></div>
                     </div>
                 </el-form-item>
@@ -122,15 +131,18 @@
                 @close="toggleTooltipDisabled()"
                 :append-to-body="true"
             >
-                <WtuWarframeList
+                <wtu-warframe-list
                     @emitToggleWarframeDrawer="toggleWarframeDrawer($event)"
                     @updateModelValue="selectWarframe($event)"
                 />
             </el-drawer>
             <template #footer>
                 <div class="flex-between">
-                    <RyuSponsor />
-                    <el-button @click="publishTeam(createTeamFormRef)">
+                    <ryu-sponsor />
+                    <el-button
+                        :loading="loading"
+                        @click="publishTeam(createTeamFormRef)"
+                    >
                         发布
                     </el-button>
                 </div>
@@ -142,13 +154,14 @@
 <script setup lang="ts">
 import { authStore } from '@/store'
 import { type FormInstance, type FormRules } from 'element-plus'
-import { type TeamInstance, type Team } from '@/composables/team'
+import { type TeamDTO, type TeamVO } from '@/composables/team'
 import { type warframe } from '@/composables/warframe'
 import { requirements } from '@composables/requirement'
-import { CreateTeam } from '@api/team'
-import { type response } from '@composables/types'
-import { teamStore } from '@/store'
-const routes = useRoute()
+import { CreateTeam, GetTeamById, BroadcastTeam } from '@api/team'
+import type { response } from '@/composables/types'
+import { SERVER_CODE } from '@/composables/enums'
+
+const route = useRoute()
 const _authStore = authStore()
 const _teamStore = teamStore()
 
@@ -162,10 +175,11 @@ const createTeamFormRules = reactive<FormRules>({
         },
     ],
 })
-const createTeamForm = reactive<TeamInstance>({
+const createTeamForm = reactive<TeamDTO>({
     title: '未修改的标题',
-    server: _authStore.getServer(),
+    server: 1,
     channel: null,
+    isPublic: true,
     requirements: [],
     members: [
         {
@@ -180,7 +194,8 @@ const createTeamForm = reactive<TeamInstance>({
                 cn: '任意',
             },
             focus: 'any',
-            role: 0,
+            leader: 1,
+            occupied: 1,
         },
         {
             user: {
@@ -194,12 +209,13 @@ const createTeamForm = reactive<TeamInstance>({
                 cn: '任意',
             },
             focus: 'any',
-            role: 1,
+            leader: 0,
+            occupied: 0,
         },
     ],
 })
 
-const addMember = (index: number) => {
+const addMember = () => {
     if (createTeamForm.members.length > 3) {
         return
     }
@@ -215,7 +231,8 @@ const addMember = (index: number) => {
             cn: '任意',
         },
         focus: 'any',
-        role: index,
+        leader: 0,
+        occupied: 0,
     })
 }
 
@@ -240,7 +257,7 @@ const addRequirement = () => {
         return
     }
     createTeamForm.requirements.push({
-        type: 'any',
+        type: '任意',
         content: '',
     })
 }
@@ -280,9 +297,9 @@ const title = computed(() => {
     return '选择第' + teamDrawer.edit + '个队友的战甲'
 })
 
-const createTeam = (index: number) => {
+const toggleCreateTeamDrawer = (index: number) => {
     teamDrawer.visible = true
-    teamDrawer.title = '在 ' + routes.meta.forehead + ' 招募队友'
+    teamDrawer.title = '在 ' + route.meta.forehead + ' 招募队友'
     teamDrawer.from = index
 }
 
@@ -296,35 +313,78 @@ const toggleTooltipDisabled = () => {
     refs[`${teamDrawer.from}`].enablePopover()
 }
 
+const loading = ref<boolean>(false)
 const publishTeam = (formEl: FormInstance | undefined) => {
+    loading.value = true
     if (!formEl) {
+        loading.value = false
         return
     }
-    formEl.validate(async (valid: boolean) => {
+    formEl.validate((valid: boolean) => {
         if (!valid) {
+            loading.value = false
             return
         }
-        createTeamForm.channel = routes.name
-        const result = (await CreateTeam(createTeamForm)) as response
-        if (result.success) {
-            teamDrawer.visible = false
-            let temp: Team = {
-                team: createTeamForm,
-            }
-            _teamStore.addTeam(temp)
+        if (checkDTO()) {
+            createTeam()
+            loading.value = false
         } else {
-            ElMessage.error(result.message)
+            ElNotification.error({
+                position: 'bottom-right',
+                message: '当前用户名不符合国际服规范，请更改',
+            })
+            loading.value = false
         }
     })
 }
 
+const checkDTO = (): boolean => {
+    if (_authStore.getServer() === SERVER_CODE.en) {
+        let reg = new RegExp(/^\w+$/)
+        let name = _authStore.getName()
+        return reg.test(name)
+    } else {
+        return true
+    }
+}
+
+const createTeam = () => {
+    createTeamForm.channel = route.name
+    createTeamForm.server = _authStore.getServer()
+
+    CreateTeam(createTeamForm)
+        .then(async (res: any) => {
+            if (res.success) {
+                const result = (await GetTeamById(res.data)) as response<TeamVO>
+                if (result.success) {
+                    BroadcastTeam(result.data)
+                } else {
+                    ElMessage.error(result.message)
+                }
+            }
+        })
+        .catch((err: any) => {
+            ElNotification.error({
+                position: 'bottom-right',
+                message: err.message,
+            })
+        })
+        .finally(() => {
+            loading.value = false
+            teamDrawer.visible = false
+        })
+}
+
+const rows = ref<number>(1)
 const initDrawerWidth = () => {
     if (document.body.clientWidth < 900) {
         teamDrawer.dynamicSize = '100%'
         warframeListDrawer.dynamicSize = '95%'
+        rows.value = 2
     } else {
         teamDrawer.dynamicSize = '40%'
         warframeListDrawer.dynamicSize = '35%'
+        rows.value = 1
     }
 }
 initDrawerWidth()

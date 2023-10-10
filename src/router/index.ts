@@ -17,10 +17,10 @@ const routes = [
                 component: () => import('@page/team/origin/index.vue'),
             },
             {
-                path: `/team/${entries.durivi}`,
-                name: entries.durivi,
+                path: `/team/${entries.duviri}`,
+                name: entries.duviri,
                 meta: { forehead: '双衍王境' },
-                component: () => import('@page/team/durivi/index.vue'),
+                component: () => import('@page/team/duviri/index.vue'),
             },
             {
                 path: `/team/${entries.empyrean}`,
@@ -142,6 +142,12 @@ const routes = [
             },
         ],
     },
+    {
+        path: '/sponsor',
+        name: 'sponsor',
+        meta: { forehead: '赞助者' },
+        component: () => import('@page/sponsor/index.vue'),
+    },
 ]
 
 const router = createRouter({
@@ -149,8 +155,7 @@ const router = createRouter({
     routes,
 })
 
-// @ts-ignore
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
     nProgress.start()
     document.title = to.meta.forehead
         ? (to.meta.forehead as any)

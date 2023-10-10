@@ -1,9 +1,11 @@
 <template>
-    <div v-if="empty" class="empty">
-        <RyuSvg class="icon" name="empty" :size="iconSize" />
-        <div class="tip">{{ tip }}</div>
+    <div>
+        <div v-if="empty" class="empty">
+            <ryu-svg class="icon" name="empty" :size="iconSize" />
+            <div class="tip">{{ tip }}</div>
+        </div>
+        <slot></slot>
     </div>
-    <slot v-else></slot>
 </template>
 
 <script setup lang="ts">
@@ -29,8 +31,11 @@ defineProps({
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    .icon {
+        padding-top: 2em;
+        padding-bottom: 0.5em;
+    }
     .tip {
-        margin-top: 1em;
         font-size: 0.88em;
         color: #999;
         user-select: none;

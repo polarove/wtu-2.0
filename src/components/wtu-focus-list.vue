@@ -1,5 +1,5 @@
 <template>
-    <el-row>
+    <el-row class="w-70%">
         <el-col
             :span="rows === 1 ? 4 : 8"
             v-for="len in focus"
@@ -7,15 +7,22 @@
             :style="{ opacity: modelValue !== len.en ? 0.25 : 1 }"
             @click="$emit('update:modelValue', len.en)"
         >
-            <RyuSvg :name="len.en" :size="size" />
+            <ryu-svg :name="len.en" :size="size" />
             <div v-if="showName" class="text-center">
-                {{ len.label }}
+                <span v-if="_authStore.getServer()">
+                    {{ simplified ? len.en_simplified : len.en }}
+                </span>
+                <span v-else>
+                    {{ simplified ? len.cn_simplified : len.cn }}
+                </span>
             </div>
         </el-col>
     </el-row>
 </template>
 
 <script setup lang="ts">
+import { authStore } from '@/store'
+const _authStore = authStore()
 import { focus } from '@composables/focus'
 defineProps({
     modelValue: {
@@ -33,6 +40,10 @@ defineProps({
     showName: {
         type: Boolean,
         default: true,
+    },
+    simplified: {
+        type: Boolean,
+        default: false,
     },
 })
 </script>

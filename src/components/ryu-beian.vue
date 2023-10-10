@@ -1,20 +1,18 @@
 <template>
-    <a href="https://beian.miit.gov.cn/" class="vertical-middle">
-        <img id="police" src="@img/police.png">
-        <span id="beianhao">闽ICP备2021003148号</span>
-    </a>
+    <div>
+        <a href="https://beian.miit.gov.cn/" class="vertical-middle">
+            <img id="police" class="icon" src="@img/police.png" />
+            <span id="beianhao">闽ICP备2021003148号</span>
+        </a>
+    </div>
 </template>
-  
-<script setup lang='ts'>
 
-</script>
-  
-<style lang='scss' scoped>
+<script setup lang="ts"></script>
+
+<style lang="scss" scoped>
 #police {
-    width: 23px;
-    margin-right: 0.5rem;
+    width: 20px;
 }
-
 
 #beianhao {
     color: var(--el-text-color-primary);

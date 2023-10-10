@@ -1,20 +1,28 @@
 // response from server
-export interface response {
+export interface response<T> {
     code: number
-    data: string | User
+    data: T
     message: string
     success: boolean
     timestamp: number
 }
 
-// user object
-export interface User {
-    avatar: string
-    description: string
-    name: string
-    onlineStatus: number | null
-    uuid: string
-    server: number
-    level: number
-    boosterList: string[]
+export interface Page {
+    current: number
+    pages: number
+    size: number
+    total: number
+}
+
+export interface ResponseEnum {
+    code: number
+    message: string
+}
+
+export interface xhr_response {
+    config: any
+    data: response<any>
+    headers: any
+    request: any
+    status: number
 }

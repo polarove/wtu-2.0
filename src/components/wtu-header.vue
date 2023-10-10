@@ -4,15 +4,15 @@
         :style="{ boxShadow: isDark ? '' : '0 2px 12px 0 rgba(0, 0, 0, 0.1)' }"
     >
         <el-col :span="5" class="flex-center">
-            <WtuLogo />
+            <wtu-logo />
         </el-col>
         <el-col :span="12" class="flex-center">
-            <WtuAppname class="invisible-max-900px" />
+            <wtu-app-name class="lg-display-none" />
         </el-col>
         <!-- <div class="flex-1"></div> -->
         <el-col :span="7" class="flex-center">
-            <WtuAvatar class="avatar" />
-            <div class="invisible-min-900px ml-1em tp">
+            <wtu-avatar class="avatar" />
+            <div class="lt-lg-display-none ml-1em tp">
                 <div
                     v-if="isBlank(_authStore.getUUID())"
                     class="text-center text-size-[1.0rem] ml-1.0em cursor-pointer hover-color-blue"
@@ -20,11 +20,8 @@
                 >
                     点击登录&nbsp;/&nbsp;注册
                 </div>
-                <div v-else class="vertical-middle">
-                    <div class="text-size-[1.2rem] font-bold">
-                        {{ _authStore.getName() }}
-                    </div>
-                    <WtuOnlineState />
+                <div v-else>
+                    <ryu-user-name inputSize="small" /> <wtu-online-state />
                 </div>
             </div>
         </el-col>

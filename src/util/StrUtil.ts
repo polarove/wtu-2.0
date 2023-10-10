@@ -1,11 +1,13 @@
-export const isBlank = (str: string) => {
-    return !str || /^\s*$/.test(str) || str.length === 0 || str === null
+export const isBlank = (str: string | undefined | null) => {
+    return (
+        !str ||
+        /^\s*$/.test(str) ||
+        str.length === 0 ||
+        str === null ||
+        str === undefined
+    )
 }
 
 export const isNotBlank = (str: string) => {
     return !isBlank(str)
-}
-
-export const toUpperCase = (str: string) => {
-    return str.toUpperCase()
 }

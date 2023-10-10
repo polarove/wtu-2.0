@@ -7,7 +7,7 @@ body {
 }
 
 a {
-    color: var(--wtu-text-color);
+    color: var(--el-text-color);
     text-decoration: none;
 }
 
@@ -30,40 +30,37 @@ a {
     background: #555;
 }
 
-:root {
-    color-scheme: light;
-    --wtu-text-color: #fff;
-}
-
-:root {
-    color-scheme: dark;
-    --wtu-text-color: #fff;
-}
-
 .vertical-middle > * {
     vertical-align: middle;
 }
+.vertical-middle > .icon {
+    margin-right: 0.3em;
+}
 
-@media screen and (max-width: 900px) {
-    .visible-max-900px {
-        display: inline-block;
+.animation_rotate {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(359deg);
     }
 }
 
-@media screen and (min-width: 900px) {
-    .visible-min-900px {
-        display: inline-block;
-    }
+.animation_blink {
+    animation: blink 1s linear infinite;
 }
-
-@media screen and (min-width: 900px) {
-    .invisible-max-900px {
-        display: none;
+@keyframes blink {
+    0% {
+        opacity: 0.5;
     }
-}
-
-@media screen and (max-width: 900px) {
-    .invisible-min-900px {
-        display: none;
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.5;
     }
 }

@@ -1,5 +1,6 @@
 <template>
-    <WtuTeamList />
+    <wtu-cycle-list />
+    <wtu-team-list />
 </template>
 
 <script setup lang="ts"></script>

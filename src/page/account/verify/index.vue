@@ -1,7 +1,7 @@
 <template>
     <div class="page-account-verify">
         <div
-            class="i-ep:loading text-size-[3rem] rotating"
+            class="i-ep:loading text-size-[3rem] animation-rotate"
             :class="{ invisible: verificationStatus.compeleted }"
         ></div>
         <div
@@ -15,6 +15,7 @@
                 </div>
             </div>
             <el-form
+                v-if="isNotDefualtUserName(_authStore.getName())"
                 class="mt-20px"
                 ref="VerifyFormRef"
                 :model="VerifyForm"
@@ -60,12 +61,12 @@
 <script setup lang="ts">
 import router from '@/router'
 import { Verify, SaveMyProfile } from '@api/account'
-import type { User, response } from '@composables/types'
+import type { response, ResponseEnum } from '@composables/types'
+import type { UserVO } from '@composables/user'
 import type { FormInstance, FormRules } from 'element-plus'
 import { authStore } from '@/store'
 import { ElMessage } from 'element-plus'
-import { defaults } from '@composables/defaults'
-const Default = new defaults()
+import { isDefualtUserName, isNotDefualtUserName } from '@composables/enums'
 
 const _authStore = authStore()
 const email = router.currentRoute.value.query.email as string
@@ -85,7 +86,7 @@ const verificationForm = reactive({
 })
 
 const verify = async () => {
-    const result = (await Verify(verificationForm)) as response
+    const result = (await Verify(verificationForm)) as response<ResponseEnum>
     if (result.code == 204) {
         setTimeout(() => {
             verificationStatus.compeleted = true
@@ -94,7 +95,7 @@ const verify = async () => {
     } else if (result.code == 205) {
         setTimeout(() => {
             verificationStatus.compeleted = true
-            if (Default.isDefualtUserName(_authStore.getName())) {
+            if (isDefualtUserName(_authStore.getName())) {
                 verificationStatus.succeed = true
                 verificationStatus.message = '别忘了输入用户名哦^_^'
             } else {
@@ -113,9 +114,8 @@ verify()
 
 const VerifyFormRef = ref<FormInstance>()
 const VerifyForm = reactive({
-    email: '',
+    uuid: '',
     name: '',
-    server: '',
 })
 const VerifyFormRules = reactive<FormRules>({
     name: [
@@ -137,11 +137,11 @@ const saveMyProfile = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate(async (valid) => {
         if (valid) {
-            VerifyForm.email = email
-            const result = (await SaveMyProfile(VerifyForm)) as response
+            VerifyForm.uuid = uuid
+            const result = (await SaveMyProfile(VerifyForm)) as response<UserVO>
             if (result.success) {
                 router.push({ name: 'origin' })
-                _authStore.setUser(result.data as User)
+                _authStore.setUser(result.data)
             } else {
                 ElMessage.error(result.message)
             }
@@ -159,25 +159,11 @@ const saveMyProfile = async (formEl: FormInstance | undefined) => {
     text-align: center;
 }
 
-.rotating {
-    animation: rotating 3s linear infinite;
-}
-
 .visible {
     display: inline-block;
 }
 
 .invisible {
     display: none;
-}
-
-@keyframes rotating {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
 }
 </style>

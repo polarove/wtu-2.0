@@ -31,7 +31,7 @@ const props = defineProps({
     },
     width: {
         type: String,
-        default: '60px',
+        default: '65px',
     },
     size: {
         type: String,
@@ -52,6 +52,7 @@ const src = computed(() => {
     cursor: pointer;
     text-align: center;
     text-wrap: pretty;
+    user-select: none;
     &:hover {
         .text {
             color: var(--el-color-primary) !important;

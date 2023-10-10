@@ -1,26 +1,43 @@
 <template>
     <div class="entries">
         <div
-            :class="{ activated: isDurivi }"
+            :class="{ activated: isDuviri }"
             class="entry"
-            @click="navi(entries.durivi)"
+            @click="navi(entries.duviri)"
         >
-            <img
-                :style="{ transform: `scale(${scale})` }"
-                src="@img/durivi.png"
-                alt="双衍王境"
-            />
+            <el-badge
+                :value="clients"
+                :max="999"
+                :hidden="!isDuviri"
+                type="primary"
+            >
+                <span class="vertical-middle overflow-hidden">
+                    <img
+                        :style="{ transform: `scale(${scale})` }"
+                        src="@img/duviri.png"
+                        alt="双衍王境"
+                    />
+                    <span v-if="isDuviri">{{ map.get(duviri.state) }}</span>
+                </span>
+            </el-badge>
         </div>
         <div
             :class="{ activated: isEmpyrean }"
             class="entry"
             @click="navi(entries.empyrean)"
         >
-            <img
-                :style="{ transform: `scale(${scale})` }"
-                src="@img/railjet.png"
-                alt="九重天"
-            />
+            <el-badge
+                :value="clients"
+                :max="999"
+                :hidden="!isEmpyrean"
+                type="primary"
+            >
+                <img
+                    :style="{ transform: `scale(${scale})` }"
+                    src="@img/railjet.png"
+                    alt="九重天"
+                />
+            </el-badge>
         </div>
     </div>
 </template>
@@ -28,14 +45,59 @@
 <script setup lang="ts">
 import entries from '@/composables/entries'
 import router from '@/router'
+import { getDuviriCycle } from '@api/warframestat'
+import { DuviriCycle } from '@composables/cycles'
+
 defineProps({
     scale: {
         type: Number,
         default: 1,
     },
+    clients: {
+        type: Number,
+        default: 0,
+    },
 })
-const isDurivi = computed(
-    () => router.currentRoute.value.name === entries.durivi
+
+enum Duviris {
+    joy = '喜悦',
+    anger = '愤怒',
+    sorrow = '悲伤',
+    fear = '恐惧',
+    jealousy = '嫉妒',
+}
+
+const map = new Map(Object.entries(Duviris))
+
+const duviri = ref<DuviriCycle>({
+    id: '',
+    activation: '',
+    expiry: '',
+    state: '',
+    choices: [
+        {
+            category: 'normal',
+            categoryKey: 'EXC_NORMAL',
+            // 普通模式战甲
+            choices: [],
+        },
+        {
+            category: 'hard',
+            categoryKey: 'EXC_HARD',
+            // 钢铁之路灵化
+            choices: [],
+        },
+    ],
+    subscribed: false,
+})
+
+const init = async () => {
+    duviri.value = (await getDuviriCycle()) as DuviriCycle
+}
+init()
+
+const isDuviri = computed(
+    () => router.currentRoute.value.name === entries.duviri
 )
 const isEmpyrean = computed(
     () => router.currentRoute.value.name === entries.empyrean
@@ -56,8 +118,8 @@ const navi = (entry: string) => {
     grid-gap: 1rem;
     align-items: center;
     user-select: none;
+
     .activated {
-        background-color: var(--el-color-primary);
         width: 200px !important;
     }
 
@@ -70,6 +132,7 @@ const navi = (entry: string) => {
         height: 50px;
         border-radius: 0.5rem;
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        background-color: var(--el-bg-color-overlay);
         cursor: pointer;
         transition: all 0.3s ease-in-out;
 
@@ -83,12 +146,6 @@ const navi = (entry: string) => {
             user-select: none;
             object-fit: cover;
             transition: all 0.3s ease-in-out;
-        }
-
-        .state {
-            padding: 0 20px;
-            word-wrap: nowrap;
-            user-select: none;
         }
     }
 }

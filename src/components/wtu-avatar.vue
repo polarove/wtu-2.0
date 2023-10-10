@@ -27,27 +27,20 @@
             </el-avatar>
         </template>
         <template #default>
-            <div class="booster-list">
-                <WtuBooster :src="'23'" v-for="booster in BoosterEnum.types">
-                    <template #img>
-                        <img
-                            :class="{
-                                active: _authStore.hasBooster(booster.type),
-                            }"
-                            @click="toggleBooster(booster.type)"
-                            :src="_authStore.hasBooster(booster.type) ?
-                            (booster.Gold.getComment() as string)
-                            : (booster.Invalid.getComment() as string)"
-                            alt="booster"
-                            class="booster-img"
-                        />
-                    </template>
-                </WtuBooster>
-            </div>
-            <div class="flex">
-                <div class="invisible-max-900px inline-block">
-                    <WtuOnlineState :tooltipDisabled="true" size="1.8rem" />
-                </div>
+            <wtu-booster-list
+                :booster="_authStore.getUserBooster()"
+                @toggle="toggleBooster($event)"
+                :direction="DIRECTION_ENUM.horizental"
+                size="2.7em"
+                activeSize="2.7em"
+            />
+
+            <div class="lg:display-none">
+                <wtu-online-state
+                    :tooltipDisabled="true"
+                    size="1.8rem"
+                    class="status"
+                />
             </div>
         </template>
     </el-popover>
@@ -57,7 +50,7 @@
 import router from '@/router'
 import { authStore } from '@/store'
 import { isBlank } from '@util/StrUtil'
-import { OnlineStatusEnum, BoosterEnum, ActionEnum } from '@composables/enums'
+import { ONLINE_STATUS, DIRECTION_ENUM } from '@composables/enums'
 import { UpdateUserBooster } from '@api/account'
 const _authStore = authStore()
 
@@ -66,18 +59,15 @@ const user_unknown = computed(() => {
 })
 
 const user_offline = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.offline.getCode()
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.offline
 })
 
 const user_online = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.online.getCode()
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.online
 })
 
 const user_ingame = computed(() => {
-    return (
-        _authStore.getOnlineStatus() ===
-        OnlineStatusEnum.online_in_game.getCode()
-    )
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.online_in_game
 })
 
 defineProps({
@@ -107,27 +97,13 @@ const NaviPrivateHome = () => {
     }
     router.push({ name: 'profile' })
 }
-
-interface UpdateBoosterForm {
-    uuid: string
-    action: number
-    booster: string
-}
-const UpdateBoosterForm = reactive<UpdateBoosterForm>({
-    uuid: _authStore.getUUID(),
-    action: 0,
-    booster: '',
-})
-const toggleBooster = async (booster: string) => {
+const toggleBooster = (booster: string) => {
     if (_authStore.hasBooster(booster)) {
         _authStore.removeBooster(booster)
-        UpdateBoosterForm.action = ActionEnum.REMOVE
     } else {
-        _authStore.addBooster(booster)
-        UpdateBoosterForm.action = ActionEnum.ADD
+        _authStore.setBooster(booster)
     }
-    UpdateBoosterForm.booster = booster
-    await UpdateUserBooster(UpdateBoosterForm)
+    UpdateUserBooster(_authStore.getUserBooster())
 }
 
 const avatarLoadingErrorHandler = (e: Event) => {
@@ -155,28 +131,12 @@ const avatarLoadingErrorHandler = (e: Event) => {
     box-shadow: 0 0 0 2px rgba($color: #3dc468, $alpha: 0.7) inset;
 }
 
-.booster-list {
+.status {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    border-bottom: 1px solid #ebeef5;
-    margin-bottom: 7px;
-    padding-bottom: 7px;
-
-    .active {
-        opacity: 1 !important;
-        transform: scale(1.2);
-    }
-    .booster-img {
-        width: 50px;
-        margin: 0 5px;
-        cursor: pointer;
-        opacity: 0.4;
-
-        &:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-    }
+    padding-top: 0.5em;
+    margin-top: 0.5em;
+    border-top: 1px solid var(--el-border-color);
 }
 </style>

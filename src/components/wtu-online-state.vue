@@ -1,54 +1,41 @@
 <template>
-    <div class="states">
-        <el-tooltip
-            :content="OnlineStatusEnum.offline.getType()"
-            :disabled="tooltipDisabled"
-        >
-            <RyuSvg
-                @click="toggleOnlineStatus(OnlineStatusEnum.offline.getCode())"
+    <div>
+        <el-tooltip content="离线" :disabled="tooltipDisabled">
+            <ryu-svg
+                @click="updateOnlineStatus(ONLINE_STATUS.offline)"
                 name="offline"
                 :size="size"
                 class="state offline"
                 :class="{ active: user_offline }"
             >
-            </RyuSvg>
+            </ryu-svg>
         </el-tooltip>
-        <el-tooltip
-            :content="OnlineStatusEnum.online.getType()"
-            :disabled="tooltipDisabled"
-        >
-            <RyuSvg
-                @click="toggleOnlineStatus(OnlineStatusEnum.online.getCode())"
+        <el-tooltip content="在线" :disabled="tooltipDisabled">
+            <ryu-svg
+                @click="updateOnlineStatus(ONLINE_STATUS.online)"
                 name="online"
                 :size="size"
                 class="state online"
                 :class="{ active: user_online }"
             >
-            </RyuSvg>
+            </ryu-svg>
         </el-tooltip>
-        <el-tooltip
-            :content="OnlineStatusEnum.online_in_game.getType()"
-            :disabled="tooltipDisabled"
-        >
-            <RyuSvg
-                @click="
-                    toggleOnlineStatus(
-                        OnlineStatusEnum.online_in_game.getCode()
-                    )
-                "
+        <el-tooltip content="游戏中" :disabled="tooltipDisabled">
+            <ryu-svg
+                @click="updateOnlineStatus(ONLINE_STATUS.online_in_game)"
                 name="wifi-solid"
                 :size="size"
                 class="state ingame"
                 :class="{ active: user_ingame }"
             >
-            </RyuSvg>
+            </ryu-svg>
         </el-tooltip>
         <el-tooltip
             content="退出登录"
             :disabled="tooltipDisabled"
             v-if="isNotBlank(_authStore.getUUID())"
         >
-            <RyuSvg
+            <ryu-svg
                 name="poweroff"
                 :size="size"
                 @click="logout()"
@@ -60,9 +47,9 @@
 
 <script setup lang="ts">
 import { UpdateOnlineStatus, Logout } from '@api/account'
-import { response } from '@/composables/types'
+import type { response } from '@/composables/types'
 import { ElMessage } from 'element-plus'
-import { OnlineStatusEnum } from '@composables/enums'
+import { ONLINE_STATUS } from '@composables/enums'
 import { authStore } from '@/store'
 import router from '@/router'
 import { isNotBlank } from '@util/StrUtil'
@@ -80,22 +67,19 @@ defineProps({
 })
 
 const user_offline = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.offline.getCode()
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.offline
 })
 
 const user_online = computed(() => {
-    return _authStore.getOnlineStatus() === OnlineStatusEnum.online.getCode()
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.online
 })
 
 const user_ingame = computed(() => {
-    return (
-        _authStore.getOnlineStatus() ===
-        OnlineStatusEnum.online_in_game.getCode()
-    )
+    return _authStore.getOnlineStatus() === ONLINE_STATUS.online_in_game
 })
 
 const logout = async () => {
-    const result = (await Logout(_authStore.getUUID())) as response
+    const result = (await Logout(_authStore.getUUID())) as response<string>
     if (result.code === 200) {
         _authStore.$reset()
         router.replace({ name: 'login' })
@@ -104,87 +88,76 @@ const logout = async () => {
     }
 }
 
-interface UpdateOnlineStatusFormType {
-    onlineStatus: number | null
-    uuid: string
-}
-const UpdateOnlineStatusForm = reactive<UpdateOnlineStatusFormType>({
-    onlineStatus: null,
-    uuid: _authStore.getUUID(),
-})
-
-const toggleOnlineStatus = async (onlineStatus: number) => {
-    if (onlineStatus === _authStore.getOnlineStatus()) {
+const updateOnlineStatus = async (status: number) => {
+    if (status === _authStore.getOnlineStatus()) {
         return
     }
-    const previosOnlineStatus = _authStore.getOnlineStatus()
-    _authStore.setOnlineStatus(onlineStatus)
-    UpdateOnlineStatusForm.onlineStatus = onlineStatus
-    const result = (await UpdateOnlineStatus(
-        UpdateOnlineStatusForm
-    )) as response
-    if (!result.success) {
-        _authStore.setOnlineStatus(previosOnlineStatus as number)
-        ElMessage.error(result.message)
+    let previosOnlineStatus = _authStore.getOnlineStatus()
+
+    const result = (await UpdateOnlineStatus(status)) as response<string>
+    if (result.success) {
+        _authStore.setOnlineStatus(status)
+    } else {
+        _authStore.setOnlineStatus(previosOnlineStatus)
+        ElNotification.error({
+            position: 'bottom-right',
+            message: result.message,
+        })
     }
 }
 </script>
 
 <style lang="scss" scoped>
-.states {
-    display: flex;
-
-    .state {
-        &:hover {
-            cursor: pointer;
-        }
+.state {
+    &:hover {
+        cursor: pointer;
     }
-    .state:nth-child(n + 2) {
-        margin-left: 8px !important;
-    }
+}
+.state:nth-child(n + 2) {
+    margin-left: 8px !important;
+}
 
-    .offline {
-        color: #ccc;
+.offline {
+    color: #ccc;
 
-        &:hover {
-            color: #d74747;
-        }
-    }
-
-    .offline.active {
+    &:hover {
         color: #d74747;
     }
+}
 
-    .online {
-        color: #ccc;
+.offline.active {
+    color: #d74747;
+}
 
-        &:hover {
-            color: var(--el-color-primary);
-        }
-    }
+.online {
+    color: #ccc;
 
-    .online.active {
+    &:hover {
         color: var(--el-color-primary);
     }
+}
 
-    .ingame {
-        color: #ccc;
+.online.active {
+    color: var(--el-color-primary);
+}
 
-        &:hover {
-            color: #47d747;
-        }
-    }
+.ingame {
+    color: #ccc;
 
-    .ingame.active {
+    &:hover {
         color: #47d747;
     }
+}
 
-    .poweroff {
-        color: #ccc;
-        transform: color 0.3s ease-in-out;
-        &:hover {
-            color: var(--el-color-danger);
-        }
+.ingame.active {
+    color: #47d747;
+}
+
+.poweroff {
+    color: #ccc;
+    transform: color 0.3s ease-in-out;
+    &:hover {
+        color: var(--el-color-danger);
     }
 }
 </style>

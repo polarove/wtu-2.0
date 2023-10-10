@@ -31,7 +31,17 @@
             </el-input>
         </el-form-item>
     </el-form>
-    <RyuCode v-if="CodeInputVisible" v-model="code" @submit="submitCode" />
+    <div v-if="CodeInputVisible" class="flex-center">
+        <ryu-verification-slot
+            v-model="code"
+            :count="6"
+            :cell-unit="1"
+            :focusOn="1"
+            @check="testNumber"
+            font-color="0 0 0 #000"
+            @submit="submitCode"
+        />
+    </div>
     <el-form
         v-if="VerifySuccess"
         :model="RecoverPasswordForm"
@@ -66,7 +76,8 @@ import {
     type FormRules,
 } from 'element-plus'
 import { GetRecoverCode, SubmitCode, ChangePassword } from '@api/account'
-import { User, response } from '@/composables/types'
+import type { response } from '@/composables/types'
+import type { UserVO } from '@composables/user'
 import router from '@/router'
 import { isNotBlank } from '@/util/StrUtil'
 import { authStore } from '@/store'
@@ -135,9 +146,9 @@ const recover = (formEl: FormInstance | undefined) => {
             }, 1000)
             const result = (await GetRecoverCode(
                 RecoverEmailForm.email
-            )) as response
+            )) as response<string>
             if (result.success) {
-                RecoverEmailForm.code = result.data as string
+                RecoverEmailForm.code = result.data
                 ElMessageBox.alert(RecoverEmailForm.code, '请记住您的验证码', {
                     // if you want to disable its autofocus
                     // autofocus: false,
@@ -170,11 +181,15 @@ const CodeInputVisible = computed(() => {
     return !VerifySuccess.value && !EmailInputHidden.value ? true : false
 })
 
+const testNumber = (str: string, callback: Function) => {
+    callback(/^\d+$/.test(str))
+}
+
 const submitCode = async () => {
     RecoverEmailForm.uuid = uuid as string
     RecoverEmailForm.code = code.value
     RecoverEmailForm.email = recoverEmail as string
-    const result = (await SubmitCode(RecoverEmailForm)) as response
+    const result = (await SubmitCode(RecoverEmailForm)) as response<boolean>
     if (result.success) {
         VerifySuccess.value = true
     } else {
@@ -198,13 +213,13 @@ const submitPassword = (formEl: FormInstance | undefined) => {
             RecoverPasswordForm.email = recoverEmail as string
             const result = (await ChangePassword(
                 RecoverPasswordForm
-            )) as response
+            )) as response<UserVO>
             if (result.success) {
                 ElMessage.success(result.message)
                 router.push({
                     name: 'origin',
                 })
-                _authStore.setUser(result.data as User)
+                _authStore.setUser(result.data)
             } else {
                 ElMessage.error(result.message)
             }

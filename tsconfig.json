@@ -26,8 +26,10 @@
             "@img/*": ["./src/img/*"],
             "@page/*": ["./src/page/*"],
             "@composables/*": ["./src/composables/*"],
+            "components/*": ["./src/components/*"],
             "@util/*": ["./src/util/*"],
-            "@api/*": ["./src/request/*"]
+            "@api/*": ["./src/api/*"],
+            "@class/*": ["./src/class/*"]
         }
     },
     "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

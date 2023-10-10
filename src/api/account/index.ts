@@ -1,7 +1,17 @@
 import AccountController from './instance'
+import type { UserBooster } from '@/composables/user'
+
+interface ToggleServerParam {
+    previous: number
+    current: number
+}
 
 export const Login = (data: any) => {
     return AccountController.post('/login', data)
+}
+
+export const LoginByUUID = (uuid: string) => {
+    return AccountController.get('/loginByUUID', { uuid: uuid })
 }
 
 export const Verify = (data: any) => {
@@ -36,14 +46,18 @@ export const SaveMyProfile = (data: any) => {
     return AccountController.post('/saveMyProfile', data)
 }
 
-export const UpdateOnlineStatus = (data: any) => {
-    return AccountController.post('/updateOnlineStatus', data)
+export const UpdateOnlineStatus = (status: number) => {
+    return AccountController.get('/updateOnlineStatus', { status: status })
 }
 
-export const UpdateUserBooster = (data: any) => {
+export const UpdateUserAccelerator = (name: string) => {
+    return AccountController.get('/updateUserAccelerator', { name: name })
+}
+
+export const UpdateUserBooster = (data: UserBooster) => {
     return AccountController.post('/updateUserBooster', data)
 }
 
-export const ToggleServer = (serverType: number) => {
-    return AccountController.get('/toggleServer', { serverType: serverType })
+export const ToggleServer = (serverType: ToggleServerParam) => {
+    return AccountController.post('/toggleServer', serverType)
 }

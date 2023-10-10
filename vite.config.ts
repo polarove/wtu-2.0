@@ -5,6 +5,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import UnoCSS from 'unocss/vite'
+import { compression } from 'vite-plugin-compression2'
 
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import path from 'path'
@@ -12,6 +13,7 @@ import fs from 'fs'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    // base: '/wtu',
     plugins: [
         vue(),
         UnoCSS(),
@@ -36,6 +38,7 @@ export default defineConfig({
              */
             customDomId: '__svg__icons__dom__',
         }),
+        compression(),
     ],
 
     server: {
@@ -56,9 +59,11 @@ export default defineConfig({
             '@icon': resolve(__dirname, 'src/assets/icon'),
             '@img': resolve(__dirname, 'src/assets/img'),
             '@page': resolve(__dirname, 'src/page'),
-            '@util': resolve(__dirname, 'src/util'),
-            '@api': resolve(__dirname, 'src/request'),
             '@composables': resolve(__dirname, 'src/composables'),
+            '@util': resolve(__dirname, 'src/util'),
+            '@api': resolve(__dirname, 'src/api'),
+            '@class': resolve(__dirname, 'src/class'),
+            '@components': resolve(__dirname, 'src/components'),
         },
     },
 })
