@@ -8,13 +8,13 @@
                 :class="checked"
                 class="color-green-500 text-size-[1.4em] cursor-pointer"
                 v-if="copied"
-                @click="copy(), $emit('copied')"
+                @click="copy()"
             ></div>
             <div
                 :class="icon"
                 v-else
                 class="text-size-[1.4em] cursor-pointer"
-                @click="copy(), $emit('copied')"
+                @click="copy()"
             ></div>
         </div>
     </div>

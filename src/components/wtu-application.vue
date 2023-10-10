@@ -13,7 +13,7 @@
         <el-drawer
             append-to-body
             v-model="visible"
-            :size="_layoutStore.isWide() ? '30%' : '100%'"
+            :size="_layoutStore.isWide() ? '40%' : '100%'"
         >
             <template #header>
                 <div class="vertical-middle panels">
@@ -365,9 +365,12 @@ const rejectApplication = (application: ApplicationDTO) => {
             APPLICATION_STATUS.rejected as keyof typeof APPLICATION_STATUS
         application.receiver.name = _authStore.getName()
         application.receiver.avatar = _authStore.getAvatar()
+        _teamStore.resolvedAsRejected(
+            application.team.uuid,
+            application.build.id
+        )
         ApplicationResult(application)
     }
-    _teamStore.resolvedAsRejected(application.team.uuid, application.build.id)
     _teamStore.removeApplication(application)
 }
 
