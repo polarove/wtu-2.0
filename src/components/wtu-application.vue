@@ -351,10 +351,6 @@ const invite = (application: ApplicationDTO) => {
         application.receiver.name = _authStore.getName()
         ApplicationResult(application)
         inviteMessage(application.team.title, application.from.name)
-        _teamStore.resolvedAsAccepted(
-            application.team.uuid,
-            application.build.id
-        )
         return
     }
 }
@@ -365,10 +361,6 @@ const rejectApplication = (application: ApplicationDTO) => {
             APPLICATION_STATUS.rejected as keyof typeof APPLICATION_STATUS
         application.receiver.name = _authStore.getName()
         application.receiver.avatar = _authStore.getAvatar()
-        _teamStore.resolvedAsRejected(
-            application.team.uuid,
-            application.build.id
-        )
         ApplicationResult(application)
     }
     _teamStore.removeApplication(application)

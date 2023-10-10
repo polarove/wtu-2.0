@@ -308,12 +308,15 @@ export const teamStore = defineStore({
                 }
             })
         },
-        resolvedAsAccepted(team_uuid: string, memberId: number) {
+        resolvedAsAccepted(application: ApplicationDTO) {
+            let team_uuid = application.team.uuid
+            let member_id = application.build.id
             this.getTeam().map((item) => {
                 if (item.team.uuid === team_uuid) {
-                    item.members.map((build) => {
-                        if (build.id === memberId) {
-                            build.localStatus = APPLICATION_STATUS.accepted
+                    item.members.map((member) => {
+                        if (member.id === member_id) {
+                            member.localStatus = APPLICATION_STATUS.accepted
+                            member.user = application.from
                         }
                     })
                 }
@@ -467,12 +470,13 @@ export const teamStore = defineStore({
                 (item) => item.team.uuid === uuid
             )
         },
-        addApplicationResult(application: ApplicationDTO) {
+        addApplicationResult(application: ApplicationDTO, uuid: string) {
             if (this.containsApplicationResult(application.team.uuid)) {
                 return
             }
-            this.applicationResultList.unshift(application)
-            if (isSupported.value) {
+            // 只有申请者弹出通知
+            if (isSupported.value && application.from.uuid === uuid) {
+                this.applicationResultList.unshift(application)
                 this.prepareNotification(application)
             } else {
                 alert('您已关闭通知, 请在浏览器设置中开启通知')
@@ -509,10 +513,7 @@ export const teamStore = defineStore({
                     notification.title = application.receiver.name
                     notification.body = '已接受入队你的申请'
                     notification.icon = application.receiver.avatar
-                    this.resolvedAsAccepted(
-                        application.team.uuid,
-                        application.build.id
-                    )
+                    this.resolvedAsAccepted(application)
                     show()
                     break
                 case APPLICATION_STATUS.rejected:

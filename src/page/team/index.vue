@@ -155,12 +155,18 @@ watchEffect(() => {
             break
         case WSS_MESSAGE_TYPE.JOIN_ACCEPT:
             let feedback_accept: ApplicationDTO = JSON.parse(result.data)
-            _teamStore.addApplicationResult(feedback_accept)
+            _teamStore.addApplicationResult(
+                feedback_accept,
+                _authStore.getUUID()
+            )
             data.value = null
             break
         case WSS_MESSAGE_TYPE.JOIN_REJECT:
             let feedback_reject: ApplicationDTO = JSON.parse(result.data)
-            _teamStore.addApplicationResult(feedback_reject)
+            _teamStore.addApplicationResult(
+                feedback_reject,
+                _authStore.getUUID()
+            )
             data.value = null
             break
         default:
