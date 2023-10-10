@@ -17,10 +17,10 @@ const routes = [
                 component: () => import('@page/team/origin/index.vue'),
             },
             {
-                path: `/team/${entries.durivi}`,
-                name: entries.durivi,
+                path: `/team/${entries.duviri}`,
+                name: entries.duviri,
                 meta: { forehead: '双衍王境' },
-                component: () => import('@page/team/durivi/index.vue'),
+                component: () => import('@page/team/duviri/index.vue'),
             },
             {
                 path: `/team/${entries.empyrean}`,

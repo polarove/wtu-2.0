@@ -1,19 +1,19 @@
 <template>
     <div class="entries">
         <div
-            :class="{ activated: isDurivi }"
+            :class="{ activated: isDuviri }"
             class="entry"
-            @click="navi(entries.durivi)"
+            @click="navi(entries.duviri)"
         >
             <el-badge
                 :value="clients"
                 :max="999"
-                :hidden="!isDurivi"
+                :hidden="!isDuviri"
                 type="primary"
             >
                 <img
                     :style="{ transform: `scale(${scale})` }"
-                    src="@img/durivi.png"
+                    src="@img/duviri.png"
                     alt="双衍王境"
                 />
             </el-badge>
@@ -52,8 +52,8 @@ defineProps({
         default: 0,
     },
 })
-const isDurivi = computed(
-    () => router.currentRoute.value.name === entries.durivi
+const isDuviri = computed(
+    () => router.currentRoute.value.name === entries.duviri
 )
 const isEmpyrean = computed(
     () => router.currentRoute.value.name === entries.empyrean

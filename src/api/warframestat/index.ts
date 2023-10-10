@@ -50,6 +50,13 @@ export const getVoidTraderCycle = (platform?: 'pc' | 'ps4' | 'xb1' | 'swi') => {
     return warframestat.get(`/${platform}/voidTrader/`, { language: 'zh' })
 }
 
+export const getDuviriCycle = (platform?: 'pc' | 'ps4' | 'xb1' | 'swi') => {
+    if (isBlank(platform)) {
+        platform = 'pc'
+    }
+    return warframestat.get(`/${platform}/duviriCycle/`, { language: 'zh' })
+}
+
 export const getArbitrationCycle = (
     platform?: 'pc' | 'ps4' | 'xb1' | 'swi'
 ) => {
