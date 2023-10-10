@@ -98,13 +98,12 @@ const NaviPrivateHome = () => {
     router.push({ name: 'profile' })
 }
 const toggleBooster = (booster: string) => {
-    UpdateUserBooster(_authStore.getUserBooster()).then(() => {
-        if (_authStore.hasBooster(booster)) {
-            _authStore.removeBooster(booster)
-        } else {
-            _authStore.setBooster(booster)
-        }
-    })
+    if (_authStore.hasBooster(booster)) {
+        _authStore.removeBooster(booster)
+    } else {
+        _authStore.setBooster(booster)
+    }
+    UpdateUserBooster(_authStore.getUserBooster())
 }
 
 const avatarLoadingErrorHandler = (e: Event) => {
