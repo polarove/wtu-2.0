@@ -26,7 +26,7 @@ import { toRaw } from 'vue'
 import { useWebNotification } from '@vueuse/core'
 import type { UseWebNotificationOptions } from '@vueuse/core'
 import { APPLICATION_STATUS } from '@/composables/wss'
-import type { fissureMission, subscription } from '@/composables/fissure'
+import type { fissure, subscription } from '@/composables/fissure'
 
 const names = boosters.map((value) => {
     return value.en
@@ -594,9 +594,22 @@ export const activityStore = defineStore({
         getSubscriptions(): Array<subscription> {
             return this.fissure.subscriptionList
         },
+        removeSubscription(
+            channel: RouteRecordName | null | undefined,
+            fissureId: string
+        ) {
+            this.findSubscriptionListByChannel(channel).map((item, index) => {
+                if (item.id === fissureId) {
+                    this.findSubscriptionListByChannel(channel).splice(index, 1)
+                }
+            })
+        },
+        splitNodeKey(nodeKey: string) {
+            return nodeKey.split('(')[0].trim()
+        },
         findSubscriptionListByChannel(
             channel: RouteRecordName | null | undefined
-        ): Array<fissureMission> {
+        ): Array<fissure> {
             let subscription = this.fissure.subscriptionList.find((item) => {
                 return item.channel === channel
             })
@@ -613,21 +626,17 @@ export const activityStore = defineStore({
         },
         toggleSubscription(
             channel: RouteRecordName | null | undefined,
-            id: string,
-            nodeKey: string,
-            missionKey: string
+            target: fissure
         ) {
             // 添加订阅
             // 数据结构：subscriptionList: [{channel: 'fissure', mission: [{nodeKey:"Venus", missionKey:"capture"},{nodeKey:"Venus1", missionKey:"capture1"}]
             let subscription = this.findChannel(channel)
             if (requires(subscription)) {
-                let target: fissureMission = {
-                    id: id,
-                    nodeKey: nodeKey,
-                    missionKey: missionKey,
-                }
                 let exsistence = subscription!.mission.findIndex((item) => {
-                    return item.id === id
+                    return (
+                        item.nodeKey === target.nodeKey &&
+                        item.missionKey === target.missionKey
+                    )
                 })
                 if (exsistence === -1) {
                     subscription!.mission.push(target)
@@ -635,7 +644,7 @@ export const activityStore = defineStore({
                     subscription!.mission.splice(exsistence, 1)
                 }
             } else {
-                this.createSubscription(channel, id, nodeKey, missionKey)
+                this.createSubscription(channel, target)
             }
         },
         ifSubscribed(
@@ -655,13 +664,11 @@ export const activityStore = defineStore({
         },
         createSubscription(
             channel: RouteRecordName | null | undefined,
-            id: string,
-            nodeKey: string,
-            missionKey: string
+            target: fissure
         ) {
             this.fissure.subscriptionList.push({
                 channel: channel,
-                mission: [{ id: id, nodeKey: nodeKey, missionKey: missionKey }],
+                mission: [target],
             } as subscription)
         },
         getNotifyHistory(): Array<string> {

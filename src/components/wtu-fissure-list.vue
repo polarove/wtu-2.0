@@ -7,19 +7,22 @@
     </div>
     <div v-else>
         <div class="options">
-            <span
-                class="option"
-                :class="{ active: !state }"
-                @click="toggleList(false)"
-                >全部</span
-            >
+            <div>
+                <span
+                    class="option"
+                    :class="{ active: !state }"
+                    @click="toggleList(false)"
+                    >全部</span
+                >
 
-            <span
-                class="option"
-                :class="{ active: state }"
-                @click="toggleList(true)"
-                >订阅</span
-            >
+                <span
+                    class="option"
+                    :class="{ active: state }"
+                    @click="toggleList(true)"
+                    >订阅</span
+                >
+            </div>
+            <span class="option" @click="manage()">管理</span>
         </div>
         <div class="list lt-lg:display-none">
             <ryu-loading :loading="loading" :rows="1">
@@ -84,6 +87,30 @@
             </ryu-loading>
         </div>
     </div>
+    <el-dialog v-model="dialog.visible">
+        <template #header>
+            <div class="text-center">订阅管理</div>
+        </template>
+        <ryu-empty :empty="emptySubscription">
+            <el-row>
+                <el-col :span="24" v-for="item in subscription" class="subs">
+                    <el-card shadow="hover">
+                        <div class="flex-between">
+                            <div>
+                                {{ item.node }}&nbsp;{{ item.missionType }}
+                            </div>
+                            <el-button
+                                @click="removeSubscription(item)"
+                                size="small"
+                            >
+                                <div class="i-ep:close"></div>
+                            </el-button>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </ryu-empty>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -134,6 +161,17 @@ const toggleList = (stat: boolean) => {
     } else {
         fissure_list.value = backup.value
     }
+}
+
+const dialog = reactive({
+    visible: false,
+})
+const subscription = computed(() =>
+    _activityStore.findSubscriptionListByChannel(route.name)
+)
+const emptySubscription = computed(() => subscription.value.length === 0)
+const manage = () => {
+    dialog.visible = true
 }
 
 const fetch = async () => {
@@ -217,9 +255,12 @@ const notify = (channel: string) => {
         if (subscriptionList.length > 0) {
             // 找出订阅列表
             let subscribed = subscriptionList.find(
-                (item) => item.id === fissure.id
+                (item) =>
+                    item.missionKey === fissure.missionKey &&
+                    item.nodeKey === fissure.nodeKey
             )
-            fissure.subscribed = requires(subscribed) ? true : false
+            // 如果这个裂缝是订阅的，且支持通知，且不是第一次加载，且没有通知过
+            fissure.subscribed = requires(subscribed)
             if (
                 fissure.subscribed &&
                 isSupported.value &&
@@ -236,20 +277,19 @@ const notify = (channel: string) => {
         return fissure
     })
 }
-
+const removeSubscription = (item: fissure) => {
+    _activityStore.removeSubscription(route.name, item.id)
+}
 const toggleSubscription = (target: fissure) => {
-    let id = target.id
-    let missionKey = target.missionKey
-    let channel = route.name
-    let nodeKey = splitNodeKey(target.nodeKey)
     // 根据裂缝id来订阅指定星球的指定任务类型
     fissure_list.value.map((fissure: fissure) => {
         if (target.id === fissure.id) {
             fissure.subscribed = !fissure.subscribed
         }
     })
+
     // 更新订阅列表
-    _activityStore.toggleSubscription(channel, id, nodeKey, missionKey)
+    _activityStore.toggleSubscription(route.name, target)
 }
 
 watchEffect(() => {
@@ -261,10 +301,6 @@ watchEffect(() => {
 const diff = (s: any[], d: any[]) => {
     return s.filter((item) => !d.map((i) => i.id).includes(item.id))
 }
-
-const splitNodeKey = (nodeKey: string) => {
-    return nodeKey.split('(')[0]
-}
 </script>
 
 <style lang="scss" scoped>
@@ -272,6 +308,8 @@ const splitNodeKey = (nodeKey: string) => {
     transition: all 0.2s ease-in-out;
 }
 .options {
+    display: flex;
+    justify-content: space-between;
     .option {
         user-select: none;
         font-size: 0.88em;
@@ -287,5 +325,9 @@ const splitNodeKey = (nodeKey: string) => {
     .option:nth-child(1) {
         margin-right: 1em;
     }
+}
+
+.subs:nth-child(n + 2) {
+    margin-top: 1em;
 }
 </style>

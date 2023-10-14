@@ -26,10 +26,5 @@ export interface fissure {
 
 export interface subscription {
     channel: RouteRecordName | null | undefined
-    mission: Array<fissureMission>
-}
-export interface fissureMission {
-    id: string
-    nodeKey: string
-    missionKey: string
+    mission: Array<fissure>
 }
