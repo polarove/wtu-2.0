@@ -7,12 +7,12 @@
             <wtu-logo />
         </el-col>
         <el-col :span="12" class="flex-center">
-            <wtu-app-name class="lg-display-none" />
+            <wtu-app-name class="md-display-none" />
         </el-col>
         <!-- <div class="flex-1"></div> -->
         <el-col :span="7" class="flex-center">
             <wtu-avatar class="avatar" />
-            <div class="lt-lg-display-none ml-1em tp">
+            <div class="lt-md-display-none ml-1em tp">
                 <div
                     v-if="isBlank(_authStore.getUUID())"
                     class="text-center text-size-[1.0rem] ml-1.0em cursor-pointer hover-color-blue"

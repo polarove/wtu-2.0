@@ -4,23 +4,20 @@
         <wtu-selections />
     </div>
     <div class="wrapper">
-        <div
-            :class="{
-                wide: _layoutStore.isWide(),
-                compact: _layoutStore.isCompact(),
-            }"
-        >
-            <div>
-                <wtu-activity :clients="clients" class="mb-0.75em mt-0.5em" />
-                <wtu-team-set class="lt-lg-flex-center" />
-            </div>
-            <wtu-entries
-                :scale="_layoutStore.isWide() ? 1 : 0.8"
-                :clients="clients"
-                class="entry"
-            />
-        </div>
-        <div class="w-75vw ma-auto min-h-65vh">
+        <el-row>
+            <el-col :xl="5" :md="5" :sm="24">
+                <div class="lt-md:flex-col lt-md:items-center">
+                    <wtu-activity class="md:w-25px" :clients="clients" />
+                    <wtu-team-set class="lt-md:mt-0.5em lt-md:mb-0.5em" />
+                </div>
+            </el-col>
+            <el-col :xl="19" :md="19" :sm="24">
+                <div class="lt-md:flex-center md:flex-end">
+                    <wtu-entries :clients="clients" />
+                </div>
+            </el-col>
+        </el-row>
+        <div class="w-75vw ma-auto min-h-85vh">
             <RouterView />
         </div>
     </div>
@@ -286,19 +283,5 @@ onbeforeunload = () => {
 }
 .wrapper {
     padding: 1em 2em;
-    .wide {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .compact {
-        display: flex;
-        flex-direction: column-reverse;
-        justify-content: center;
-        align-items: center;
-        .entry {
-            margin: 1em 0;
-        }
-    }
 }
 </style>

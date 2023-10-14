@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="teamset" v-if="_authStore.isLogin()">
+        <div class="teamset">
             <wtu-loadout
                 v-for="(teammate, index) in createTeamForm.members"
                 :teammate="teammate"
@@ -18,7 +18,7 @@
         </div>
         <el-drawer
             v-model="teamDrawer.visible"
-            :size="_layoutStore.isWide() ? '40%' : '100%'"
+            :size="drawerSize"
             :title="teamDrawer.title"
             :direction="teamDrawer.direction"
             @close="toggleTooltipDisabled()"
@@ -101,7 +101,7 @@
                             <wtu-focus-list
                                 v-model="member.focus"
                                 size="3em"
-                                :rows="_layoutStore.isWide() ? 1 : 2"
+                                :rows="1"
                                 simplified
                             />
                         </div>
@@ -125,7 +125,7 @@
             <el-drawer
                 v-model="warframeListDrawer.visible"
                 :title="title"
-                :size="_layoutStore.isWide() ? '40%' : '100%'"
+                :size="drawerSize"
                 :direction="warframeListDrawer.direction"
                 destroy-on-close
                 @close="toggleTooltipDisabled()"
@@ -160,10 +160,14 @@ import { requirements } from '@composables/requirement'
 import { CreateTeam, GetTeamById, BroadcastTeam } from '@api/team'
 import type { response } from '@/composables/types'
 import { SERVER_CODE } from '@/composables/enums'
+import router from '@/router'
 
 const route = useRoute()
 const _authStore = authStore()
 const _layoutStore = layoutStore()
+const drawerSize = computed(() => {
+    return _layoutStore.isWide() ? '40%' : '100%'
+})
 const createTeamFormRef = ref<FormInstance>()
 const createTeamFormRules = reactive<FormRules>({
     title: [
@@ -295,6 +299,9 @@ const title = computed(() => {
 })
 
 const toggleCreateTeamDrawer = (index: number) => {
+    if (!_authStore.isLogin()) {
+        router.push({ name: 'login' })
+    }
     teamDrawer.visible = true
     teamDrawer.title = '在 ' + route.meta.forehead + ' 招募队友'
     teamDrawer.from = index

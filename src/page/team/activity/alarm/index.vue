@@ -1,5 +1,5 @@
 <template>
-    <div class="lt-lg:mt-1em">
+    <div class="lt-md:mt-1em">
         <wtu-cycle-arbitration />
     </div>
     <wtu-team-list />

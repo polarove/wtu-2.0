@@ -1,20 +1,13 @@
-import {
-    defineConfig,
-    presetAttributify,
-    presetUno,
-    toEscapedSelector as e,
-} from 'unocss'
+import { defineConfig, presetAttributify, presetUno } from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 
 export default defineConfig({
     // ...UnoCSS选项
     theme: {
         breakpoints: {
-            sm: '640px',
-            md: '768px',
-            lg: '900px',
-            xl: '1280px',
-            xxl: '1536px',
+            sm: '768px',
+            md: '992.2px',
+            lg: '1280px',
         },
     },
     rules: [

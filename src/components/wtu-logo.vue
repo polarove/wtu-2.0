@@ -8,7 +8,7 @@
                 class="cursor-pointer"
             ></ryu-svg>
         </el-tooltip>
-        <wtu-app-name v-if="showTitle" class="lt-lg:display-none" />
+        <wtu-app-name v-if="showTitle" class="lt-md:display-none" />
     </div>
 </template>
 

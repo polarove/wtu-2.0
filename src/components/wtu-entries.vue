@@ -13,7 +13,7 @@
             >
                 <span class="vertical-middle overflow-hidden">
                     <img
-                        :style="{ transform: `scale(${scale})` }"
+                        class="lt-md:scale-80"
                         src="@img/duviri.png"
                         alt="双衍王境"
                     />
@@ -33,7 +33,7 @@
                 type="primary"
             >
                 <img
-                    :style="{ transform: `scale(${scale})` }"
+                    class="lt-md:scale-80"
                     src="@img/railjet.png"
                     alt="九重天"
                 />
@@ -49,10 +49,6 @@ import { getDuviriCycle } from '@api/warframestat'
 import { DuviriCycle } from '@composables/cycles'
 
 defineProps({
-    scale: {
-        type: Number,
-        default: 1,
-    },
     clients: {
         type: Number,
         default: 0,

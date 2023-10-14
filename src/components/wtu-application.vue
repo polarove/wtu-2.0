@@ -13,7 +13,7 @@
         <el-drawer
             append-to-body
             v-model="visible"
-            :size="_layoutStore.isWide() ? '50%' : '100%'"
+            :size="_layoutStore.isWide() ? '40%' : '100%'"
         >
             <template #header>
                 <div class="vertical-middle panels">

@@ -1,11 +1,16 @@
 <template>
-    <el-row :gutter="24" class="lt-lg:mt-1em">
-        <el-col
-            :span="_layoutStore.isWide() ? 4 : 12"
-            v-for="(item, index) in cycles"
-        >
+    <el-row :gutter="12" class="lt-md:mt-1em">
+        <el-col :xs="12" :sm="6" :md="4" v-for="(item, index) in cycle12">
             <div
-                class="lt-lg:ma-0.25em"
+                class="lt-md:ma-0.25em"
+                @subscribe="toggleSubscribe(item.name)"
+            >
+                <component :key="index" :is="item"></component>
+            </div>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="4" v-for="(item, index) in cycle24">
+            <div
+                class="lt-md:ma-0.25em"
                 @subscribe="toggleSubscribe(item.name)"
             >
                 <component :key="index" :is="item"></component>
@@ -22,20 +27,16 @@ import wtuCycleEarth from '@/components/wtu-cycle-earth.vue'
 import wtuCycleVoidTrader from '@/components/wtu-cycle-voidTrader.vue'
 import wtuCycleZariman from '@/components/wtu-cycle-zariman.vue'
 
-import { layoutStore } from '@/store'
-const _layoutStore = layoutStore()
+const cycle12 = [wtuCycleCetus, wtuCycleCambion, wtuCycleVallis, wtuCycleEarth]
 
-const cycles = [
-    wtuCycleCetus,
-    wtuCycleCambion,
-    wtuCycleVallis,
-    wtuCycleZariman,
-    wtuCycleEarth,
-    wtuCycleVoidTrader,
-]
+const cycle24 = [wtuCycleZariman, wtuCycleVoidTrader]
 const toggleSubscribe = (name: string | undefined) => {
     console.log(name)
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.el-statistic__content) {
+    display: flex;
+}
+</style>

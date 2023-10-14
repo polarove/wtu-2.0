@@ -7,7 +7,7 @@
         <el-drawer
             append-to-body
             v-model="visible"
-            :size="_layoutStore.isWide() ? '50%' : '100%'"
+            :size="_layoutStore.isWide() ? '40%' : '100%'"
         >
             <template #header> <div>常见问题 Q&A</div></template>
             <el-card v-for="z in qa" class="mb-2em">

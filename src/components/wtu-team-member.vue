@@ -1,6 +1,6 @@
 <template>
     <div class="flex-col items-center">
-        <div class="lt-lg:display-none">
+        <div class="lt-md:display-none">
             <div
                 class="font-bold font-size-[0.88em]"
                 :class="{
@@ -98,7 +98,7 @@
             </template>
             <div class="flex">
                 <div class="equipments">
-                    <div class="lg:display-none">
+                    <div class="md:display-none">
                         <div
                             class="font-bold"
                             v-if="isNotBlank(member.user.name) && nameVisible"

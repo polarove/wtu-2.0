@@ -24,7 +24,7 @@
             </div>
             <span class="option" @click="manage()">管理</span>
         </div>
-        <div class="list lt-lg:display-none">
+        <div class="list">
             <ryu-loading :loading="loading" :rows="1">
                 <ryu-empty
                     :empty="isEmpty"
@@ -32,7 +32,9 @@
                 >
                     <el-row>
                         <el-col
-                            :span="4"
+                            :xs="12"
+                            :sm="8"
+                            :md="4"
                             v-for="item in fissure_list"
                             class="p-0.4em"
                         >

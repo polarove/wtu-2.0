@@ -35,7 +35,7 @@
                 activeSize="2.7em"
             />
 
-            <div class="lg:display-none">
+            <div class="md:display-none">
                 <wtu-online-state
                     :tooltipDisabled="true"
                     size="1.8rem"
