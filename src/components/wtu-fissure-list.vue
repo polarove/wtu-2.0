@@ -68,10 +68,6 @@
                                             v-if="item.subscribed"
                                             @click="toggleSubscription(item)"
                                         ></span>
-                                        <span
-                                            class="i-ep:loading animation_rotate"
-                                            v-if="item.refreshing"
-                                        ></span>
                                         <div
                                             class="text-size-[0.8em] c-p inline hover-color-blue select-none"
                                             @click="toggleSubscription(item)"
@@ -214,8 +210,7 @@ const parseFissureList = (
     full_list: fissure[],
     channel: relic_channel,
     isHard: boolean,
-    isStorm: boolean,
-    callback?: Function
+    isStorm: boolean
 ): any => {
     let filterred = full_list.filter(
         (fissure: fissure) =>
@@ -226,13 +221,7 @@ const parseFissureList = (
     let diffs = diff(filterred, fissure_list.value)
     if (diffs.length === 0) {
         setTimeout(() => {
-            return parseFissureList(
-                full_list,
-                channel,
-                isHard,
-                isStorm,
-                callback
-            )
+            return parseFissureList(full_list, channel, isHard, isStorm)
         }, 1000 * 3)
     } else {
         diffs.forEach((item) => {
@@ -246,11 +235,7 @@ const parseFissureList = (
 }
 
 const refresh = (fissure: fissure) => {
-    fissure_list.value.map((item: fissure) => {
-        if (item.id === fissure.id) {
-            item.refreshing = true
-        }
-    })
+    fissure_list.value.slice(fissure_list.value.indexOf(fissure), 1)
     fetch()
 }
 
