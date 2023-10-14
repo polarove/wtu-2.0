@@ -29,7 +29,7 @@
                 :key="index"
                 class="infinite-list-item inline-block mt-15px"
             >
-                <div v-if="route.name === entries.durivi">
+                <div v-if="route.name === entries.duviri">
                     <wtu-warframe
                         :modelValue="warframe"
                         width="130px"

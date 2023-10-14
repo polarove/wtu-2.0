@@ -8,7 +8,7 @@ export const filterWarframeNameList = (
     search: string
 ): Array<string> => {
     let result: Array<string> = []
-    if (routeName === entries.durivi) {
+    if (routeName === entries.duviri) {
         result = warframes
             .filter((warframe) =>
                 warframe[_authStore.getServerChar()].toString().includes(search)
