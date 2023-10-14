@@ -8,7 +8,7 @@
             <el-col :xl="5" :md="5" :sm="24">
                 <div class="lt-md:flex-col lt-md:items-center">
                     <wtu-activity class="md:w-25px" :clients="clients" />
-                    <wtu-team-set class="lt-md:mt-0.5em lt-md:mb-0.5em" />
+                    <wtu-team-set class="lt-md:mt-0.6em lt-md:mb-0.9em" />
                 </div>
             </el-col>
             <el-col :xl="19" :md="19" :sm="24">

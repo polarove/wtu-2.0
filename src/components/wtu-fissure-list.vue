@@ -1,93 +1,92 @@
 <template>
     <div
         v-if="_authStore.getServer() === 0"
-        class="text-center color-gray text-size-[0.88em]"
+        class="text-center color-gray text-size-[0.88em] lt-md:mt-1em"
     >
         国服暂不支持裂缝订阅，若您有想法，可以向我提供技术支持
     </div>
-    <div v-else>
+    <div v-else class="lt-md:mt-1em">
         <div class="options">
             <div>
                 <span
                     class="option"
                     :class="{ active: !state }"
                     @click="toggleList(false)"
-                    >全部</span
                 >
-
+                    全部
+                </span>
                 <span
                     class="option"
                     :class="{ active: state }"
                     @click="toggleList(true)"
-                    >订阅</span
                 >
+                    订阅
+                </span>
+                <span class="option" @click="manage()">管理</span>
             </div>
-            <span class="option" @click="manage()">管理</span>
+            <div
+                :class="shrink ? 'i-ep:arrow-down-bold' : 'i-ep:minus'"
+                class="c-p hover-color-blue"
+                @click="toggleShrink()"
+            ></div>
         </div>
-        <div class="list">
-            <ryu-loading :loading="loading" :rows="1">
-                <ryu-empty
-                    :empty="isEmpty"
-                    :tip="state ? '暂无订阅' : '请稍等，正在加载...'"
-                >
-                    <el-row>
-                        <el-col
-                            :xs="12"
-                            :sm="8"
-                            :md="4"
-                            v-for="item in fissure_list"
-                            class="p-0.4em"
+        <ryu-loading :loading="loading" :rows="1">
+            <ryu-empty
+                :empty="isEmpty"
+                :tip="state ? '暂无订阅' : '请稍等，正在加载...'"
+            >
+                <el-row :style="{ display: shrink ? 'none' : 'flex' }">
+                    <el-col
+                        :xs="12"
+                        :sm="8"
+                        :md="4"
+                        v-for="item in fissure_list"
+                        class="p-0.4em"
+                    >
+                        <el-card
+                            shadow="hover"
+                            class="animate__animated"
+                            :class="{
+                                animate__fadeIn: !item.expired,
+                                animate__fadeOut: item.expired || shrink,
+                            }"
                         >
-                            <el-card
-                                shadow="hover"
-                                class="animate__animated"
-                                :class="{
-                                    animate__fadeIn: !item.expired,
-                                    animate__fadeOut: item.expired,
-                                }"
+                            <el-countdown
+                                :format="format.hour"
+                                :value="utcTimestamp(item.expiry)"
+                                @finish="refresh(item)"
                             >
-                                <el-countdown
-                                    :format="format.hour"
-                                    :value="utcTimestamp(item.expiry)"
-                                    @finish="refresh(item)"
-                                >
-                                    <template #title>
-                                        <div>
-                                            {{ item.tier }}&nbsp;{{ item.node }}
-                                        </div>
-                                    </template>
-                                    <template #prefix>
+                                <template #title>
+                                    <div>
+                                        {{ item.tier }}&nbsp;{{ item.node }}
+                                    </div>
+                                </template>
+                                <template #prefix>
+                                    <div class="transform-translate-y-[-2px]">
+                                        <span
+                                            class="i-ant-design:check-square-outlined c-p color-blue"
+                                            v-if="item.subscribed"
+                                            @click="toggleSubscription(item)"
+                                        ></span>
+                                        <span
+                                            class="i-ep:loading animation_rotate"
+                                            v-if="item.refreshing"
+                                        ></span>
                                         <div
-                                            class="transform-translate-y-[-2px]"
+                                            class="text-size-[0.8em] c-p inline hover-color-blue select-none"
+                                            @click="toggleSubscription(item)"
                                         >
-                                            <span
-                                                class="i-ant-design:check-square-outlined c-p color-blue"
-                                                v-if="item.subscribed"
-                                                @click="
-                                                    toggleSubscription(item)
-                                                "
-                                            ></span>
-                                            <span
-                                                class="i-ep:loading animation_rotate"
-                                                v-if="item.refreshing"
-                                            ></span>
-                                            <div
-                                                class="text-size-[0.8em] c-p inline hover-color-blue select-none"
-                                                @click="
-                                                    toggleSubscription(item)
-                                                "
-                                            >
-                                                {{ item.missionType }}&nbsp;
-                                            </div>
+                                            {{ item.missionType }}&nbsp;
                                         </div>
-                                    </template>
-                                </el-countdown>
-                            </el-card>
-                        </el-col>
-                    </el-row>
-                </ryu-empty>
-            </ryu-loading>
-        </div>
+                                    </div>
+                                </template>
+                            </el-countdown>
+                        </el-card>
+                    </el-col>
+                </el-row>
+                <el-divider v-if="shrink"></el-divider>
+            </ryu-empty>
+        </ryu-loading>
     </div>
     <el-dialog v-model="dialog.visible">
         <template #header>
@@ -140,6 +139,11 @@ const isEmpty = computed(() => fissure_list.value.length === 0)
 const loading = ref<boolean>(true)
 const state = ref<boolean>(false)
 const route = useRoute()
+const shrink = ref<boolean>(false)
+
+const toggleShrink = () => {
+    shrink.value = !shrink.value
+}
 
 const firstLoad = ref<boolean>(true)
 
@@ -306,12 +310,10 @@ const diff = (s: any[], d: any[]) => {
 </script>
 
 <style lang="scss" scoped>
-.list {
-    transition: all 0.2s ease-in-out;
-}
 .options {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     .option {
         user-select: none;
         font-size: 0.88em;
@@ -324,8 +326,8 @@ const diff = (s: any[], d: any[]) => {
     .option.active {
         color: var(--el-color-primary);
     }
-    .option:nth-child(1) {
-        margin-right: 1em;
+    .option:nth-child(n + 2) {
+        margin-left: 0.5em;
     }
 }
 
