@@ -1,3 +1,5 @@
+import { ONLINE_STATUS } from '@composables/enums'
+
 export interface UserVO extends TeamUserBO {
     description: string
     server: number
@@ -8,7 +10,7 @@ export interface TeamUserBO {
     uuid: string
     name: string
     avatar: string
-    onlineStatus: number
+    onlineStatus: ONLINE_STATUS
     booster: UserBooster
     accelerator: string
 }

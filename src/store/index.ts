@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type { response, xhr_response } from '@composables/types'
 import type { UserBooster, UserVO } from '@composables/user'
-import { getUserVOByUUID } from '@api/account'
+import { getUserVOByUUID, UpdateOnlineStatus } from '@api/account'
 import { isBlank, isNotBlank } from '@/util/StrUtil'
 import { MatrixUtil } from '@/class/MatrixUtil'
 import { requires } from '@/util/ObjectUtil'
@@ -108,7 +108,16 @@ export const authStore = defineStore({
             return this.user.onlineStatus
         },
         setOnlineStatus(onlineStatus: number) {
-            this.user.onlineStatus = onlineStatus
+            UpdateOnlineStatus(onlineStatus).then((res: any) => {
+                if (res.success) {
+                    this.user.onlineStatus = onlineStatus
+                } else {
+                    ElNotification.error({
+                        position: 'bottom-right',
+                        message: res.message,
+                    })
+                }
+            })
         },
         getBooster(booster: string): number {
             return this.user.booster[booster as keyof UserBooster] as number

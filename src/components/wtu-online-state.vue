@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { UpdateOnlineStatus, Logout } from '@api/account'
+import { Logout } from '@api/account'
 import type { response } from '@/composables/types'
 import { ElMessage } from 'element-plus'
 import { ONLINE_STATUS } from '@composables/enums'
@@ -92,18 +92,7 @@ const updateOnlineStatus = async (status: number) => {
     if (status === _authStore.getOnlineStatus()) {
         return
     }
-    let previosOnlineStatus = _authStore.getOnlineStatus()
-
-    const result = (await UpdateOnlineStatus(status)) as response<string>
-    if (result.success) {
-        _authStore.setOnlineStatus(status)
-    } else {
-        _authStore.setOnlineStatus(previosOnlineStatus)
-        ElNotification.error({
-            position: 'bottom-right',
-            message: result.message,
-        })
-    }
+    _authStore.setOnlineStatus(status)
 }
 </script>
 

@@ -3,9 +3,10 @@
 </template>
 
 <script setup lang="ts">
-import { layoutStore } from '@/store'
-import { LAYOUT_ENUM } from '@/composables/enums'
+import { layoutStore, authStore } from '@/store'
+import { LAYOUT_ENUM, ONLINE_STATUS } from '@/composables/enums'
 const _layoutStore = layoutStore()
+const _authStore = authStore()
 const initLayouts = () => {
     if (document.body.clientWidth < 900) {
         _layoutStore.setMode(LAYOUT_ENUM.compact)
@@ -20,5 +21,6 @@ onMounted(() => {
 
 onbeforeunload = () => {
     window.removeEventListener('resize', initLayouts)
+    _authStore.setOnlineStatus(ONLINE_STATUS.offline)
 }
 </script>
