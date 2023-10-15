@@ -3,7 +3,11 @@
         <el-card shadow="hover" class="c-p">
             <el-countdown
                 :format="format.day"
-                :value="utcTimestamp(voidTrader.expiry)"
+                :value="
+                    voidTrader.active
+                        ? utcTimestamp(voidTrader.activation)
+                        : utcTimestamp(voidTrader.expiry)
+                "
                 @finish="refresh()"
             >
                 <template #title>
@@ -69,6 +73,7 @@ const voidTrader = ref<VoidTraderCycle>({
 
 const init = async () => {
     voidTrader.value = (await getVoidTraderCycle()) as VoidTraderCycle
+    console.log(voidTrader.value)
 }
 init()
 const isLoading = computed(() => {
