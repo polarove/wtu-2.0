@@ -15,7 +15,7 @@
                         虚空商人
                         {{
                             voidTrader.active
-                                ? `即将离开${location(voidTrader.location)}`
+                                ? `已经到达${location(voidTrader.location)}`
                                 : `正在前往${location(voidTrader.location)}`
                         }}
                     </div>
