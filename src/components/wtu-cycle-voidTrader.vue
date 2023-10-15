@@ -5,8 +5,8 @@
                 :format="format.day"
                 :value="
                     voidTrader.active
-                        ? utcTimestamp(voidTrader.activation)
-                        : utcTimestamp(voidTrader.expiry)
+                        ? utcTimestamp(voidTrader.expiry)
+                        : utcTimestamp(voidTrader.activation)
                 "
                 @finish="refresh()"
             >
@@ -15,7 +15,7 @@
                         虚空商人
                         {{
                             voidTrader.active
-                                ? `已经到达${location(voidTrader.location)}`
+                                ? `即将离开${location(voidTrader.location)}`
                                 : `正在前往${location(voidTrader.location)}`
                         }}
                     </div>
