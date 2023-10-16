@@ -73,7 +73,6 @@ const voidTrader = ref<VoidTraderCycle>({
 
 const init = async () => {
     voidTrader.value = (await getVoidTraderCycle()) as VoidTraderCycle
-    console.log(voidTrader.value)
 }
 init()
 const isLoading = computed(() => {

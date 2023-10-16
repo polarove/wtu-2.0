@@ -206,6 +206,10 @@ watch(
     }
 )
 
+const currentTimestamp = computed(() => {
+    return new Date().getTime()
+})
+
 const parseFissureList = (
     full_list: fissure[],
     channel: relic_channel,
@@ -216,7 +220,8 @@ const parseFissureList = (
         (fissure: fissure) =>
             fissure.isHard === isHard &&
             fissure.isStorm === isStorm &&
-            fissure.expired === false
+            fissure.expired === false &&
+            utcTimestamp(fissure.expiry) > currentTimestamp.value
     )
     let diffs = diff(filterred, fissure_list.value)
     if (diffs.length === 0) {
@@ -235,7 +240,8 @@ const parseFissureList = (
 }
 
 const refresh = (fissure: fissure) => {
-    fissure_list.value.slice(fissure_list.value.indexOf(fissure), 1)
+    let idx = fissure_list.value.indexOf(fissure)
+    fissure_list.value.splice(idx, 1)
     fetch()
 }
 
@@ -318,5 +324,12 @@ const diff = (s: any[], d: any[]) => {
 
 .subs:nth-child(n + 2) {
     margin-top: 1em;
+}
+
+:deep(.el-statistic__content) {
+    display: flex;
+    @media screen and (max-width: 1420px) {
+        font-size: 0.88em;
+    }
 }
 </style>

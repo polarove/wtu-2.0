@@ -38,5 +38,8 @@ const toggleSubscribe = (name: string | undefined) => {
 <style lang="scss" scoped>
 :deep(.el-statistic__content) {
     display: flex;
+    @media screen and (max-width: 1420px) {
+        font-size: 0.88em;
+    }
 }
 </style>
