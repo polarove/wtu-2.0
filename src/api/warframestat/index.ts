@@ -65,3 +65,10 @@ export const getArbitrationCycle = (
     }
     return warframestat.get(`/${platform}/arbitration/`, { language: 'zh' })
 }
+
+export const getAlerts = (platform?: 'pc' | 'ps4' | 'xb1' | 'swi') => {
+    if (isBlank(platform)) {
+        platform = 'pc'
+    }
+    return warframestat.get(`/${platform}/alerts/`, { language: 'zh' })
+}

@@ -1,6 +1,6 @@
 <template>
     <ryu-svg
-        class="tool"
+        class="c-p hover-color-blue"
         :name="_authStore.getDifficulty() ? 'steelpath' : 'origin'"
         :size="size"
         @click="updateDifficulty()"

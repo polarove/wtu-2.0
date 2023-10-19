@@ -6,6 +6,7 @@
             animation_rotate: loading,
         }"
         @click="scrollDown()"
+        class="c-p hover-color-blue"
     ></div>
 </template>
 

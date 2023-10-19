@@ -1,5 +1,5 @@
 <template>
-    <div class="i-ep:arrow-up" @click="backToTop()"></div>
+    <div class="i-ep:arrow-up c-p hover-color-blue" @click="backToTop()"></div>
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="c-p hover-color-blue">
         <span
             class="i-ant-design:question-circle-outlined"
             @click="visible = true"

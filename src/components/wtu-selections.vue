@@ -18,9 +18,5 @@
     justify-content: center;
     align-items: center;
     margin: 0.25em 0 !important;
-    cursor: pointer;
-    &:hover {
-        color: var(--el-color-primary);
-    }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="c-p hover-color-blue">
         <el-badge
             @click="visible = true"
             :value="lengthInTotal"

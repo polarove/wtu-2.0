@@ -46,7 +46,7 @@ export interface VoidTraderCycle extends subscribed {
     activation: string
     startString: string
     expiry: string
-    active: false
+    active: boolean
     character: string
     location: string
     inventory: Array<any>
@@ -93,4 +93,43 @@ export interface DuviriChoices {
     category: 'normal' | 'hard'
     categoryKey: 'EXC_NORMAL' | 'EXC_HARD'
     choices: Array<string>
+}
+
+export interface AlertsCycle extends subscribed {
+    id: string
+    activation: string
+    startString: string
+    expiry: string
+    active: boolean
+    mission: {
+        description: string
+        node: string
+        nodeKey: string
+        type: string
+        typeKey: string
+        faction: string
+        factionKey: string
+        reward: {
+            items: string[]
+            countedItems: []
+            credits: number
+            asString: string
+            itemString: string
+            thumbnail: string
+            color: number
+        }
+        minEnemyLevel: number
+        maxEnemyLevel: number
+        nightmare: boolean
+        archwingRequired: boolean
+        isSharkwing: boolean
+        levelOverride: string
+        enemySpec: string
+        advancedSpawners: []
+        requiredItems: []
+        levelAuras: []
+    }
+    eta: string
+    rewardTypes: string[]
+    tag: string
 }

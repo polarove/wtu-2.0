@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="c-p hover-color-blue">
         <ryu-svg name="lightning" @click="visible = true" size="1.5em" />
         <el-drawer
             append-to-body
