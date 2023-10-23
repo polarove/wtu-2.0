@@ -266,8 +266,8 @@ const notify = (channel: string) => {
             ) {
                 notification.title =
                     fissure.tier + fissure.missionType + fissure.node
-                notification.body =
-                    route.meta.forehead + ' 有新的订阅的虚空裂缝模式'
+                notification.body = route.meta.forehead + ' 订阅的虚空裂缝'
+                _activityStore.addNotifyHistory(fissure.id)
                 show()
             }
         }

@@ -638,7 +638,8 @@ export const activityStore = defineStore({
             target: fissure
         ) {
             // 添加订阅
-            // 数据结构：subscriptionList: [{channel: 'fissure', mission: [{nodeKey:"Venus", missionKey:"capture"},{nodeKey:"Venus1", missionKey:"capture1"}]
+            // 数据结构：
+            //subscriptionList: [{channel: 'fissure', mission: [{ nodeKey: "Venus", missionKey: "capture" }, { nodeKey: "Venus1", missionKey: "capture1" }]
             let subscription = this.findChannel(channel)
             if (requires(subscription)) {
                 let exsistence = subscription!.mission.findIndex((item) => {
