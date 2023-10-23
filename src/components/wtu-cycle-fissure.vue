@@ -271,6 +271,7 @@ const notify = (channel: string) => {
 }
 const removeSubscription = (item: fissure) => {
     _activityStore.removeSubscription(route.name, item.id)
+    item.subscribed = false
 }
 const toggleSubscription = (target: fissure) => {
     // 根据裂缝id来订阅指定星球的指定任务类型
