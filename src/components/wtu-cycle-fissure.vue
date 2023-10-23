@@ -55,7 +55,7 @@
                             <el-countdown
                                 :format="format.hour"
                                 :value="utcTimestamp(item.expiry)"
-                                @finish="fetch()"
+                                @finish="refresh(item)"
                             >
                                 <template #title>
                                     <div>
@@ -229,6 +229,7 @@ const parseFissureList = (
         setTimeout(() => {
             return parseFissureList(full_list, channel, isHard, isStorm)
         }, 1000 * 3)
+        return
     } else {
         diffs.forEach((item) => {
             if (!fissure_list.value.map((i) => i.id).includes(item.id)) {
@@ -236,15 +237,14 @@ const parseFissureList = (
             }
         })
         // 扫描整个新的列表，并根据订阅状态发送通知
-        notify(channel)
+        notify(channel, diffs)
     }
 }
 
-const notify = (channel: string) => {
+const notify = (channel: string, diffs: fissure[]) => {
     let subscriptionList = _activityStore.findSubscriptionListByChannel(channel)
-    fissure_list.value.map((fissure: fissure) => {
-        // 这个频道有订阅
-        if (subscriptionList.length > 0) {
+    if (subscriptionList.length > 0) {
+        diffs.map((fissure: fissure) => {
             // 找出订阅列表
             let subscribed = subscriptionList.find(
                 (item) =>
@@ -254,6 +254,7 @@ const notify = (channel: string) => {
             // 如果这个裂缝是订阅的，且支持通知，且不是第一次加载，且没有通知过
             fissure.subscribed = requires(subscribed)
             if (
+                requires(subscribed) &&
                 fissure.subscribed &&
                 isSupported.value &&
                 !firstLoad.value &&
@@ -265,10 +266,19 @@ const notify = (channel: string) => {
                 _activityStore.addNotifyHistory(fissure.id)
                 show()
             }
-        }
-        return fissure
-    })
+        })
+    }
 }
+
+const refresh = (fissure: fissure) => {
+    let idx = fissure_list.value.indexOf(fissure)
+    if (idx === -1) {
+        return
+    } else {
+        fissure_list.value.splice(fissure_list.value.indexOf(fissure), 1)
+    }
+}
+
 const removeSubscription = (item: fissure) => {
     _activityStore.removeSubscription(route.name, item.id)
     item.subscribed = false
@@ -291,7 +301,7 @@ watchEffect(() => {
     }
 })
 
-const diff = (s: any[], d: any[]) => {
+const diff = (s: any[], d: any[]): fissure[] => {
     return s.filter((item) => !d.map((i) => i.id).includes(item.id))
 }
 </script>
