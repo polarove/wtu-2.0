@@ -1,8 +1,9 @@
 <template>
     <ryu-loading :loading="isLoading" height="90px" :rows="1">
-        <el-row>
+        <el-row :gutter="24">
             <el-col
-                :span="Math.max(minSpan, span)"
+                :xs="24"
+                :md="Math.max(minSpan, span)"
                 v-for="(alert, index) in alerts"
             >
                 <el-card shadow="hover" class="c-p" :index="index">

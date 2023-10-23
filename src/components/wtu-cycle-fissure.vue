@@ -39,7 +39,8 @@
                     <el-col
                         :xs="12"
                         :sm="8"
-                        :md="4"
+                        :md="6"
+                        :xl="4"
                         v-for="item in fissure_list"
                         class="p-0.4em"
                     >
@@ -54,7 +55,7 @@
                             <el-countdown
                                 :format="format.hour"
                                 :value="utcTimestamp(item.expiry)"
-                                @finish="refresh(item)"
+                                @finish="fetch()"
                             >
                                 <template #title>
                                     <div>
@@ -68,12 +69,12 @@
                                             v-if="item.subscribed"
                                             @click="toggleSubscription(item)"
                                         ></span>
-                                        <div
+                                        <span
                                             class="text-size-[0.8em] c-p inline hover-color-blue select-none"
                                             @click="toggleSubscription(item)"
                                         >
                                             {{ item.missionType }}&nbsp;
-                                        </div>
+                                        </span>
                                     </div>
                                 </template>
                             </el-countdown>
@@ -237,12 +238,6 @@ const parseFissureList = (
         // 扫描整个新的列表，并根据订阅状态发送通知
         notify(channel)
     }
-}
-
-const refresh = (fissure: fissure) => {
-    let idx = fissure_list.value.indexOf(fissure)
-    fissure_list.value.splice(idx, 1)
-    fetch()
 }
 
 const notify = (channel: string) => {
