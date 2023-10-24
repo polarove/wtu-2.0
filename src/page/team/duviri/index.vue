@@ -1,4 +1,5 @@
 <template>
+    <wtu-cycle-duviri />
     <wtu-team-list />
 </template>
 

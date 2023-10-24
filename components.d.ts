@@ -57,6 +57,7 @@ declare module 'vue' {
     WtuCycleArchonHunt: typeof import('./src/components/wtu-cycle-archon-hunt.vue')['default']
     WtuCycleCambion: typeof import('./src/components/wtu-cycle-cambion.vue')['default']
     WtuCycleCetus: typeof import('./src/components/wtu-cycle-cetus.vue')['default']
+    WtuCycleDuviri: typeof import('./src/components/wtu-cycle-duviri.vue')['default']
     WtuCycleEarth: typeof import('./src/components/wtu-cycle-earth.vue')['default']
     WtuCycleFissure: typeof import('./src/components/wtu-cycle-fissure.vue')['default']
     WtuCycleList: typeof import('./src/components/wtu-cycle-list.vue')['default']

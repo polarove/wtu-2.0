@@ -1,7 +1,7 @@
 <template>
     <div class="entries">
         <div
-            :class="{ activated: isDuviri }"
+            :class="{ activate: isDuviri }"
             class="entry"
             @click="navi(entries.duviri)"
         >
@@ -17,12 +17,12 @@
                         src="@img/duviri.png"
                         alt="双衍王境"
                     />
-                    <span v-if="isDuviri">{{ map.get(duviri.state) }}</span>
                 </span>
+                <span>{{ map.get(_activityStore.getDuviState()) }}</span>
             </el-badge>
         </div>
         <div
-            :class="{ activated: isEmpyrean }"
+            :class="{ activate: isEmpyrean }"
             class="entry"
             @click="navi(entries.empyrean)"
         >
@@ -45,8 +45,18 @@
 <script setup lang="ts">
 import entries from '@/composables/entries'
 import router from '@/router'
-import { getDuviriCycle } from '@api/cycles'
-import { DuviriCycle } from '@composables/cycles'
+import { activityStore } from '@/store'
+const _activityStore = activityStore()
+
+enum Duviris {
+    joy = '喜悦',
+    anger = '愤怒',
+    sorrow = '悲伤',
+    fear = '恐惧',
+    envy = '嫉妒',
+}
+
+const map = new Map<string, string>(Object.entries(Duviris))
 
 defineProps({
     clients: {
@@ -54,43 +64,6 @@ defineProps({
         default: 0,
     },
 })
-
-enum Duviris {
-    joy = '喜悦',
-    anger = '愤怒',
-    sorrow = '悲伤',
-    fear = '恐惧',
-    jealousy = '嫉妒',
-}
-
-const map = new Map<string, string>(Object.entries(Duviris))
-
-const duviri = ref<DuviriCycle>({
-    id: '',
-    activation: '',
-    expiry: '',
-    state: '',
-    choices: [
-        {
-            category: 'normal',
-            categoryKey: 'EXC_NORMAL',
-            // 普通模式战甲
-            choices: [],
-        },
-        {
-            category: 'hard',
-            categoryKey: 'EXC_HARD',
-            // 钢铁之路灵化
-            choices: [],
-        },
-    ],
-    subscribed: false,
-})
-
-const init = async () => {
-    duviri.value = (await getDuviriCycle()) as DuviriCycle
-}
-init()
 
 const isDuviri = computed(
     () => router.currentRoute.value.name === entries.duviri
@@ -115,7 +88,7 @@ const navi = (entry: string) => {
     align-items: center;
     user-select: none;
 
-    .activated {
+    .activate {
         width: 200px !important;
     }
 

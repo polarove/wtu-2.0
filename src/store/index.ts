@@ -601,12 +601,19 @@ export const layoutStore = defineStore({
 export const activityStore = defineStore({
     id: 'activity',
     state: () => ({
+        duviriState: '',
         fissure: {
             subscriptionList: [] as Array<subscription>,
             notifyHistory: [] as Array<string>,
         },
     }),
     actions: {
+        setDuviState(state: string) {
+            this.duviriState = state
+        },
+        getDuviState(): string {
+            return this.duviriState
+        },
         getSubscriptions(): Array<subscription> {
             return this.fissure.subscriptionList
         },
