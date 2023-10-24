@@ -57,6 +57,7 @@ const init = async () => {
     const result = (await getAlerts(_authStore.getServerChar())) as response<
         AlertsCycle[]
     >
+    console.log(result)
     alerts.value = result.data
     isLoading.value = false
 }
