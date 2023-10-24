@@ -37,6 +37,7 @@ import { utcTimestamp, format } from '@/util/DateUtil'
 import { CambionCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
 import { authStore } from '@/store'
+import { response } from '@/composables/types'
 const _authStore = authStore()
 const props = defineProps({
     heartbeat: {
@@ -54,10 +55,10 @@ const cambion = ref<CambionCycle>({
     subscribed: false,
 })
 const init = async () => {
-    cambion.value = (await getCambionCycle(
+    const result = (await getCambionCycle(
         _authStore.getServerChar()
-    )) as CambionCycle
-    return true
+    )) as response<CambionCycle>
+    cambion.value = result.data
 }
 init()
 const refreshing = ref<boolean>(false)
@@ -65,14 +66,14 @@ const refresh = async (): Promise<any> => {
     refreshing.value = true
     const reslut = (await getCambionCycle(
         _authStore.getServerChar()
-    )) as CambionCycle
-    if (reslut.id === cambion.value.id) {
+    )) as response<CambionCycle>
+    if (reslut.data.id === cambion.value.id) {
         console.log('cambion cycle not changed, refresh again')
         setTimeout(() => {
             return refresh()
         }, props.heartbeat)
     } else {
-        cambion.value = reslut
+        cambion.value = reslut.data
         refreshing.value = false
         return true
     }

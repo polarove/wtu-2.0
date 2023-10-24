@@ -277,6 +277,7 @@ const applicationDTO: ApplicationDTO = reactive({
             modDropRateBooster: 0,
         },
         accelerator: '',
+        platform: '',
     },
     team: {
         uuid: '',

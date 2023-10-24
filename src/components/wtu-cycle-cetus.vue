@@ -37,6 +37,7 @@ import { utcTimestamp, format } from '@/util/DateUtil'
 import { CetusCycle } from '@/composables/cycles'
 import { isBlank } from '@/util/StrUtil'
 import { authStore } from '@/store'
+import { response } from '@/composables/types'
 const _authStore = authStore()
 const props = defineProps({
     heartbeat: {
@@ -56,9 +57,10 @@ const cetus = ref<CetusCycle>({
     subscribed: false,
 })
 const init = async () => {
-    cetus.value = (await getCetusCycle(
+    const result = (await getCetusCycle(
         _authStore.getServerChar()
-    )) as CetusCycle
+    )) as response<CetusCycle>
+    cetus.value = result.data
 }
 init()
 
@@ -67,14 +69,14 @@ const refresh = async (): Promise<any> => {
     refreshing.value = true
     const reslut = (await getCetusCycle(
         _authStore.getServerChar()
-    )) as CetusCycle
-    if (reslut.id === cetus.value.id) {
+    )) as response<CetusCycle>
+    if (reslut.data.id === cetus.value.id) {
         console.log('cetus cycle not changed, refresh again')
         setTimeout(() => {
             return refresh()
         }, props.heartbeat)
     } else {
-        cetus.value = reslut
+        cetus.value = reslut.data
         refreshing.value = false
         return true
     }

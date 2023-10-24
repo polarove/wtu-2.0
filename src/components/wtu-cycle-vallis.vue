@@ -37,6 +37,7 @@ import { utcTimestamp, format } from '@/util/DateUtil'
 import { VallisCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
 import { authStore } from '@/store'
+import { response } from '@/composables/types'
 const _authStore = authStore()
 const props = defineProps({
     heartbeat: {
@@ -56,9 +57,10 @@ const vallis = ref<VallisCycle>({
 })
 
 const init = async () => {
-    vallis.value = (await getVallisCycle(
+    const result = (await getVallisCycle(
         _authStore.getServerChar()
-    )) as VallisCycle
+    )) as response<VallisCycle>
+    vallis.value = result.data
 }
 init()
 
@@ -67,14 +69,14 @@ const refresh = async (): Promise<any> => {
     refreshing.value = true
     const reslut = (await getVallisCycle(
         _authStore.getServerChar()
-    )) as VallisCycle
-    if (reslut.id === vallis.value.id) {
+    )) as response<VallisCycle>
+    if (reslut.data.id === vallis.value.id) {
         console.log('vallis cycle not changed, refresh again')
         setTimeout(() => {
             return refresh()
         }, props.heartbeat)
     } else {
-        vallis.value = reslut
+        vallis.value = reslut.data
         refreshing.value = false
         return true
     }
