@@ -5,7 +5,7 @@
         }"
         :src="src"
         alt="booster"
-        :style="{ width: active ? activeSize : size }"
+        :style="{ width: size }"
         class="booster-img"
     />
 </template>
@@ -15,14 +15,12 @@ defineProps({
     src: { type: String, required: true },
     active: { type: Boolean, default: true },
     size: { type: String, default: '2em' },
-    activeSize: { type: String, default: '3em' },
 })
 </script>
 
 <style lang="scss" scoped>
 .active {
     opacity: 1 !important;
-    transform: scale(1.2);
 }
 .booster-img {
     cursor: pointer;

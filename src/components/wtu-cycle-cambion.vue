@@ -32,10 +32,12 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { getCambionCycle } from '@/api/warframestat'
+import { getCambionCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { CambionCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
+import { authStore } from '@/store'
+const _authStore = authStore()
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -52,14 +54,18 @@ const cambion = ref<CambionCycle>({
     subscribed: false,
 })
 const init = async () => {
-    cambion.value = (await getCambionCycle()) as CambionCycle
+    cambion.value = (await getCambionCycle(
+        _authStore.getServerChar()
+    )) as CambionCycle
     return true
 }
 init()
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getCambionCycle()) as CambionCycle
+    const reslut = (await getCambionCycle(
+        _authStore.getServerChar()
+    )) as CambionCycle
     if (reslut.id === cambion.value.id) {
         console.log('cambion cycle not changed, refresh again')
         setTimeout(() => {

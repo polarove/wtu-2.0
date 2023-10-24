@@ -32,10 +32,12 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { getZarimanCycle } from '@/api/warframestat'
+import { getZarimanCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { ZarimanCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
+import { authStore } from '@/store'
+const _authStore = authStore()
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -55,14 +57,18 @@ const zariman = ref<ZarimanCycle>({
 })
 
 const init = async () => {
-    zariman.value = (await getZarimanCycle()) as ZarimanCycle
+    zariman.value = (await getZarimanCycle(
+        _authStore.getServerChar()
+    )) as ZarimanCycle
 }
 init()
 
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getZarimanCycle()) as ZarimanCycle
+    const reslut = (await getZarimanCycle(
+        _authStore.getServerChar()
+    )) as ZarimanCycle
     if (reslut.id === zariman.value.id) {
         console.log('zariman cycle not changed, refresh again')
         setTimeout(() => {

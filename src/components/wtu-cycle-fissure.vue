@@ -113,11 +113,12 @@
 
 <script setup lang="ts">
 import type { fissure } from '@/composables/fissure'
-import { getFissureList } from '@api/warframestat/index'
+import { getFissureList } from '@api/cycles/index'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { activityStore, authStore } from '@/store'
 import { requires } from '@/util/ObjectUtil'
 import { useWebNotification, UseWebNotificationOptions } from '@vueuse/core'
+import { response } from '@/composables/types'
 
 const _authStore = authStore()
 const notification: UseWebNotificationOptions = {
@@ -181,20 +182,39 @@ const fetch = async () => {
     if (!_authStore.getServer()) {
         fissure_list.value = []
         return
+    } else {
+        const full_list = (await getFissureList(
+            _authStore.getServerChar()
+        )) as response<fissure[]>
+
+        switch (route.name) {
+            case relic_channel.fissure:
+                parseFissureList(
+                    full_list.data,
+                    relic_channel.fissure,
+                    false,
+                    false
+                )
+                break
+            case relic_channel.steelpath:
+                parseFissureList(
+                    full_list.data,
+                    relic_channel.steelpath,
+                    true,
+                    false
+                )
+                break
+            case relic_channel.empyrean:
+                parseFissureList(
+                    full_list.data,
+                    relic_channel.empyrean,
+                    false,
+                    true
+                )
+                break
+        }
+        firstLoad.value = false
     }
-    const full_list = (await getFissureList()) as fissure[]
-    switch (route.name) {
-        case relic_channel.fissure:
-            parseFissureList(full_list, relic_channel.fissure, false, false)
-            break
-        case relic_channel.steelpath:
-            parseFissureList(full_list, relic_channel.steelpath, true, false)
-            break
-        case relic_channel.empyrean:
-            parseFissureList(full_list, relic_channel.empyrean, false, true)
-            break
-    }
-    firstLoad.value = false
 }
 
 watch(
@@ -229,7 +249,6 @@ const parseFissureList = (
         setTimeout(() => {
             return parseFissureList(full_list, channel, isHard, isStorm)
         }, 1000 * 3)
-        return
     } else {
         diffs.forEach((item) => {
             if (!fissure_list.value.map((i) => i.id).includes(item.id)) {
@@ -271,11 +290,12 @@ const notify = (channel: string, diffs: fissure[]) => {
 }
 
 const refresh = (fissure: fissure) => {
-    let idx = fissure_list.value.indexOf(fissure)
+    let idx = fissure_list.value.findIndex((item) => item.id === fissure.id)
     if (idx === -1) {
         return
     } else {
         fissure_list.value.splice(idx, 1)
+        fetch()
     }
 }
 
@@ -283,6 +303,7 @@ const removeSubscription = (item: fissure) => {
     _activityStore.removeSubscription(route.name, item.id)
     item.subscribed = false
 }
+
 const toggleSubscription = (target: fissure) => {
     // 根据裂缝id来订阅指定星球的指定任务类型
     fissure_list.value.map((fissure: fissure) => {

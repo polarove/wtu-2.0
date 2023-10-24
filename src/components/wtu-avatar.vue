@@ -32,13 +32,12 @@
                 @toggle="toggleBooster($event)"
                 :direction="DIRECTION_ENUM.horizental"
                 size="2.7em"
-                activeSize="2.7em"
             />
-
+            <wtu-platform size="1.7em" class="status" />
             <div class="md:display-none">
                 <wtu-online-state
                     :tooltipDisabled="true"
-                    size="1.8rem"
+                    size="1.7em"
                     class="status"
                 />
             </div>

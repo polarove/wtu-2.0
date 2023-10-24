@@ -72,3 +72,10 @@ export enum DIRECTION_ENUM {
     horizental = 1,
     vertical = 2,
 }
+
+export enum platform {
+    pc = 'pc',
+    ps4 = 'ps4',
+    xbox = 'xb1',
+    switch = 'swi',
+}

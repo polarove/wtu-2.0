@@ -72,6 +72,7 @@ declare module 'vue' {
     WtuLoadout: typeof import('./src/components/wtu-loadout.vue')['default']
     WtuLogo: typeof import('./src/components/wtu-logo.vue')['default']
     WtuOnlineState: typeof import('./src/components/wtu-online-state.vue')['default']
+    WtuPlatform: typeof import('./src/components/wtu-platform.vue')['default']
     WtuProfileRoute: typeof import('./src/components/wtu-profile-route.vue')['default']
     WtuSelections: typeof import('./src/components/wtu-selections.vue')['default']
     WtuServer: typeof import('./src/components/wtu-server.vue')['default']

@@ -13,6 +13,7 @@ export interface TeamUserBO {
     onlineStatus: ONLINE_STATUS
     booster: UserBooster
     accelerator: string
+    platform: string
 }
 
 export interface UserBooster {

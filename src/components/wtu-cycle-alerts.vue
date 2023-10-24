@@ -44,15 +44,18 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { getAlerts } from '@/api/warframestat'
+import { getAlerts } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { AlertsCycle } from '@/composables/cycles'
-
+import { authStore } from '@/store'
+const _authStore = authStore()
 const isLoading = ref<boolean>(false)
 const alerts = ref<AlertsCycle[]>([])
 const init = async () => {
     isLoading.value = true
-    alerts.value = (await getAlerts()) as AlertsCycle[]
+    alerts.value = (await getAlerts(
+        _authStore.getServerChar()
+    )) as AlertsCycle[]
     isLoading.value = false
 }
 init()

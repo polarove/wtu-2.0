@@ -36,10 +36,12 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { getArbitrationCycle } from '@/api/warframestat'
+import { getArbitrationCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { ArbitrationCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
+import { authStore } from '@/store'
+const _authStore = authStore()
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -61,13 +63,17 @@ const arbitration = ref<ArbitrationCycle>({
     subscribed: false,
 })
 const init = async () => {
-    arbitration.value = (await getArbitrationCycle()) as ArbitrationCycle
+    arbitration.value = (await getArbitrationCycle(
+        _authStore.getServerChar()
+    )) as ArbitrationCycle
 }
 init()
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getArbitrationCycle()) as ArbitrationCycle
+    const reslut = (await getArbitrationCycle(
+        _authStore.getServerChar()
+    )) as ArbitrationCycle
     if (reslut.id === arbitration.value.id) {
         console.log('arbitration cycle not changed, refresh again')
         setTimeout(() => {

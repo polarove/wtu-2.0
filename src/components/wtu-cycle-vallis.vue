@@ -32,10 +32,12 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { getVallisCycle } from '@/api/warframestat'
+import { getVallisCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { VallisCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
+import { authStore } from '@/store'
+const _authStore = authStore()
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -54,14 +56,18 @@ const vallis = ref<VallisCycle>({
 })
 
 const init = async () => {
-    vallis.value = (await getVallisCycle()) as VallisCycle
+    vallis.value = (await getVallisCycle(
+        _authStore.getServerChar()
+    )) as VallisCycle
 }
 init()
 
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getVallisCycle()) as VallisCycle
+    const reslut = (await getVallisCycle(
+        _authStore.getServerChar()
+    )) as VallisCycle
     if (reslut.id === vallis.value.id) {
         console.log('vallis cycle not changed, refresh again')
         setTimeout(() => {

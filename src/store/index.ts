@@ -52,6 +52,7 @@ export const authStore = defineStore({
             onlineStatus: 0,
             server: 1,
             level: 0,
+            platform: '',
             booster: {
                 affinityBooster: 0,
                 creditBooster: 0,
@@ -79,6 +80,12 @@ export const authStore = defineStore({
         },
         setAccelerator(accelerator: string) {
             this.user.accelerator = accelerator
+        },
+        getPlatform(): string {
+            return this.user.platform
+        },
+        setPlatform(platform: string) {
+            this.user.platform = platform
         },
         getUUID(): string {
             return this.user.uuid

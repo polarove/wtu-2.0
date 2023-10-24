@@ -43,11 +43,12 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { getVoidTraderCycle } from '@/api/warframestat'
+import { getVoidTraderCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { VoidTraderCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
-
+import { authStore } from '@/store'
+const _authStore = authStore()
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -72,7 +73,9 @@ const voidTrader = ref<VoidTraderCycle>({
 })
 
 const init = async () => {
-    voidTrader.value = (await getVoidTraderCycle()) as VoidTraderCycle
+    voidTrader.value = (await getVoidTraderCycle(
+        _authStore.getServerChar()
+    )) as VoidTraderCycle
 }
 init()
 const isLoading = computed(() => {
@@ -87,7 +90,9 @@ const location = (location: string) => {
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getVoidTraderCycle()) as VoidTraderCycle
+    const reslut = (await getVoidTraderCycle(
+        _authStore.getServerChar()
+    )) as VoidTraderCycle
     if (reslut.id === voidTrader.value.id) {
         console.log('voidTrader cycle not changed, refresh again')
         setTimeout(() => {

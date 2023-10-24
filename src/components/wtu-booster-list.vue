@@ -12,7 +12,6 @@
             :active="hasBooster(booster.en)"
             @click="$emit('toggle', booster.en)"
             :size="size"
-            :activeSize="activeSize"
             class="icon"
         />
     </div>
@@ -31,10 +30,6 @@ const props = defineProps({
     size: {
         type: String,
         default: '2em',
-    },
-    activeSize: {
-        type: String,
-        default: '3em',
     },
     direction: {
         type: Number,

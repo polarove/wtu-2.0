@@ -31,10 +31,12 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { getEarthCycle } from '@/api/warframestat'
+import { getEarthCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { EarthCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
+import { authStore } from '@/store'
+const _authStore = authStore()
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -52,14 +54,18 @@ const earth = ref<EarthCycle>({
 })
 
 const init = async () => {
-    earth.value = (await getEarthCycle()) as EarthCycle
+    earth.value = (await getEarthCycle(
+        _authStore.getServerChar()
+    )) as EarthCycle
 }
 init()
 
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getEarthCycle()) as EarthCycle
+    const reslut = (await getEarthCycle(
+        _authStore.getServerChar()
+    )) as EarthCycle
     if (reslut.id === earth.value.id) {
         console.log('earth cycle not changed, refresh again')
         setTimeout(() => {

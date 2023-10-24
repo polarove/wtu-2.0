@@ -61,3 +61,7 @@ export const UpdateUserBooster = (data: UserBooster) => {
 export const ToggleServer = (serverType: ToggleServerParam) => {
     return AccountController.post('/toggleServer', serverType)
 }
+
+export const TogglePlatform = (platform: string) => {
+    return AccountController.get('/togglePlatform', { platform: platform })
+}

@@ -32,10 +32,12 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { getCetusCycle } from '@/api/warframestat'
+import { getCetusCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { CetusCycle } from '@/composables/cycles'
 import { isBlank } from '@/util/StrUtil'
+import { authStore } from '@/store'
+const _authStore = authStore()
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -54,14 +56,18 @@ const cetus = ref<CetusCycle>({
     subscribed: false,
 })
 const init = async () => {
-    cetus.value = (await getCetusCycle()) as CetusCycle
+    cetus.value = (await getCetusCycle(
+        _authStore.getServerChar()
+    )) as CetusCycle
 }
 init()
 
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getCetusCycle()) as CetusCycle
+    const reslut = (await getCetusCycle(
+        _authStore.getServerChar()
+    )) as CetusCycle
     if (reslut.id === cetus.value.id) {
         console.log('cetus cycle not changed, refresh again')
         setTimeout(() => {
