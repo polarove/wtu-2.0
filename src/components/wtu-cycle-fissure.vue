@@ -119,6 +119,7 @@ import { activityStore, authStore } from '@/store'
 import { requires } from '@/util/ObjectUtil'
 import { useWebNotification, UseWebNotificationOptions } from '@vueuse/core'
 import { response } from '@/composables/types'
+import { RouteRecordName } from 'vue-router'
 
 const _authStore = authStore()
 const notification: UseWebNotificationOptions = {
@@ -151,20 +152,13 @@ enum relic_channel {
     empyrean = 'empyrean',
 }
 
-const backup = ref<fissure[]>([])
-const toggleList = (stat: boolean) => {
-    if (stat === state.value) {
-        return
-    }
+const currentTimestamp = computed(() => {
+    return new Date().getTime()
+})
+
+const toggleList = async (stat: boolean) => {
     state.value = stat
-    if (stat) {
-        backup.value = fissure_list.value
-        fissure_list.value = fissure_list.value.filter((fissure: fissure) => {
-            return fissure.subscribed
-        })
-    } else {
-        fissure_list.value = backup.value
-    }
+    initialize()
 }
 
 const dialog = reactive({
@@ -178,87 +172,114 @@ const manage = () => {
     dialog.visible = true
 }
 
-const fetch = async () => {
+const initialize = async () => {
     if (!_authStore.getServer()) {
         fissure_list.value = []
         return
     } else {
-        const full_list = (await getFissureList()) as response<fissure[]>
-
-        switch (route.name) {
-            case relic_channel.fissure:
-                parseFissureList(
-                    full_list.data,
-                    relic_channel.fissure,
-                    false,
-                    false
-                )
-                break
-            case relic_channel.steelpath:
-                parseFissureList(
-                    full_list.data,
-                    relic_channel.steelpath,
-                    true,
-                    false
-                )
-                break
-            case relic_channel.empyrean:
-                parseFissureList(
-                    full_list.data,
-                    relic_channel.empyrean,
-                    false,
-                    true
-                )
-                break
+        const result = (await getFissureList()) as response<fissure[]>
+        let parsed = parseFissures(result.data) as fissure[]
+        fissure_list.value = checkSubscription(parsed)
+        if (state.value) {
+            fissure_list.value = filterSubscription(parsed)
         }
         firstLoad.value = false
     }
+}
+initialize()
+
+const parseFissures = (result: fissure[]): fissure[] => {
+    let temp: fissure[] = []
+    switch (route.name) {
+        case relic_channel.fissure:
+            temp = result.filter(
+                (fissure: fissure) =>
+                    fissure.isHard === _authStore.getDifficulty() &&
+                    fissure.isStorm === false &&
+                    fissure.expired === false &&
+                    utcTimestamp(fissure.expiry) > currentTimestamp.value
+            )
+            break
+        case relic_channel.empyrean:
+            temp = result.filter(
+                (fissure: fissure) =>
+                    fissure.isStorm === true &&
+                    fissure.expired === false &&
+                    utcTimestamp(fissure.expiry) > currentTimestamp.value
+            )
+            break
+    }
+    return temp
+}
+
+const checkSubscription = (parsed: fissure[]): fissure[] => {
+    return parsed.map((fissure: fissure) => {
+        fissure.subscribed = requires(
+            _activityStore
+                .findSubscriptionListByChannel(route.name)
+                .find(
+                    (item) =>
+                        item.missionKey === fissure.missionKey &&
+                        item.nodeKey === fissure.nodeKey
+                )
+        )
+        return fissure
+    })
+}
+
+const filterSubscription = (parsed: fissure[]): fissure[] => {
+    return parsed.filter((fissure: fissure) => fissure.subscribed)
 }
 
 watch(
     () => _authStore.getServer(),
     () => {
-        fetch()
-    },
-    {
-        immediate: true,
+        initialize()
     }
 )
 
-const currentTimestamp = computed(() => {
-    return new Date().getTime()
-})
+watch(
+    () => _authStore.getDifficulty(),
+    () => {
+        initialize()
+    }
+)
 
-const parseFissureList = (
-    full_list: fissure[],
-    channel: relic_channel,
-    isHard: boolean,
-    isStorm: boolean
-): any => {
-    let filterred = full_list.filter(
-        (fissure: fissure) =>
-            fissure.isHard === isHard &&
-            fissure.isStorm === isStorm &&
-            fissure.expired === false &&
-            utcTimestamp(fissure.expiry) > currentTimestamp.value
-    )
-    let diffs = diff(filterred, fissure_list.value)
-    if (diffs.length === 0) {
-        setTimeout(() => {
-            return parseFissureList(full_list, channel, isHard, isStorm)
-        }, 1000 * 3)
+const refresh = (fissure: fissure) => {
+    let idx = fissure_list.value.findIndex((item) => item.id === fissure.id)
+    if (idx === -1) {
+        return
     } else {
-        diffs.forEach((item) => {
-            if (!fissure_list.value.map((i) => i.id).includes(item.id)) {
-                fissure_list.value.unshift(item)
-            }
-        })
-        // 扫描整个新的列表，并根据订阅状态发送通知
-        notify(channel, diffs)
+        fissure_list.value.splice(idx, 1)
+        update()
     }
 }
 
-const notify = (channel: string, diffs: fissure[]) => {
+const update = async () => {
+    const result = (await getFissureList()) as response<fissure[]>
+    let parsed = parseFissures(result.data) as fissure[]
+    let diffs = diff(parsed, fissure_list.value)
+    if (diffs.length === 0) {
+        setTimeout(() => {
+            return update()
+        }, 1000 * 30)
+    } else {
+        if (!state.value) {
+            diffs.forEach((item) => {
+                if (!fissure_list.value.map((i) => i.id).includes(item.id)) {
+                    fissure_list.value.unshift(item)
+                }
+            })
+        }
+        // 扫描整个新的列表，并根据订阅状态发送通知
+        notify(route.name, diffs)
+    }
+}
+
+const notify = (
+    channel: RouteRecordName | null | undefined,
+    diffs: fissure[]
+) => {
     let subscriptionList = _activityStore.findSubscriptionListByChannel(channel)
     if (subscriptionList.length > 0) {
         diffs.map((fissure: fissure) => {
@@ -270,6 +291,9 @@ const notify = (channel: string, diffs: fissure[]) => {
             )
             // 如果这个裂缝是订阅的，且支持通知，且不是第一次加载，且没有通知过
             fissure.subscribed = requires(subscribed)
+            if (state.value) {
+                fissure_list.value.unshift(fissure)
+            }
             if (
                 requires(subscribed) &&
                 fissure.subscribed &&
@@ -284,16 +308,6 @@ const notify = (channel: string, diffs: fissure[]) => {
                 show()
             }
         })
-    }
-}
-
-const refresh = (fissure: fissure) => {
-    let idx = fissure_list.value.findIndex((item) => item.id === fissure.id)
-    if (idx === -1) {
-        return
-    } else {
-        fissure_list.value.splice(idx, 1)
-        fetch()
     }
 }
 

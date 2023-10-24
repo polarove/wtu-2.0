@@ -1,5 +1,4 @@
 <template>
-    <wtu-cycle-fissure />
     <wtu-team-list />
 </template>
 
