@@ -37,6 +37,10 @@ export const warframes: Array<warframe> = [
         cn: '辉光晶灵',
     },
     {
+        en: 'Dagath',
+        cn: '无面骑影',
+    },
+    {
         en: 'Ember',
         cn: '永恒烈焰',
     },

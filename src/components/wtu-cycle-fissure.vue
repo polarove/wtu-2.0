@@ -179,10 +179,12 @@ const initialize = async () => {
     } else {
         const result = (await getFissureList()) as response<fissure[]>
         let parsed = parseFissures(result.data) as fissure[]
-        fissure_list.value = checkSubscription(parsed)
         if (state.value) {
             fissure_list.value = filterSubscription(parsed)
+        } else {
+            fissure_list.value = checkSubscription(parsed)
         }
+        sort(fissure_list.value)
         firstLoad.value = false
     }
 }
@@ -231,6 +233,12 @@ const filterSubscription = (parsed: fissure[]): fissure[] => {
     return parsed.filter((fissure: fissure) => fissure.subscribed)
 }
 
+const sort = (list: fissure[]) => {
+    list.sort((a: fissure, b: fissure) => {
+        return a.tierNum - b.tierNum
+    })
+}
+
 watch(
     () => _authStore.getServer(),
     () => {
@@ -250,7 +258,6 @@ const refresh = (fissure: fissure) => {
     if (idx === -1) {
         return
     } else {
-        fissure_list.value.splice(idx, 1)
         update()
     }
 }
@@ -262,7 +269,7 @@ const update = async () => {
     if (diffs.length === 0) {
         setTimeout(() => {
             return update()
-        }, 1000 * 30)
+        }, 1000 * 3)
     } else {
         if (!state.value) {
             diffs.forEach((item) => {
