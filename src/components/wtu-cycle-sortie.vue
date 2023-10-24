@@ -76,7 +76,6 @@ const sortie = ref<SortieCycle>({
 const init = async () => {
     const result = (await getSortie()) as response<SortieCycle>
     sortie.value = result.data
-    console.log(result)
 }
 init()
 

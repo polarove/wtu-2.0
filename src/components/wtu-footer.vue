@@ -11,17 +11,27 @@
             <el-text type="info" class="md:inline-block lt-md:block">
                 若要启用网站全部功能，请
                 <el-text type="primary">允许</el-text>
-                我们向您<el-text type="primary">&nbsp;发送通知消息</el-text
-                >&nbsp;及&nbsp;<el-text type="primary">访问剪贴板</el-text>
+                我们向您<el-text
+                    type="primary"
+                    class="c-p"
+                    @click="acquireNotificationPermission()"
+                    >&nbsp;发送通知消息</el-text
+                >&nbsp;及&nbsp;<el-text
+                    type="primary"
+                    class="c-p"
+                    @click="acquireClipboardPermission()"
+                    >访问剪贴板</el-text
+                >
             </el-text>
         </div>
         <div class="md:flex md:justify-around lt-md:flex-col w-100%">
             <RyuBeian class="lt-md:mb-1em" />
             <div class="lt-md:mb-1em">
+                <el-text>qq群@</el-text>
                 <el-tooltip :content="copied ? '已复制 ✔' : '点击复制'">
-                    <el-text @click="copy" class="c-p hover-color-blue">
-                        qq群@376878510
-                    </el-text>
+                    <el-text @click="copy" class="c-p hover-underline"
+                        >376878510</el-text
+                    >
                 </el-tooltip>
             </div>
             <div class="lt-md:mb-1em">
@@ -47,6 +57,17 @@
 </template>
 
 <script setup lang="ts">
+import { useWebNotification, UseWebNotificationOptions } from '@vueuse/core'
+const notification: UseWebNotificationOptions = {
+    title: '',
+    body: '',
+    dir: 'auto',
+    lang: 'zh',
+    renotify: false,
+}
+const { isSupported, show, ensurePermissions } =
+    useWebNotification(notification)
+
 const copied = ref(false)
 const copy = () => {
     navigator.clipboard
@@ -59,6 +80,19 @@ const copy = () => {
                 copied.value = false
             }, 3000)
         })
+}
+const acquireNotificationPermission = () => {
+    ensurePermissions().then(() => {
+        if (isSupported.value) {
+            show({
+                title: '通知权限已获取',
+                body: '您可以在浏览器设置中关闭通知权限',
+            })
+        }
+    })
+}
+const acquireClipboardPermission = () => {
+    navigator.clipboard.writeText('Warframe.Team.Up')
 }
 </script>
 

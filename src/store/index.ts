@@ -35,9 +35,8 @@ const names = boosters.map((value) => {
 const notification: UseWebNotificationOptions = {
     title: '',
     body: '',
-    dir: 'auto',
     lang: 'zh',
-    renotify: false,
+    icon: '',
 }
 const { isSupported, show } = useWebNotification(notification)
 

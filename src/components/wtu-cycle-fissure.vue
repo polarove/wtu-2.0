@@ -171,7 +171,7 @@ const subscription = computed(() =>
     _activityStore
         .findSubscriptionListByChannel(route.name)
         .sort((a, b) => {
-            return a.tierNum - b.tierNum
+            return b.tierNum - a.tierNum
         })
         .sort((a) => {
             return a.isHard ? 1 : -1
@@ -189,10 +189,9 @@ const initialize = async () => {
     } else {
         const result = (await getFissureList()) as response<fissure[]>
         let parsed = parseFissures(result.data) as fissure[]
+        fissure_list.value = checkSubscription(parsed)
         if (state.value) {
             fissure_list.value = filterSubscription(parsed)
-        } else {
-            fissure_list.value = checkSubscription(parsed)
         }
         sort(fissure_list.value)
         firstLoad.value = false
