@@ -1,4 +1,5 @@
 <template>
+    <wtu-cycle-archon-hunt />
     <wtu-team-list />
 </template>
 

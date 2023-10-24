@@ -3,13 +3,12 @@
         class="c-p hover-color-blue"
         :name="_authStore.getDifficulty() ? 'steelpath' : 'origin'"
         :size="size"
-        @click="updateDifficulty()"
+        @click="_authStore.toggleDifficulty()"
     />
 </template>
 
 <script setup lang="ts">
 import { authStore } from '@/store'
-import router from '@/router'
 defineProps({
     size: {
         type: String,
@@ -18,14 +17,6 @@ defineProps({
 })
 
 const _authStore = authStore()
-const updateDifficulty = () => {
-    if (_authStore.getDifficulty()) {
-        router.push({ name: 'fissure' })
-    } else {
-        router.push({ name: 'steelpath' })
-    }
-    _authStore.toggleDifficulty()
-}
 </script>
 
 <style lang="scss" scoped></style>

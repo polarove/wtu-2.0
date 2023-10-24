@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import type { fissure } from '@/composables/fissure'
+import type { fissure } from '@/composables/cycles'
 import { getFissureList } from '@api/cycles/index'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { activityStore, authStore } from '@/store'
@@ -183,9 +183,7 @@ const fetch = async () => {
         fissure_list.value = []
         return
     } else {
-        const full_list = (await getFissureList(
-            _authStore.getServerChar()
-        )) as response<fissure[]>
+        const full_list = (await getFissureList()) as response<fissure[]>
 
         switch (route.name) {
             case relic_channel.fissure:

@@ -47,17 +47,13 @@ export default defineComponent({
 import { getAlerts } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { AlertsCycle } from '@/composables/cycles'
-import { authStore } from '@/store'
 import { response } from '@/composables/types'
-const _authStore = authStore()
+
 const isLoading = ref<boolean>(false)
 const alerts = ref<AlertsCycle[]>([])
 const init = async () => {
     isLoading.value = true
-    const result = (await getAlerts(_authStore.getServerChar())) as response<
-        AlertsCycle[]
-    >
-    console.log(result)
+    const result = (await getAlerts()) as response<AlertsCycle[]>
     alerts.value = result.data
     isLoading.value = false
 }

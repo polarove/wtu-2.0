@@ -36,9 +36,9 @@ import { getZarimanCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { ZarimanCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
-import { authStore } from '@/store'
+
 import { response } from '@/composables/types'
-const _authStore = authStore()
+
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -58,9 +58,7 @@ const zariman = ref<ZarimanCycle>({
 })
 
 const init = async () => {
-    const result = (await getZarimanCycle(
-        _authStore.getServerChar()
-    )) as response<ZarimanCycle>
+    const result = (await getZarimanCycle()) as response<ZarimanCycle>
     zariman.value = result.data
 }
 init()
@@ -68,9 +66,7 @@ init()
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getZarimanCycle(
-        _authStore.getServerChar()
-    )) as response<ZarimanCycle>
+    const reslut = (await getZarimanCycle()) as response<ZarimanCycle>
     if (reslut.data.id === zariman.value.id) {
         console.log('zariman cycle not changed, refresh again')
         setTimeout(() => {

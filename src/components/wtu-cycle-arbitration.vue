@@ -40,9 +40,8 @@ import { getArbitrationCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { ArbitrationCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
-import { authStore } from '@/store'
 import { response } from '@/composables/types'
-const _authStore = authStore()
+
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -64,18 +63,14 @@ const arbitration = ref<ArbitrationCycle>({
     subscribed: false,
 })
 const init = async () => {
-    const result = (await getArbitrationCycle(
-        _authStore.getServerChar()
-    )) as response<ArbitrationCycle>
+    const result = (await getArbitrationCycle()) as response<ArbitrationCycle>
     arbitration.value = result.data
 }
 init()
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getArbitrationCycle(
-        _authStore.getServerChar()
-    )) as response<ArbitrationCycle>
+    const reslut = (await getArbitrationCycle()) as response<ArbitrationCycle>
     if (reslut.data.id === arbitration.value.id) {
         console.log('arbitration cycle not changed, refresh again')
         setTimeout(() => {

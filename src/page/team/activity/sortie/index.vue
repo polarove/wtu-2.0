@@ -1,4 +1,5 @@
 <template>
+    <wtu-cycle-sortie />
     <wtu-team-list />
 </template>
 

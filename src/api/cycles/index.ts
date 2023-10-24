@@ -1,41 +1,51 @@
 import Cycles from './instance'
+import { authStore } from '@/store'
+const _authStore = authStore()
 
-export const getFissureList = (server: string) => {
-    return Cycles.get(`/fissures/${server}`)
+export const getFissureList = () => {
+    return Cycles.get(`/fissures/${_authStore.getServerChar()}`)
 }
 
-export const getAlerts = (server: string) => {
-    return Cycles.get(`/alerts/${server}`)
+export const getAlerts = () => {
+    return Cycles.get(`/alerts/${_authStore.getServerChar()}`)
 }
 
-export const getArbitrationCycle = (server: string) => {
-    return Cycles.get(`/arbitration/${server}`)
+export const getArbitrationCycle = () => {
+    return Cycles.get(`/arbitration/${_authStore.getServerChar()}`)
 }
 
-export const getVoidTraderCycle = (server: string) => {
-    return Cycles.get(`/voidTrader/${server}`)
+export const getVoidTraderCycle = () => {
+    return Cycles.get(`/voidTrader/${_authStore.getServerChar()}`)
 }
 
-export const getEarthCycle = (server: string) => {
-    return Cycles.get(`/earthCycle/${server}`)
+export const getEarthCycle = () => {
+    return Cycles.get(`/earthCycle/${_authStore.getServerChar()}`)
 }
 
-export const getCetusCycle = (server: string) => {
-    return Cycles.get(`/cetusCycle/${server}`)
+export const getCetusCycle = () => {
+    return Cycles.get(`/cetusCycle/${_authStore.getServerChar()}`)
 }
 
-export const getCambionCycle = (server: string) => {
-    return Cycles.get(`/cambionCycle/${server}`)
+export const getCambionCycle = () => {
+    return Cycles.get(`/cambionCycle/${_authStore.getServerChar()}`)
 }
 
-export const getVallisCycle = (server: string) => {
-    return Cycles.get(`/vallisCycle/${server}`)
+export const getVallisCycle = () => {
+    return Cycles.get(`/vallisCycle/${_authStore.getServerChar()}`)
 }
 
-export const getZarimanCycle = (server: string) => {
-    return Cycles.get(`/zarimanCycle/${server}`)
+export const getZarimanCycle = () => {
+    return Cycles.get(`/zarimanCycle/${_authStore.getServerChar()}`)
 }
 
-export const getDuviriCycle = (server: string) => {
-    return Cycles.get(`/duviriCycle/${server}`)
+export const getDuviriCycle = () => {
+    return Cycles.get(`/duviriCycle/${_authStore.getServerChar()}`)
+}
+
+export const getArchonHunt = () => {
+    return Cycles.get(`/archonHunt/${_authStore.getServerChar()}`)
+}
+
+export const getSortie = () => {
+    return Cycles.get(`/sortie/${_authStore.getServerChar()}`)
 }

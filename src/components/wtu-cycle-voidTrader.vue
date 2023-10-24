@@ -47,9 +47,8 @@ import { getVoidTraderCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { VoidTraderCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
-import { authStore } from '@/store'
 import { response } from '@/composables/types'
-const _authStore = authStore()
+
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -74,9 +73,7 @@ const voidTrader = ref<VoidTraderCycle>({
 })
 
 const init = async () => {
-    const result = (await getVoidTraderCycle(
-        _authStore.getServerChar()
-    )) as response<VoidTraderCycle>
+    const result = (await getVoidTraderCycle()) as response<VoidTraderCycle>
     voidTrader.value = result.data
 }
 init()
@@ -92,9 +89,7 @@ const location = (location: string) => {
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getVoidTraderCycle(
-        _authStore.getServerChar()
-    )) as response<VoidTraderCycle>
+    const reslut = (await getVoidTraderCycle()) as response<VoidTraderCycle>
     if (reslut.data.id === voidTrader.value.id) {
         console.log('voidTrader cycle not changed, refresh again')
         setTimeout(() => {

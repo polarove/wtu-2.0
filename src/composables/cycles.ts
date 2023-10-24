@@ -1,3 +1,6 @@
+import { relicTier, relicTireNum } from '@composables/relic'
+import type { RouteRecordName } from 'vue-router'
+
 export interface subscribed {
     subscribed: boolean
 }
@@ -132,4 +135,79 @@ export interface AlertsCycle extends subscribed {
     eta: string
     rewardTypes: string[]
     tag: string
+}
+
+export interface ArchonHuntCycle extends subscribed {
+    id: string
+    activation: string
+    startString: string
+    expiry: string
+    active: boolean
+    rewardPool: string
+    variants: []
+    missions: ArchonHuntMission[]
+    boss: string
+    faction: string
+    expired: boolean
+    eta: string
+}
+
+export interface ArchonHuntMission {
+    node: string
+    nodeKey: string
+    type: string
+    typeKey: string
+    nightmare: boolean
+    archwingRequired: boolean
+    isSharkwing: boolean
+    advancedSpawners: []
+    requiredItems: []
+    levelAuras: []
+}
+
+export interface SortieCycle extends subscribed {
+    id: string
+    activation: string
+    startString: string
+    expiry: string
+    active: boolean
+    rewardPool: string
+    variants: SortieVariants[]
+    missions: []
+    boss: string
+    faction: string
+    expired: boolean
+    eta: string
+}
+
+export interface SortieVariants {
+    missionType: string
+    modifier: string
+    modifierDescription: string
+    node: string
+}
+
+export interface fissure extends subscribed {
+    activation: string
+    active: boolean
+    enemy: string
+    enemyKey: string
+    eta: string
+    expired: boolean
+    expiry: string
+    id: string
+    isHard: boolean
+    isStorm: boolean
+    missionKey: string
+    missionType: string
+    node: string
+    nodeKey: string
+    startString: string
+    tier: relicTier
+    tierNum: relicTireNum
+}
+
+export interface subscription {
+    channel: RouteRecordName | null | undefined
+    mission: Array<fissure>
 }

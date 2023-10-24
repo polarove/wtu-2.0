@@ -35,9 +35,8 @@ import { getEarthCycle } from '@/api/cycles'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { EarthCycle } from '@/composables/cycles'
 import { isBlank } from '@util/StrUtil'
-import { authStore } from '@/store'
 import { response } from '@/composables/types'
-const _authStore = authStore()
+
 const props = defineProps({
     heartbeat: {
         type: Number,
@@ -55,9 +54,7 @@ const earth = ref<EarthCycle>({
 })
 
 const init = async () => {
-    const result = (await getEarthCycle(
-        _authStore.getServerChar()
-    )) as response<EarthCycle>
+    const result = (await getEarthCycle()) as response<EarthCycle>
     earth.value = result.data
 }
 init()
@@ -65,9 +62,7 @@ init()
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
-    const reslut = (await getEarthCycle(
-        _authStore.getServerChar()
-    )) as EarthCycle
+    const reslut = (await getEarthCycle()) as EarthCycle
     if (reslut.id === earth.value.id) {
         console.log('earth cycle not changed, refresh again')
         setTimeout(() => {

@@ -21,10 +21,7 @@ import { platform } from '@/composables/enums'
 import { authStore } from '@/store'
 import { TogglePlatform } from '@api/account'
 const _authStore = authStore()
-const map = new Map<string, string>()
-Object.keys(platform).map((key) =>
-    map.set(key, platform[key as keyof typeof platform])
-)
+const map = new Map<string, string>(Object.entries(platform))
 
 defineProps({
     size: {

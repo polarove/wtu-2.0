@@ -26,7 +26,7 @@ import { toRaw } from 'vue'
 import { useWebNotification } from '@vueuse/core'
 import type { UseWebNotificationOptions } from '@vueuse/core'
 import { APPLICATION_STATUS } from '@/composables/wss'
-import type { fissure, subscription } from '@/composables/fissure'
+import type { fissure, subscription } from '@/composables/cycles'
 
 const names = boosters.map((value) => {
     return value.en

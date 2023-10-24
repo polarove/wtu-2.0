@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import entries from '@/composables/entries'
 import router from '@/router'
-import { getDuviriCycle } from '@api/warframestat'
+import { getDuviriCycle } from '@api/cycles'
 import { DuviriCycle } from '@composables/cycles'
 
 defineProps({
@@ -63,7 +63,7 @@ enum Duviris {
     jealousy = '嫉妒',
 }
 
-const map = new Map(Object.entries(Duviris))
+const map = new Map<string, string>(Object.entries(Duviris))
 
 const duviri = ref<DuviriCycle>({
     id: '',
