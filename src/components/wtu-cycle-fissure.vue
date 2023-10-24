@@ -95,6 +95,9 @@
                     <el-card shadow="hover">
                         <div class="flex-between">
                             <div>
+                                {{
+                                    item.isHard ? '钢铁' : '普通'
+                                }}&nbsp;-&nbsp;{{ item.tier }}&nbsp;
                                 {{ item.node }}&nbsp;{{ item.missionType }}
                             </div>
                             <el-button
@@ -165,7 +168,14 @@ const dialog = reactive({
     visible: false,
 })
 const subscription = computed(() =>
-    _activityStore.findSubscriptionListByChannel(route.name)
+    _activityStore
+        .findSubscriptionListByChannel(route.name)
+        .sort((a, b) => {
+            return a.tierNum - b.tierNum
+        })
+        .sort((a) => {
+            return a.isHard ? 1 : -1
+        })
 )
 const emptySubscription = computed(() => subscription.value.length === 0)
 const manage = () => {

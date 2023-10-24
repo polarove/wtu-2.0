@@ -1,7 +1,9 @@
 <template>
     <div class="entries">
         <div
-            :class="{ activate: isDuviri }"
+            :class="{
+                active: isDuviri,
+            }"
             class="entry"
             @click="navi(entries.duviri)"
         >
@@ -18,11 +20,13 @@
                         alt="双衍王境"
                     />
                 </span>
-                <span>{{ map.get(_activityStore.getDuviState()) }}</span>
+                <span v-if="route.name === entries.duviri">
+                    {{ map.get(_activityStore.getDuviState()) }}
+                </span>
             </el-badge>
         </div>
         <div
-            :class="{ activate: isEmpyrean }"
+            :class="{ active: isEmpyrean }"
             class="entry"
             @click="navi(entries.empyrean)"
         >
@@ -47,7 +51,7 @@ import entries from '@/composables/entries'
 import router from '@/router'
 import { activityStore } from '@/store'
 const _activityStore = activityStore()
-
+const route = useRoute()
 enum Duviris {
     joy = '喜悦',
     anger = '愤怒',
@@ -88,7 +92,7 @@ const navi = (entry: string) => {
     align-items: center;
     user-select: none;
 
-    .activate {
+    .active {
         width: 200px !important;
     }
 
