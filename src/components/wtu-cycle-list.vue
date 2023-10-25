@@ -1,6 +1,6 @@
 <template>
     <el-row :gutter="12" class="lt-md:mt-1em">
-        <el-col :xs="12" :sm="8" :md="6" :xl="4" v-for="(item, index) in cycle">
+        <el-col :xs="12" :sm="8" :md="4" v-for="(item, index) in cycle">
             <div
                 class="lt-md:ma-0.25em"
                 @subscribe="toggleSubscribe(item.name)"
