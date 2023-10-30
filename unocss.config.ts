@@ -5,9 +5,12 @@ export default defineConfig({
     // ...UnoCSS选项
     theme: {
         breakpoints: {
-            sm: '768px',
-            md: '992.2px',
-            lg: '1280px',
+            xs: '480px',
+            sm: '576px',
+            md: '768px',
+            lg: '992px',
+            xl: '1200px',
+            xxl: '1600px',
         },
     },
     rules: [

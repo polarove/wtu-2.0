@@ -1,8 +1,11 @@
 <template>
     <el-row :gutter="24">
         <el-col
-            :xl="_authStore.getDifficulty() ? 4 : 8"
-            v-for="choice in difficulty?.choices"
+            class="xs:mt-1em"
+            :xs="isHard ? 8 : 12"
+            :sm="isHard ? 4 : 6"
+            :key="index"
+            v-for="(choice, index) in difficulty?.choices"
         >
             <el-card>{{ choice }}</el-card>
         </el-col>
@@ -17,7 +20,9 @@ import { authStore } from '@/store'
 import { activityStore } from '@/store'
 const _activityStore = activityStore()
 const _authStore = authStore()
-
+const isHard = computed(() => {
+    return _authStore.getDifficulty()
+})
 const duviri = ref<DuviriCycle>({
     id: '',
     activation: '',
@@ -43,18 +48,20 @@ const duviri = ref<DuviriCycle>({
 const init = async () => {
     const result = (await getDuviriCycle()) as response<DuviriCycle>
     duviri.value = result.data
+    result.data.choices
+        .find((choice) => choice.category === 'normal')
+        ?.choices.unshift('本周战甲')
+    result.data.choices
+        .find((choice) => choice.category === 'hard')
+        ?.choices.unshift('本周灵化')
     _activityStore.setDuviState(duviri.value.state)
 }
 init()
 
 const difficulty = computed(() => {
-    if (_authStore.getDifficulty()) {
-        return duviri.value.choices.find((choice) => choice.category === 'hard')
-    } else {
-        return duviri.value.choices.find(
-            (choice) => choice.category === 'normal'
-        )
-    }
+    return isHard.value
+        ? duviri.value.choices.find((choice) => choice.category === 'hard')
+        : duviri.value.choices.find((choice) => choice.category === 'normal')
 })
 </script>
 

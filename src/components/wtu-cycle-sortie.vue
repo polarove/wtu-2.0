@@ -1,7 +1,7 @@
 <template>
     <ryu-loading :loading="loading" :rows="1">
         <el-row :gutter="24">
-            <el-col class="lt-lg:mt-0.5em" :xl="6" :sm="24">
+            <el-col class="mt-1em" :xl="6" :sm="12" :xs="24">
                 <el-card>
                     <div class="flex-between">
                         <el-countdown
@@ -28,9 +28,10 @@
                 </el-card>
             </el-col>
             <el-col
-                class="lt-lg:mt-0.5em"
+                class="mt-1em"
                 :xl="6"
-                :sm="24"
+                :sm="12"
+                :xs="24"
                 v-if="hidden"
                 v-for="(mission, index) in sortie.variants"
             >
