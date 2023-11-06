@@ -19,6 +19,19 @@
                                 }}&nbsp;&nbsp;
                             </div>
                         </template>
+                        <template #suffix>
+                            <div>
+                                -
+                                <span
+                                    v-for="reward in alert.mission.reward
+                                        .countedItems"
+                                >
+                                    {{ JSON.parse(reward).type }}&nbsp;x{{
+                                        JSON.parse(reward).count
+                                    }}
+                                </span>
+                            </div>
+                        </template>
                         <template #prefix>
                             <span
                                 class="i-ep:loading animation_rotate"

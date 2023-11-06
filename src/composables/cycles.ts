@@ -71,6 +71,7 @@ export interface ArbitrationCycle extends subscribed {
     nodeKey: string
     typeKey: string
     expired: boolean
+    //local variables
 }
 
 export interface ZarimanCycle extends subscribed {
@@ -114,7 +115,7 @@ export interface AlertsCycle extends subscribed {
         factionKey: string
         reward: {
             items: string[]
-            countedItems: []
+            countedItems: string[]
             credits: number
             asString: string
             itemString: string
