@@ -38,10 +38,7 @@ import { isBlank } from '@util/StrUtil'
 import { authStore } from '@/store'
 import router from '@/router'
 const _authStore = authStore()
-
-onMounted(() => {
-    _authStore.updateUser()
-})
+_authStore.updateUser()
 </script>
 
 <style lang="scss" scoped>

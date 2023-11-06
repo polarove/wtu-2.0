@@ -219,10 +219,10 @@ const loading = reactive({
 })
 
 const isPublic = (uuid: string, status: number) => {
-    return _authStore.getUser().uuid === uuid && status
+    return _authStore.getUUID() === uuid && status
 }
 const isCreator = (uuid: string) => {
-    return _authStore.getUser().uuid === uuid
+    return _authStore.getUUID() === uuid
 }
 
 const toggleTeamStatus = async (instance: TeamVO) => {

@@ -78,7 +78,6 @@ const login = (formEl: FormInstance | undefined) => {
             if (result.success) {
                 router.push({ name: 'origin' })
                 _authStore.setUser(result.data as UserVO)
-                console.log(_authStore.getUser())
             } else {
                 ElNotification.error({
                     position: 'bottom-right',
@@ -99,13 +98,6 @@ const recover = () => {
     })
 }
 
-const delay = (uuid: string) => {
-    loading.value = true
-    setTimeout(() => {
-        loginByUuid(uuid)
-    }, 2000)
-}
-
 const loginByUuid = async (uuid: string) => {
     const result = (await LoginByUUID(uuid)) as response<UserVO>
     if (result.success) {
@@ -120,6 +112,14 @@ const loginByUuid = async (uuid: string) => {
         loading.value = false
     }
 }
+
+const delay = (uuid: string) => {
+    loading.value = true
+    setTimeout(() => {
+        loginByUuid(uuid)
+    }, 2000)
+}
+
 onBeforeMount(() => {
     let uuid = _authStore.getUUID()
 
