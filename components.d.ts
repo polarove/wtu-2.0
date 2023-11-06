@@ -34,6 +34,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    RyuAd: typeof import('./src/components/ryu-ad.vue')['default']
     RyuBeian: typeof import('./src/components/ryu-beian.vue')['default']
     RyuClipboard: typeof import('./src/components/ryu-clipboard.vue')['default']
     RyuEmpty: typeof import('./src/components/ryu-empty.vue')['default']
