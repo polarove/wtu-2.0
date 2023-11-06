@@ -2,7 +2,6 @@
     <el-row :gutter="24">
         <el-col
             class="xs:mt-1em"
-            :xs="isHard ? 8 : 12"
             :sm="isHard ? 4 : 6"
             :key="index"
             v-for="(choice, index) in difficulty?.choices"

@@ -267,6 +267,7 @@ const refresh = (fissure: fissure) => {
     if (idx === -1) {
         return
     } else {
+        fissure_list.value.splice(idx, 1)
         update()
     }
 }
