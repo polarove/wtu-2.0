@@ -1,6 +1,6 @@
 <template>
     <ryu-loading :loading="isLoading" height="90px" :rows="1">
-        <el-card shadow="hover" class="c-p">
+        <el-card shadow="hover" class="c-p lt-lg:mt-1em">
             <el-countdown
                 :format="format.hour"
                 :value="utcTimestamp(arbitration.expiry)"

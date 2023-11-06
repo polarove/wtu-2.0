@@ -6,7 +6,7 @@
                 :md="Math.max(minSpan, span)"
                 v-for="(alert, index) in alerts"
             >
-                <el-card shadow="hover" class="c-p" :index="index">
+                <el-card shadow="hover" class="c-p lt-lg:mt-1em" :index="index">
                     <el-countdown
                         :format="format.day"
                         :value="utcTimestamp(alert.expiry)"
