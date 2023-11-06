@@ -11,35 +11,37 @@
             <div class="sponsor-header">
                 <div
                     @click="visible = true"
-                    class="cursor-pointer text-size-[0.88em] color-gray hover-color-blue"
+                    class="cursor-pointer hover-color-blue"
                 >
                     成为赞助者
                 </div>
-                <div>由衷感谢以下各位仓鼠的赞助！</div>
-            </div>
-            <div v-for="item in sponsors" class="item">
-                <div class="level">
-                    {{ item.level }}
+                <div class="color-gray text-size-[0.88em]">
+                    由衷感谢以下各位仓鼠的赞助！
                 </div>
-                <div
-                    v-if="item.sponsros.length > 0"
-                    class="list"
-                    :class="{
-                        unique: item.level === sponsor_level.UNIQUE,
-                        platium: item.level === sponsor_level.PLATINUM,
-                        gold: item.level === sponsor_level.GOLD,
-                        silver: item.level === sponsor_level.SILVER,
-                        bronze: item.level === sponsor_level.BRONZE,
-                        mercy: item.level === sponsor_level.MERCY,
-                    }"
-                >
-                    <div v-for="sponsor in item.sponsros">
-                        <el-avatar :src="sponsor.avatar" size="large" />
-                        <div>{{ sponsor.name }}</div>
+            </div>
+            <el-row>
+                <el-col v-for="item in sponsors" class="item" :span="24">
+                    <div class="level">
+                        {{ item.level }}
                     </div>
-                </div>
-                <div v-else class="list">虚位以待</div>
-            </div>
+                    <el-row v-if="item.sponsros.length > 0">
+                        <el-col
+                            :span="4"
+                            v-for="sponsor in item.sponsros"
+                            class="sponsor"
+                        >
+                            <el-avatar
+                                :src="sponsor.avatar"
+                                size="large"
+                                class="avatar"
+                            />
+                            <div class="name">{{ sponsor.name }}</div>
+                        </el-col>
+                    </el-row>
+
+                    <div v-else class="min-h-67px flex-center">虚位以待</div>
+                </el-col>
+            </el-row>
         </div>
     </div>
 
@@ -56,7 +58,7 @@
         <div class="text-center">
             并在备注中告知你的联系方式，我会尽快联系你
         </div>
-        <div class="flex-around">
+        <div class="flex-around mt-1em">
             <img src="@img/sponsor/payment_alipay.jpg" class="payment" />
             <img src="@img/sponsor/payment_wechat.jpg" class="payment" />
         </div>
@@ -74,16 +76,12 @@
                 ></span
                 >liuqi6602@163.com
             </div>
-            <div>
-                或者👉
-                <a href="https://afdian.net/a/warframe-team-up">爱发电</a>
-            </div>
         </div>
     </el-drawer>
 </template>
 
 <script setup lang="ts">
-import { sponsor_level, sponsors } from '@/composables/sponsor'
+import { sponsors } from '@/composables/sponsor'
 import { layoutStore } from '@/store'
 const _layoutStore = layoutStore()
 const visible = ref<boolean>(false)
@@ -104,7 +102,6 @@ const visible = ref<boolean>(false)
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
     .item {
         text-align: center;
     }
@@ -116,48 +113,38 @@ const visible = ref<boolean>(false)
         color: var(--el-text-color-primary);
         border-radius: 0.3em;
     }
-    .list {
-        display: grid;
+    .sponsor {
         margin: 1em 0;
-        min-height: 67px;
-    }
-    .list.unique {
-        grid-template-columns: 1fr;
-    }
-    .list.platium {
-        grid-template-columns: repeat(4, 1fr);
-    }
-    .list.gold {
-        grid-template-columns: repeat(8, 1fr);
-    }
-    .list.silver {
-        grid-template-columns: repeat(12, 1fr);
-    }
-    .list.bronze {
-        grid-template-columns: repeat(16, 1fr);
-    }
-    .list.mercy {
-        grid-template-columns: repeat(20, 1fr);
+
+        .avatar {
+            cursor: pointer;
+        }
+        .name {
+            cursor: pointer;
+            &:hover {
+                color: var(--el-color-primary);
+            }
+        }
     }
 }
 
-.sponsor-header {
-    margin-bottom: 0.3em;
-}
 @media screen and (min-width: 900px) {
     .payment {
         width: 267px;
     }
-    .sponsor-header {
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: space-between;
-    }
 }
 
+.sponsor-header {
+    display: flex;
+    margin-bottom: 0.6em;
+    justify-content: space-between;
+}
 @media screen and (max-width: 900px) {
     .payment {
         width: 40vw;
+    }
+    .sponsor-header {
+        flex-direction: row-reverse;
     }
 }
 

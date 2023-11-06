@@ -7,6 +7,7 @@ export interface I_sponsor {
 export interface sponsor {
     name: string
     avatar: string
+    url?: string
     amount?: number
 }
 
@@ -17,6 +18,7 @@ export enum sponsor_level {
     SILVER = '忘 年 之 交',
     BRONZE = '莫 逆 之 交',
     MERCY = '袍 泽 之 谊',
+    PARTNERSHIP = '合 作 主 播',
 }
 
 export const sponsors: I_sponsor[] = [
@@ -60,5 +62,16 @@ export const sponsors: I_sponsor[] = [
     {
         level: sponsor_level.MERCY,
         sponsros: [],
+    },
+    {
+        level: sponsor_level.PARTNERSHIP,
+        sponsros: [
+            {
+                name: '堪称英俊',
+                avatar: 'https://www.neorae.cn/data/img/sponsor/2023-10-10/kanchengyingjun.jpg',
+                url: 'https://www.neorae.cn',
+                amount: 0,
+            },
+        ],
     },
 ]

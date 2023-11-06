@@ -2,7 +2,7 @@
     <div>
         <a href="https://beian.miit.gov.cn/" class="vertical-middle">
             <img id="police" class="icon" src="@img/police.png" />
-            <span id="beianhao">闽ICP备2021003148号</span>
+            <span id="beianhao">闽ICP备&nbsp;2021003148号</span>
         </a>
     </div>
 </template>
