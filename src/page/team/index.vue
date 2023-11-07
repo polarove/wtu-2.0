@@ -275,7 +275,7 @@ onbeforeunload = () => {
 .selections {
     position: fixed;
     right: 0.75rem;
-    top: 35%;
+    top: 28%;
     display: flex;
     flex-direction: column;
     align-items: center;

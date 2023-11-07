@@ -67,6 +67,7 @@ const init = async () => {
     arbitration.value = result.data
 }
 init()
+
 const refreshing = ref<boolean>(false)
 const refresh = async (): Promise<any> => {
     refreshing.value = true
