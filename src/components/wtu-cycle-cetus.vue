@@ -4,7 +4,7 @@
             <el-countdown
                 :format="format.hour"
                 :value="utcTimestamp(cetus.expiry)"
-                @finish="refresh()"
+                @finish="refresh(cetus.id)"
             >
                 <template #title>
                     <div>夜灵平原：{{ cetus.isDay ? '白天' : '夜晚' }}</div>
@@ -62,13 +62,13 @@ const init = async () => {
 init()
 
 const refreshing = ref<boolean>(false)
-const refresh = async (): Promise<any> => {
+const refresh = async (id: string): Promise<any> => {
     refreshing.value = true
     const reslut = (await getCetusCycle()) as response<CetusCycle>
     if (reslut.data.id === cetus.value.id) {
         console.log('cetus cycle not changed, refresh again')
         setTimeout(() => {
-            return refresh()
+            return refresh(id)
         }, props.heartbeat)
     } else {
         cetus.value = reslut.data

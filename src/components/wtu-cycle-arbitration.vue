@@ -4,7 +4,7 @@
             <el-countdown
                 :format="format.hour"
                 :value="utcTimestamp(arbitration.expiry)"
-                @finish="refresh()"
+                @finish="refresh(arbitration.id)"
             >
                 <template #title>
                     <div>
@@ -69,13 +69,13 @@ const init = async () => {
 init()
 
 const refreshing = ref<boolean>(false)
-const refresh = async (): Promise<any> => {
+const refresh = async (id: string): Promise<any> => {
     refreshing.value = true
     const reslut = (await getArbitrationCycle()) as response<ArbitrationCycle>
-    if (reslut.data.id === arbitration.value.id) {
+    if (reslut.data.id === id) {
         console.log('arbitration cycle not changed, refresh again')
         setTimeout(() => {
-            return refresh()
+            return refresh(id)
         }, props.heartbeat)
     } else {
         arbitration.value = reslut.data

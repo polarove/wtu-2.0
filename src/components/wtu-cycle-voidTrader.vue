@@ -8,7 +8,7 @@
                         ? utcTimestamp(voidTrader.expiry)
                         : utcTimestamp(voidTrader.activation)
                 "
-                @finish="refresh()"
+                @finish="refresh(voidTrader.id)"
             >
                 <template #title>
                     <div>
@@ -87,13 +87,13 @@ const location = (location: string) => {
 }
 
 const refreshing = ref<boolean>(false)
-const refresh = async (): Promise<any> => {
+const refresh = async (id: string): Promise<any> => {
     refreshing.value = true
     const reslut = (await getVoidTraderCycle()) as response<VoidTraderCycle>
-    if (reslut.data.id === voidTrader.value.id) {
+    if (reslut.data.id === id) {
         console.log('voidTrader cycle not changed, refresh again')
         setTimeout(() => {
-            return refresh()
+            return refresh(id)
         }, 1000 * props.heartbeat)
     } else {
         voidTrader.value = reslut.data

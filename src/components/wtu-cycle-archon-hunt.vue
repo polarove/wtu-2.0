@@ -7,11 +7,18 @@
                         <el-countdown
                             :format="format.day"
                             :value="utcTimestamp(archonHunt.expiry)"
-                            @finish="init()"
+                            @finish="refresh(archonHunt.id)"
                         >
                             <template #title>
                                 <div>执行官猎杀：{{ archonHunt.boss }}</div>
                             </template>
+                            <template #prefix>
+                                <span
+                                    class="i-ep:loading animation_rotate"
+                                    v-if="refreshing"
+                                >
+                                </span
+                            ></template>
                         </el-countdown>
 
                         <div
@@ -113,6 +120,22 @@ const init = async () => {
     archonHunt.value = result.data
 }
 init()
+
+const refreshing = ref<boolean>(false)
+const refresh = async (id: string) => {
+    refreshing.value = true
+    const result = (await getArchonHunt()) as response<ArchonHuntCycle>
+    if (result.data.id === id) {
+        console.log('archon hunt cycle not changed, refresh again')
+        setTimeout(() => {
+            return refresh(id)
+        }, 3000)
+    } else {
+        archonHunt.value = result.data
+        refreshing.value = false
+        return true
+    }
+}
 
 const shrink = (state: boolean) => {
     hidden.value = state

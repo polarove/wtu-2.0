@@ -10,7 +10,7 @@
                     <el-countdown
                         :format="format.day"
                         :value="utcTimestamp(alert.expiry)"
-                        @finish="refresh()"
+                        @finish="refresh(alert.id)"
                     >
                         <template #title>
                             <div>
@@ -72,9 +72,21 @@ const init = async () => {
 }
 init()
 const refreshing = ref<boolean>(false)
-const refresh = async (): Promise<any> => {
+const refresh = async (id: string) => {
     refreshing.value = true
-    await init()
+    const result = (await getAlerts()) as response<AlertsCycle[]>
+    result.data.forEach((element) => {
+        if (element.id === id) {
+            console.log(`alert: ${id} cycle not changed, refresh again`)
+            setTimeout(() => {
+                return refresh(id)
+            }, 3000)
+        } else {
+            alerts.value = result.data
+            refreshing.value = false
+            return true
+        }
+    })
     refreshing.value = false
 }
 

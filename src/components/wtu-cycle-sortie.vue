@@ -7,7 +7,7 @@
                         <el-countdown
                             :format="format.hour"
                             :value="utcTimestamp(sortie.expiry)"
-                            @finish="init()"
+                            @finish="refresh(sortie.id)"
                         >
                             <template #title>
                                 <div>每日突击：{{ sortie.boss }}</div>
@@ -84,6 +84,22 @@ const hidden = ref<boolean>(false)
 const loading = computed(() => {
     return isBlank(sortie.value.id)
 })
+
+const refreshing = ref<boolean>(false)
+const refresh = async (id: string) => {
+    refreshing.value = true
+    const result = (await getSortie()) as response<SortieCycle>
+    if (result.data.id === id) {
+        console.log('sortie cycle not changed, refresh again')
+        setTimeout(() => {
+            return refresh(id)
+        }, 3000)
+    } else {
+        sortie.value = result.data
+        refreshing.value = false
+        return true
+    }
+}
 
 const shrink = (state: boolean) => {
     hidden.value = state

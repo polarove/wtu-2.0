@@ -4,7 +4,7 @@
             <el-countdown
                 :format="format.hour"
                 :value="utcTimestamp(vallis.expiry)"
-                @finish="refresh()"
+                @finish="refresh(vallis.id)"
             >
                 <template #title>
                     <div>奥布山谷：{{ vallis.isWarm ? '温暖' : '寒冷' }}</div>
@@ -62,13 +62,13 @@ const init = async () => {
 init()
 
 const refreshing = ref<boolean>(false)
-const refresh = async (): Promise<any> => {
+const refresh = async (id: string): Promise<any> => {
     refreshing.value = true
     const reslut = (await getVallisCycle()) as response<VallisCycle>
-    if (reslut.data.id === vallis.value.id) {
+    if (reslut.data.id === id) {
         console.log('vallis cycle not changed, refresh again')
         setTimeout(() => {
-            return refresh()
+            return refresh(id)
         }, props.heartbeat)
     } else {
         vallis.value = reslut.data

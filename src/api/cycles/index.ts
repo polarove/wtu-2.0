@@ -49,3 +49,7 @@ export const getArchonHunt = () => {
 export const getSortie = () => {
     return Cycles.get(`/sortie/${_authStore.getServerChar()}`)
 }
+
+export const getEvents = () => {
+    return Cycles.get(`/events/${_authStore.getServerChar()}`)
+}

@@ -4,7 +4,7 @@
             <el-countdown
                 :format="format.hour"
                 :value="utcTimestamp(zariman.bountiesEndDate)"
-                @finish="refresh()"
+                @finish="refresh(zariman.id)"
             >
                 <template #title>
                     <div>扎里曼号：赏金轮换</div>
@@ -64,13 +64,13 @@ const init = async () => {
 init()
 
 const refreshing = ref<boolean>(false)
-const refresh = async (): Promise<any> => {
+const refresh = async (id: string): Promise<any> => {
     refreshing.value = true
     const reslut = (await getZarimanCycle()) as response<ZarimanCycle>
-    if (reslut.data.id === zariman.value.id) {
+    if (reslut.data.id === id) {
         console.log('zariman cycle not changed, refresh again')
         setTimeout(() => {
-            return refresh()
+            return refresh(id)
         }, props.heartbeat)
     } else {
         zariman.value = reslut.data

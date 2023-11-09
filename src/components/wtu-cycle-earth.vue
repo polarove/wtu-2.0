@@ -4,7 +4,7 @@
             <el-countdown
                 :format="format.hour"
                 :value="utcTimestamp(earth.expiry)"
-                @finish="refresh()"
+                @finish="refresh(earth.id)"
             >
                 <template #title>
                     <div>地球：{{ earth.isDay ? '白天' : '夜晚' }}</div>
@@ -60,13 +60,13 @@ const init = async () => {
 init()
 
 const refreshing = ref<boolean>(false)
-const refresh = async (): Promise<any> => {
+const refresh = async (id: string): Promise<any> => {
     refreshing.value = true
     const reslut = (await getEarthCycle()) as EarthCycle
     if (reslut.id === earth.value.id) {
         console.log('earth cycle not changed, refresh again')
         setTimeout(() => {
-            return refresh()
+            return refresh(id)
         }, props.heartbeat)
     } else {
         earth.value = reslut

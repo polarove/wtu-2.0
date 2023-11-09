@@ -208,6 +208,48 @@ export interface fissure extends subscribed {
     tierNum: relicTireNum
 }
 
+export interface EventCycle extends subscribed {
+    id: string
+    activation: string
+    startString: string
+    expiry: string
+    active: boolean
+    description: string
+    tooltip: string
+    concurrentNodes: []
+    victimNode: string
+    rewards: []
+    expired: boolean
+    health: number
+    affiliatedWith: string
+    jobs: EventJob[]
+    previousJobs: []
+    previousId: string
+    interimSteps: []
+    progressSteps: []
+    regionDrops: []
+    archwingDrops: []
+    asString: string
+    metadata: {}
+    completionBonuses: []
+    altExpiry: string
+    altActivation: string
+    nextAlt: {
+        expiry: string
+        activation: string
+    }
+}
+
+export interface EventJob {
+    id: string
+    rewardPool: string[]
+    type: string
+    enemyLevels: []
+    standingStages: []
+    minMR: 0
+    expiry: string
+}
+
 export interface subscription {
     channel: RouteRecordName | null | undefined
     mission: Array<fissure>

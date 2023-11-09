@@ -55,7 +55,7 @@
                             <el-countdown
                                 :format="format.hour"
                                 :value="utcTimestamp(item.expiry)"
-                                @finish="refresh(item)"
+                                @finish="refresh(item.id)"
                             >
                                 <template #title>
                                     <div>
@@ -262,8 +262,8 @@ watch(
     }
 )
 
-const refresh = (fissure: fissure) => {
-    let idx = fissure_list.value.findIndex((item) => item.id === fissure.id)
+const refresh = (id: string) => {
+    let idx = fissure_list.value.findIndex((item) => item.id === id)
     if (idx === -1) {
         return
     } else {

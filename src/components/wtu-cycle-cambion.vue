@@ -4,7 +4,7 @@
             <el-countdown
                 :format="format.hour"
                 :value="utcTimestamp(cambion.expiry)"
-                @finish="refresh()"
+                @finish="refresh(cambion.id)"
             >
                 <template #title>
                     <div>魔胎之境：{{ cambion.state }}</div>
@@ -59,13 +59,13 @@ const init = async () => {
 }
 init()
 const refreshing = ref<boolean>(false)
-const refresh = async (): Promise<any> => {
+const refresh = async (id: string): Promise<any> => {
     refreshing.value = true
     const reslut = (await getCambionCycle()) as response<CambionCycle>
-    if (reslut.data.id === cambion.value.id) {
+    if (reslut.data.id === id) {
         console.log('cambion cycle not changed, refresh again')
         setTimeout(() => {
-            return refresh()
+            return refresh(id)
         }, props.heartbeat)
     } else {
         cambion.value = reslut.data
