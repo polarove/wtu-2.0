@@ -29,6 +29,15 @@
                 <span class="select-none">我忘记了密码</span>
             </div>
         </el-form-item>
+        <el-divider />
+        <div class="text-center">
+            <span class="opacity-60 text-size-[0.77em]">
+                您所填写的邮箱与密码与 Warframe / Digital Extremes
+            </span>
+            <span class="opacity-80 text-size-[0.77em]">
+                没有任何关联，仅用作网站登录
+            </span>
+        </div>
     </el-form>
 </template>
 
@@ -133,6 +142,8 @@ onBeforeMount(() => {
 .tip {
     color: #999;
     margin-left: 15px;
+    display: flex;
+    align-items: center;
 
     &:hover {
         color: var(--el-color-primary);
