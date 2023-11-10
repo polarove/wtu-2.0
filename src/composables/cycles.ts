@@ -254,3 +254,8 @@ export interface subscription {
     channel: RouteRecordName | null | undefined
     mission: Array<fissure>
 }
+
+export interface fissureSubs {
+    subscriptionList: Array<subscription>
+    notifyHistory: Array<string>
+}

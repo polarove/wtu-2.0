@@ -26,7 +26,7 @@ import { toRaw } from 'vue'
 import { useWebNotification } from '@vueuse/core'
 import type { UseWebNotificationOptions } from '@vueuse/core'
 import { APPLICATION_STATUS } from '@/composables/wss'
-import type { fissure, subscription } from '@/composables/cycles'
+import type { fissure, subscription, fissureSubs } from '@/composables/cycles'
 
 const names = boosters.map((value) => {
     return value.en
@@ -613,6 +613,12 @@ export const activityStore = defineStore({
         getDuviState(): string {
             return this.duviriState
         },
+        getFissureSubs(): fissureSubs {
+            return this.fissure
+        },
+        setFissureSubs(fissure: fissureSubs) {
+            this.fissure = fissure
+        },
         getSubscriptions(): Array<subscription> {
             return this.fissure.subscriptionList
         },
@@ -696,6 +702,14 @@ export const activityStore = defineStore({
         },
         getNotifyHistory(): Array<string> {
             return this.fissure.notifyHistory
+        },
+        removeNotifyHistory(id: string) {
+            let idx = this.getNotifyHistory().findIndex((item) => item === id)
+            if (idx === -1) {
+                return
+            } else {
+                this.getNotifyHistory().splice(idx, 1)
+            }
         },
         hasNotified(id: string): boolean {
             return this.fissure.notifyHistory.includes(id)

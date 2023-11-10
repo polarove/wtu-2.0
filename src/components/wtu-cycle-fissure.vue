@@ -22,11 +22,16 @@
                 >
                     订阅
                 </span>
-                <span class="option" @click="manage()">管理</span>
+                <span
+                    class="option"
+                    :class="{ active: dialog.visible }"
+                    @click="manage()"
+                    >管理</span
+                >
             </div>
             <div
                 :class="shrink ? 'i-ep:arrow-down-bold' : 'i-ep:minus'"
-                class="c-p hover-color-blue"
+                class="c-p hover-color-blue ml-0.5em"
                 @click="toggleShrink()"
             ></div>
         </div>
@@ -35,7 +40,7 @@
                 :empty="isEmpty"
                 :tip="state ? '暂无订阅' : '请稍等，正在加载...'"
             >
-                <el-row :style="{ display: shrink ? 'none' : 'flex' }">
+                <el-row :style="{ display: shrink && 'none' }">
                     <el-col
                         :xs="12"
                         :sm="8"
@@ -87,7 +92,17 @@
     </div>
     <el-dialog v-model="dialog.visible">
         <template #header>
-            <div class="text-center">订阅管理</div>
+            <div>
+                <span>订阅管理</span>
+                <span
+                    class="i-ep:upload mr-0.5em ml-0.5em c-p hover-color-blue"
+                    @click="uploadSubs()"
+                ></span>
+                <span
+                    class="i-ep:download c-p hover-color-blue"
+                    @click="downloadSubs()"
+                ></span>
+            </div>
         </template>
         <ryu-empty :empty="emptySubscription">
             <el-row>
@@ -117,12 +132,17 @@
 <script setup lang="ts">
 import type { fissure } from '@/composables/cycles'
 import { getFissureList } from '@api/cycles/index'
+import {
+    uploadFissureSubscriptions,
+    downloadFissureSubscriptions,
+} from '@api/account/index'
 import { utcTimestamp, format } from '@/util/DateUtil'
 import { activityStore, authStore } from '@/store'
 import { requires } from '@/util/ObjectUtil'
 import { useWebNotification, UseWebNotificationOptions } from '@vueuse/core'
 import { response } from '@/composables/types'
 import { RouteRecordName } from 'vue-router'
+import { fissureSubs } from '@/composables/cycles'
 
 const _authStore = authStore()
 const notification: UseWebNotificationOptions = {
@@ -262,12 +282,39 @@ watch(
     }
 )
 
+// 同步裂缝订阅列表
+const syncing = ref<boolean>(false)
+const uploadSubs = async () => {
+    syncing.value = true
+    const data = _activityStore.getFissureSubs()
+    const result = (await uploadFissureSubscriptions(data)) as response<string>
+    if (result.success) {
+        ElMessage.success('订阅记录已上传')
+    } else {
+        ElMessage.error('订阅记录上传失败')
+    }
+}
+
+const downloadSubs = async () => {
+    const uuid: string = _authStore.getUUID()
+    const result = (await downloadFissureSubscriptions(
+        uuid
+    )) as response<fissureSubs>
+    if (result.success) {
+        _activityStore.setFissureSubs(result.data)
+        ElMessage.success('同步成功')
+    } else {
+        ElMessage.error('同步失败')
+    }
+}
+
 const refresh = (id: string) => {
     let idx = fissure_list.value.findIndex((item) => item.id === id)
     if (idx === -1) {
         return
     } else {
         fissure_list.value.splice(idx, 1)
+        _activityStore.removeNotifyHistory(id)
         update()
     }
 }
@@ -311,13 +358,13 @@ const notify = (
             if (state.value) {
                 fissure_list.value.unshift(fissure)
             }
-            if (
+            const conditions =
                 requires(subscribed) &&
                 fissure.subscribed &&
                 isSupported.value &&
                 !firstLoad.value &&
                 !_activityStore.hasNotified(fissure.id)
-            ) {
+            if (conditions) {
                 notification.title =
                     fissure.tier + fissure.missionType + fissure.node
                 notification.body = route.meta.forehead + ' 订阅的虚空裂缝'

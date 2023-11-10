@@ -1,5 +1,6 @@
 import AccountController from './instance'
 import type { UserBooster } from '@/composables/user'
+import type { fissureSubs } from '@/composables/cycles'
 
 interface ToggleServerParam {
     previous: number
@@ -64,4 +65,14 @@ export const ToggleServer = (serverType: ToggleServerParam) => {
 
 export const TogglePlatform = (platform: string) => {
     return AccountController.get('/togglePlatform', { platform: platform })
+}
+
+export const uploadFissureSubscriptions = (data: fissureSubs) => {
+    return AccountController.post('/uploadFissureSubscriptions', data)
+}
+
+export const downloadFissureSubscriptions = (uuid: string) => {
+    return AccountController.get('/downloadFissureSubscriptions', {
+        uuid: uuid,
+    })
 }
