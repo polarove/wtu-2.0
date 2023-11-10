@@ -126,6 +126,10 @@
                 </el-col>
             </el-row>
         </ryu-empty>
+        <div class="mt-1em" v-if="onDecision">
+            <el-button @click="saveUpdates">保存</el-button>
+            <el-button @click="canclepdate">取消</el-button>
+        </div>
     </el-dialog>
 </template>
 
@@ -283,9 +287,7 @@ watch(
 )
 
 // 同步裂缝订阅列表
-const syncing = ref<boolean>(false)
 const uploadSubs = async () => {
-    syncing.value = true
     const data = _activityStore.getFissureSubs()
     const result = (await uploadFissureSubscriptions(data)) as response<string>
     if (result.success) {
@@ -295,17 +297,27 @@ const uploadSubs = async () => {
     }
 }
 
+const onDecision = ref<boolean>(false)
+const currentSubs = ref<fissureSubs | null>()
 const downloadSubs = async () => {
+    onDecision.value = true
     const uuid: string = _authStore.getUUID()
+    currentSubs.value = _activityStore.getFissureSubs()
     const result = (await downloadFissureSubscriptions(
         uuid
     )) as response<fissureSubs>
-    if (result.success) {
-        _activityStore.setFissureSubs(result.data)
-        ElMessage.success('同步成功')
-    } else {
-        ElMessage.error('同步失败')
-    }
+    _activityStore.setFissureSubs(result.data)
+}
+
+const saveUpdates = () => {
+    onDecision.value = false
+    currentSubs.value = null
+    ElMessage.success('订阅记录已更新')
+}
+
+const canclepdate = () => {
+    onDecision.value = false
+    _activityStore.setFissureSubs(currentSubs.value!)
 }
 
 const refresh = (id: string) => {
