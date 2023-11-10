@@ -5,7 +5,11 @@
                 class="lt-md:ma-0.25em"
                 @subscribe="toggleSubscribe(item.name)"
             >
-                <component :key="index" :is="item"></component>
+                <component
+                    :heartbeat="30000"
+                    :key="index"
+                    :is="item"
+                ></component>
             </div>
         </el-col>
     </el-row>

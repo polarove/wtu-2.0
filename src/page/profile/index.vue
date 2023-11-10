@@ -31,28 +31,6 @@
 <script setup lang="ts">
 import { authStore } from '@/store'
 const _authStore = authStore()
-// import { websocket } from '@/util/WebsocketUtil'
-// const route = useRoute()
-// const ChannelParam = reactive({
-//     route: route.name,
-//     uuid: _authStore.getUUID(),
-//     server: _authStore.getServer(),
-//     action: 1,
-// })
-// const wss = new websocket(_authStore.getServer())
-// const createConnection = () => {
-//     ChannelParam.action = 0
-//     console.log(1)
-
-//     wss.on_open(() => {
-//         wss.send(ChannelParam, () => {
-//             wss.on_message((data: any) => {
-//                 console.log(data)
-//             })
-//         })
-//     })
-// }
-// createConnection()
 </script>
 
 <style lang="scss" scoped>
