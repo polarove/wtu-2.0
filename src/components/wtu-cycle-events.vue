@@ -1,6 +1,6 @@
 <template>
     <ryu-loading :loading="loading" :rows="1">
-        <el-row :gutter="12">
+        <el-row :gutter="12" class="mt-1em">
             <el-col
                 v-for="(event, index) in events"
                 :key="index"
