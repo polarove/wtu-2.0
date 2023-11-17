@@ -2,15 +2,14 @@ import { defineConfig, presetAttributify, presetUno } from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 
 export default defineConfig({
-    // ...UnoCSS选项
+    // reference: https://element-plus.org/zh-CN/component/layout.html#col-attributes
     theme: {
         breakpoints: {
-            xs: '480px',
-            sm: '576px',
-            md: '768px',
-            lg: '992px',
-            xl: '1200px',
-            xxl: '1600px',
+            xs: '576px',
+            sm: '768px',
+            md: '992px',
+            lg: '1200px',
+            xl: '1920px',
         },
     },
     rules: [
@@ -119,26 +118,6 @@ export default defineConfig({
                 cursor: 'pointer',
             },
         ],
-        // [
-        //     /^min-\[\w+\]-(\w+)$/,
-        //     ([, w, s], { rawSelector, theme }) => {
-        //         const selector = e(rawSelector)
-        //         // return a string instead of an object
-        //         return `@media (min-width: ${theme.breakpoints.lg.width}) {
-        //                     ${selector} {
-        //                         display: ${theme.breakpoints.lg.visible};
-        //                     }
-        //                 }`
-        //     },
-        // ],
-        // [
-        //     /^text-(\w+)$/,
-        //     ([, c]) => {
-        //         return {
-        //             color: c,
-        //         }
-        //     },
-        // ],
     ],
     presets: [
         presetUno(),
