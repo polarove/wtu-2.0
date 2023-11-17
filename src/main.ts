@@ -19,7 +19,7 @@ import 'animate.css'
 import 'virtual:uno.css'
 
 // global css style
-import './style/style.css'
+import './style/normalize.css'
 
 // dark mode css style
 import './style/css-vars.scss'
@@ -34,15 +34,10 @@ import 'nprogress/nprogress.css'
 import 'virtual:svg-icons-register'
 import ryuSvg from './components/ryu-svg.vue'
 
-// Element Plus
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-
 // element-plus dark mode
 import 'element-plus/theme-chalk/dark/css-vars.css'
 
 const app = createApp(App)
-app.use(ElementPlus)
 app.use(pinia)
 app.use(router)
 app.component('svg-icon', ryuSvg)

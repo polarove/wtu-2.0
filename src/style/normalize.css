@@ -11,6 +11,10 @@ a {
     text-decoration: none;
 }
 
+li {
+    list-style: none;
+}
+
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
