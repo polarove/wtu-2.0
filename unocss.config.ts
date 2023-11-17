@@ -1,5 +1,5 @@
-import { defineConfig, presetAttributify, presetUno } from 'unocss'
-import presetIcons from '@unocss/preset-icons'
+// unocss.config.ts
+import { defineConfig, presetAttributify, presetUno, presetIcons } from 'unocss'
 
 export default defineConfig({
     // reference: https://element-plus.org/zh-CN/component/layout.html#col-attributes
@@ -12,7 +12,35 @@ export default defineConfig({
             xl: '1920px',
         },
     },
+    // 以下配置是为了可以在组件中更方便地使用图标<el-button icon="i-ep-lock"/>
+    // 需要安装来自iconify-json/icon-set-name的图标才行, 如 iconify-json/ep
+    variants: [
+        {
+            match: (s) => {
+                if (s.startsWith('i-')) {
+                    return {
+                        matcher: s,
+                        selector: (s) => {
+                            return s.startsWith('.') ? `${s.slice(1)},${s}` : s
+                        },
+                    }
+                }
+            },
+        },
+    ],
     rules: [
+        [
+            'p-r',
+            {
+                position: 'relative',
+            },
+        ],
+        [
+            'p-a',
+            {
+                position: 'absolute',
+            },
+        ],
         [
             'absolute-center',
             {
@@ -86,24 +114,6 @@ export default defineConfig({
             {
                 display: 'flex',
                 'flex-direction': 'column-reverse',
-            },
-        ],
-        [
-            'font-smiley',
-            {
-                'font-family': 'smiley-sans',
-            },
-        ],
-        [
-            'p-r',
-            {
-                position: 'relative',
-            },
-        ],
-        [
-            'p-a',
-            {
-                position: 'absolute',
             },
         ],
         [
