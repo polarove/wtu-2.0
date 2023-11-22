@@ -27,6 +27,7 @@ const backToHome = () => {
     user-select: none;
     text-align: center;
     .name {
+        white-space: nowrap;
         cursor: pointer;
         font-size: 1.37em;
         &:hover {

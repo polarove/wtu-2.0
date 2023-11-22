@@ -7,9 +7,8 @@
             <wtu-logo />
         </el-col>
         <el-col :span="12" class="flex-center">
-            <wtu-app-name class="md-display-none" />
+            <wtu-app-name class="md:display-none" />
         </el-col>
-        <!-- <div class="flex-1"></div> -->
         <el-col :span="7" class="flex-center">
             <wtu-avatar class="avatar" />
             <div class="lt-md-display-none ml-1em tp">

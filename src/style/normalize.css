@@ -57,6 +57,11 @@ li {
 .animation_blink {
     animation: blink 1s linear infinite;
 }
+
+.font-smiley {
+    font-family: 'smiley sans';
+}
+
 @keyframes blink {
     0% {
         opacity: 0.5;
