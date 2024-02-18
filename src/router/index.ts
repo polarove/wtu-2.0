@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import nProgress from 'nprogress'
 import entries from '@/composables/entries'
 
@@ -151,7 +151,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes,
 })
 
